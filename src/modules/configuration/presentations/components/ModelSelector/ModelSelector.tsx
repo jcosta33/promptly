@@ -4,26 +4,12 @@ import { Box } from "$/components/Box/Box";
 import { Flex } from "$/components/Flex/Flex";
 import { Select } from "$/components/Select/Select";
 import { Text } from "$/components/Text/Text";
+import type {
+  ModelGroupName,
+  ModelGroups,
+  ModelRecord
+} from "$/modules/inference/models/inference_model";
 import styles from "./ModelSelector.module.css";
-
-export type ModelRecord = {
-  name: string;
-  display_name: string;
-  provider: string;
-  family: string;
-  memory_requirements: string;
-  short_description: string;
-  tags?: string[];
-  recommended_config?: Record<string, unknown>;
-  version?: number | string;
-  parameter_count?: string;
-  quantization?: string;
-  precision?: string;
-  model_type?: string;
-  huggingface_link?: string;
-};
-
-export type ModelGroups = Record<string, ModelRecord[]>;
 
 type ModelSelectorProps = {
   modelGroups: ModelGroups;
@@ -42,14 +28,14 @@ export const ModelSelector: FC<ModelSelectorProps> = ({
   disabled = false,
 }) => {
   const [modelFamilies, setModelFamilies] = useState<string[]>([]);
-  const [selectedFamily, setSelectedFamily] = useState<string>("");
-  const [selectedModel, setSelectedModel] = useState<ModelRecord | null>(null);
+  const [selectedFamily, setSelectedFamily] = useState<ModelGroupName | undefined>(undefined);
+  const [selectedModel, setSelectedModel] = useState<ModelRecord | undefined>(undefined);
 
   // Extract model families on component mount
   useEffect(() => {
     if (!modelGroups || Object.keys(modelGroups).length === 0) return;
 
-    const families = Object.keys(modelGroups);
+    const families = Object.keys(modelGroups) as ModelGroupName[];
     setModelFamilies(families);
 
     // Set initial family selection
@@ -70,7 +56,10 @@ export const ModelSelector: FC<ModelSelectorProps> = ({
 
   // Auto-select first model when family changes and no model is selected
   useEffect(() => {
-    if (!selectedFamily || !modelGroups) return;
+    if (!selectedFamily || !modelGroups) {
+      return
+
+    };
 
     const familyModels = modelGroups[selectedFamily] || [];
 
@@ -78,6 +67,7 @@ export const ModelSelector: FC<ModelSelectorProps> = ({
       const model = familyModels.find((m) => {
         return m.name === selectedModelId;
       });
+
       if (model) {
         setSelectedModel(model);
       } else if (familyModels.length > 0) {
@@ -92,12 +82,15 @@ export const ModelSelector: FC<ModelSelectorProps> = ({
     }
   }, [selectedFamily, modelGroups, selectedModelId, onModelSelect]);
 
-  // Handle family change
   const handleFamilyChange = (value: string) => {
-    setSelectedFamily(value);
+    setSelectedFamily(value as ModelGroupName);
   };
 
   const handleModelChange = (value: string) => {
+    if (!selectedFamily) {
+      return;
+    }
+
     const model = modelGroups[selectedFamily]?.find((m) => {
       return m.name === value;
     });
@@ -124,7 +117,7 @@ export const ModelSelector: FC<ModelSelectorProps> = ({
         fullWidth
       />
 
-      <Select
+      {selectedFamily ? <Select
         options={(modelGroups[selectedFamily] || []).map((model) => {
           return {
             value: model.name,
@@ -141,7 +134,7 @@ export const ModelSelector: FC<ModelSelectorProps> = ({
           modelGroups[selectedFamily]?.length === 0
         }
         fullWidth
-      />
+      /> : null}
 
       {selectedModel && (
         <>
@@ -165,7 +158,7 @@ export const ModelSelector: FC<ModelSelectorProps> = ({
                     key={index}
                     p="xs"
                     bg="secondary"
-                    className={styles.tagBox} // Apply class
+                    className={styles.tagBox}
                   >
                     <Text size="sm">{tag}</Text>
                   </Box>

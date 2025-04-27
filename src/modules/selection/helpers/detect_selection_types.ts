@@ -23,18 +23,21 @@ export function detect_selection_types(
   const detected: Set<SelectionType> = new Set();
 
   const range = selection.rangeCount > 0 ? selection.getRangeAt(0) : null;
+  const container = range?.commonAncestorContainer;
+
+  // Define the common parent element once, handling potential nulls
+  const parentElement =
+    container && (container.nodeType === Node.ELEMENT_NODE
+      ? (container as Element)
+      : container.parentElement);
+
 
   // --- HTML Structure Checks ---
-  if (range) {
-    const container = range.commonAncestorContainer;
-    const parentElement =
-      container.nodeType === Node.ELEMENT_NODE
-        ? (container as Element)
-        : container.parentElement;
-
-    // Helper to check if the container or its parent is inside a specific tag
+  if (range && parentElement) {
+    // Helper to check if the parentElement is inside a specific tag
     const isInside = (selector: string): boolean => {
-      return parentElement?.closest(selector) !== null;
+      // Use the single parentElement variable
+      return parentElement.closest(selector) !== null;
     };
 
     // Check for specific HTML tags more reliably
@@ -61,7 +64,7 @@ export function detect_selection_types(
     }
     if (isInside("a[href]")) {
       // Check if the *entire* selection is the link text
-      const linkElement = parentElement?.closest("a[href]");
+      const linkElement = parentElement.closest("a[href]");
       if (
         linkElement &&
         linkElement.textContent?.trim() === cleanedText.trim()

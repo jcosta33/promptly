@@ -1,5 +1,4 @@
 import type { MLCEngine } from "@mlc-ai/web-llm";
-import { EventType } from "../../messaging/models/event_types";
 import {
     DEFAULT_INFERENCE_PARAMETERS,
 } from "../models/inference_model";
@@ -9,27 +8,6 @@ import type {
 } from "../models/inference_model";
 import { generate_text_stream } from "../repositories/generate_text_stream";
 import { logger } from "$/utils/logger";
-
-/**
- * Stream the inference output back to the client
- * NOTE: This type seems unused as the function does not actually handle streaming options directly.
- */
-type StreamOptions = {
-  /**
-   * Whether to use a persistent connection for streaming tokens
-   */
-  useConnection: boolean;
-
-  /**
-   * Target tab ID for streaming (if connection is used)
-   */
-  tabId?: number;
-
-  /**
-   * Frame ID for streaming (if connection is used)
-   */
-  frameId?: number;
-};
 
 /**
  * Run inference using WebLLM.
@@ -57,7 +35,6 @@ export async function run_inference(
   const parameters = {
     ...DEFAULT_INFERENCE_PARAMETERS,
     ...request.parameters,
-    // Force stream true as generate_text_stream expects it for callbacks
     stream: true,
   };
 

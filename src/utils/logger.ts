@@ -12,7 +12,7 @@ const isDebugMode = true; // Or: process.env.NODE_ENV !== 'production';
 
 function logInternal(level: LogLevel, ...args: any[]): void {
     if (!isDebugMode && level === "debug") {
-        return; // Skip debug logs if not in debug mode
+        return;
     }
 
     const timestamp = new Date().toISOString();

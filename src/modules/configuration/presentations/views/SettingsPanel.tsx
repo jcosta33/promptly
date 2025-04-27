@@ -4,29 +4,31 @@ import { Box } from "$/components/Box/Box";
 import { Flex } from "$/components/Flex/Flex";
 import { Switch } from "$/components/Switch/Switch";
 import { Text } from "$/components/Text/Text";
-import { AVAILABLE_MODELS } from "$/modules/inference/repositories/get_available_models";
+import { Select } from "$/components/Select/Select";
 
 import { ModelLoadingStatus } from "../components/ModelLoadingStatus/ModelLoadingStatus";
-import { ModelSelector } from "../components/ModelSelector";
+import { ModelSelector } from "../components/ModelSelector/ModelSelector";
 import { useModelLoading } from "../hooks/useModelLoading";
 import { useSettings } from "../hooks/useSettings";
+import { get_available_models } from "$/modules/inference/use_cases/get_available_models";
 import { logger } from "$/utils/logger";
+import { ThemePreference } from "$/modules/configuration/models/user_settings";
 
 /**
  * Main settings panel component for the popup
  */
 export const SettingsPanel: FC = () => {
-  const { settings, loading, toggleEnabled, setSelectedModel } = useSettings();
+  const { settings, loading: settingsLoading, toggleEnabled, setSelectedModel, setThemePreference } = useSettings();
+  const modelGroups = get_available_models();
 
   const {
     loadModel,
     progress,
     status,
-    isLoading,
+    isLoading: modelLoadHookIsLoading,
     error: loadingError,
   } = useModelLoading();
 
-  // Handle toggle enabled
   const handleToggle = async (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
       await handleLoadModel();
@@ -35,7 +37,6 @@ export const SettingsPanel: FC = () => {
     await toggleEnabled();
   };
 
-  // Handle model selection
   const handleModelSelect = async (modelId: string) => {
     await setSelectedModel(modelId);
     if (settings?.isEnabled) {
@@ -43,7 +44,6 @@ export const SettingsPanel: FC = () => {
     }
   };
 
-  // Handle model load button
   const handleLoadModel = async () => {
     if (!settings || !settings.selectedModelId) {
       logger.warn("No model selected, cannot trigger load.");
@@ -53,24 +53,38 @@ export const SettingsPanel: FC = () => {
     loadModel(settings.selectedModelId);
   };
 
-  // Log loading state changes for debugging
+  const handleThemeChange = (value: string) => {
+    if (Object.values(ThemePreference).includes(value as ThemePreference)) {
+      setThemePreference(value as ThemePreference);
+    } else {
+      logger.warn("Invalid theme value selected:", value);
+    }
+  };
+
+  const loading = settingsLoading || modelLoadHookIsLoading;
+
   useEffect(() => {
-    logger.debug("SettingsPanel state update", { isLoading, progress, status, loadingError });
-  }, [isLoading, progress, status, loadingError]);
+    logger.debug("SettingsPanel state update", {
+      settingsLoading,
+      isLoading: modelLoadHookIsLoading,
+      progress,
+      status,
+      loadingError
+    });
+  }, [settingsLoading, modelLoadHookIsLoading, progress, status, loadingError]);
 
   return (
     <Box>
       <Flex direction="column" gap="md">
-        {/* Model Selection */}
         <Text as="h3">Model Selection</Text>
-        {/* Loading Status */}
+
         <ModelLoadingStatus
-          isLoading={isLoading}
+          isLoading={modelLoadHookIsLoading}
           progress={progress}
           status={status}
           error={loadingError}
         />
-        {/* Enable/Disable Switch */}
+
         <Switch
           checked={settings?.isEnabled}
           onChange={handleToggle}
@@ -79,11 +93,29 @@ export const SettingsPanel: FC = () => {
           size="lg"
         />
 
-        <ModelSelector
-          modelGroups={AVAILABLE_MODELS}
-          selectedModelId={settings?.selectedModelId}
-          onModelSelect={handleModelSelect}
+        {modelGroups ? (
+          <ModelSelector
+            modelGroups={modelGroups}
+            selectedModelId={settings?.selectedModelId}
+            onModelSelect={handleModelSelect}
+            disabled={loading}
+          />
+        ) : (
+          <Text color="error">Error: Could not retrieve available models list.</Text>
+        )}
+
+        <Text as="h3">Appearance</Text>
+        <Select
+          label="Theme"
+          options={[
+            { value: ThemePreference.LIGHT, label: "Light" },
+            { value: ThemePreference.DARK, label: "Dark" },
+            { value: ThemePreference.SYSTEM, label: "System Default" },
+          ]}
+          value={settings?.themePreference}
+          onChange={handleThemeChange}
           disabled={loading}
+          fullWidth
         />
       </Flex>
     </Box>

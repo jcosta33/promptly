@@ -1,16 +1,7 @@
 ---
 description: 
 globs: 
-alwaysApply: true
----
-# Promptly Chrome Extension: Coding Conventions
-
-**Preamble: Strict Enforcement**
-
-* **Purpose:** This rule set dictates mandatory standards for writing new code and refactoring existing code within the Promptly Chrome Extension project. Adherence ensures consistency, maintainability, and alignment with the defined architecture (`arch.md`) and core design principles (SOLID, KISS, DRY).
-* **Refactoring:** Applying these guidelines may involve refactoring existing code. Preserve original core functionality unless the explicit goal is architectural alignment (e.g., implementing event bus communication, extracting helpers).
-* **Consistency:** Strict adherence to these conventions is required. Use ESLint/Prettier tooling configured for this project to assist enforcement.
-
+alwaysApply: false
 ---
 
 ## 1. Imports and Configuration
@@ -114,6 +105,13 @@ alwaysApply: true
   * Build UI and logic by composing smaller, focused components and hooks.
 * **Rule 7.5: JSDoc for Component Props.**
   * Exported component prop `type` aliases (e.g., `ButtonProps`) **MUST** have JSDoc comments explaining the purpose of each prop, following the standard multi-line format.
+* **Rule 7.6: Component Internal Order.**
+    * Within a Function Component, the internal code structure MUST follow this order:
+        1.  **Hook Calls:** All hook calls (`useState`, `useRef`, library hooks like `useQuery`, custom hooks) MUST appear at the top of the component body.
+            *   External library hooks (e.g., from React, TanStack Query) MAY be grouped before custom hooks (`useMyHook`).
+        2.  **State/Prop Derivations:** Simple derived values calculated directly from state or props MAY be declared next using `const` (e.g., `const itemCount = items.length;`). Avoid complex derivations here; compute directly in JSX or use helper functions if necessary.
+        3.  **Event Handlers & Internal Functions:** Callback functions for event handlers (e.g., `const handleClick = () => {...};`) or internal helper functions specific *only* to this component's rendering MUST be declared after hooks and derivations. Use arrow function assignments (`const myFunction = () => {}`).
+    *   **NOTE:** Per Rule 8.7, `useEffect` calls MUST be encapsulated within custom hooks and therefore should not appear directly in the component body following this order.
 
 ## 8. State Management and Communication
 

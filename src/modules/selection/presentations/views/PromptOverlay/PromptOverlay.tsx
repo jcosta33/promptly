@@ -1,4 +1,4 @@
-import React, { useState, useEffect, FC } from "react";
+import { useState, useEffect, FC } from "react";
 
 import { Message } from "$/modules/inference/models/inference_model";
 import { Box } from "@/src/components/Box/Box";
@@ -15,8 +15,8 @@ import { ResponseDisplay } from "../../components/ResponseDisplay/ResponseDispla
 import { useInference } from "../../hooks/useInference";
 
 import styles from "./PromptOverlay.module.css";
+import { logger } from "$/utils/logger";
 
-// Convert PromptlyOverlayProps interface to type alias
 export type PromptlyOverlayProps = {
   selectionData: SelectionData;
   position: { x: number; y: number };
@@ -37,9 +37,9 @@ export const PromptlyOverlay: FC<PromptlyOverlayProps> = ({
   );
   const [pageContext, setPageContext] = useState<{ category: PageCategory }>();
 
-  // --- Inference Hook & Callbacks ---
   const handleInferenceUpdate = (chunk: string) => {
-    // console.log("Inference update:", chunk);
+    logger.debug("Inference update:", chunk);
+
     setMessages((prevMessages) => {
       const lastMessage = prevMessages[prevMessages.length - 1];
       if (lastMessage?.role === "assistant") {
@@ -48,7 +48,7 @@ export const PromptlyOverlay: FC<PromptlyOverlayProps> = ({
           { ...lastMessage, content: lastMessage.content + chunk },
         ];
       }
-      return prevMessages; // Should not happen if placeholder is added correctly
+      return prevMessages;
     });
   };
 
@@ -73,7 +73,6 @@ export const PromptlyOverlay: FC<PromptlyOverlayProps> = ({
   const handleActionSelect = (action: ActionDefinition) => {
     setSelectedAction(action);
 
-    // Construct the context string for the LLM, instructing it to use the context
     const contextString = `Consider the following context when formulating your response:
 --- CONTEXT ---
 Page URL: ${selectionData.pageUrl}
@@ -102,23 +101,20 @@ ${contextString}`;
     }
   };
 
-  // Defined sendFollowUp function
   const sendFollowUp = (followUpText: string) => {
     if (!selectedAction) {
       return;
-    } // Should have an action selected for follow-ups
+    }
 
     const userMessage: Message = { role: "user", content: followUpText };
     const assistantPlaceholder: Message = { role: "assistant", content: "" };
 
-    // Append user message and placeholder
     const newMessages = [...messages, userMessage, assistantPlaceholder];
     setMessages(newMessages);
 
-    // Run inference with the updated history (excluding placeholder)
     runInference({
       messages: newMessages.slice(0, -1),
-      parameters: selectedAction.llmParams, // Reuse params from original action
+      parameters: selectedAction.llmParams,
     });
   };
 
@@ -134,10 +130,10 @@ ${contextString}`;
     ) {
       cancelInference();
     }
-    resetInference(); // Reset hook state
-    setMessages([]); // Clear local messages
+    resetInference();
+    setMessages([]);
     setSelectedAction(null);
-    onClose(); // Call parent handler
+    onClose();
   };
 
   const isLoading =
@@ -155,6 +151,7 @@ ${contextString}`;
             <Text as="h2" weight="bold" size="xl">
               Promptly
             </Text>
+
             <Button size="sm" onClick={handleClose} aria-label="Close">
               ✕
             </Button>

@@ -1,4 +1,4 @@
-import { AVAILABLE_MODELS } from "$/modules/inference/repositories/get_available_models";
+import { AVAILABLE_MODELS } from "$/modules/inference/repositories/available_models_data";
 
 /**
  * User theme preference constant object

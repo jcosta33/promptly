@@ -1,21 +1,42 @@
-import { initTheme } from "$/theme";
-import { mountPromptlyRoot } from "@/src/modules/selection/presentations/views/SelectionRoot";
+import { initTheme, setTheme } from "$/theme";
+import { logger } from "$/utils/logger";
+import { mountPromptlyRoot } from "$/modules/selection/presentations/views/SelectionRoot";
+import { initialize_messaging } from "$/modules/messaging/use_cases/initialize_messaging";
+import { subscribe } from "$/modules/messaging/repositories/message_bus";
+import { EventType } from "$/modules/messaging/models/event_types";
+import type { ExtensionSettings } from "$/modules/configuration/models/user_settings";
+import type { MessageEvent } from "$/modules/messaging/helpers/create_message_event";
 
 export default defineContentScript({
   matches: ["*://*/*"],
 
   main() {
-    // console.log("Promptly content script initialized");
+    logger.debug("Promptly content script initializing...");
 
-    // Inject fonts
     const fontLink = document.createElement("link");
     fontLink.rel = "stylesheet";
     fontLink.href =
       "https://fonts.googleapis.com/css2?family=JetBrains+Mono&family=Press+Start+2P&display=swap";
     document.head.appendChild(fontLink);
+
+    initialize_messaging();
     initTheme();
 
-    // Mount the Promptly component
+    subscribe<ExtensionSettings>(
+      EventType.SETTINGS_UPDATE,
+      (event: MessageEvent<ExtensionSettings>) => {
+        logger.debug("Content script received theme update", event.payload);
+        const newThemePref = event.payload.themePreference;
+        let darkMode = false;
+        if (newThemePref === "dark") {
+          darkMode = true;
+        } else if (newThemePref === "system") {
+          darkMode = window.matchMedia("(prefers-color-scheme: dark)").matches;
+        }
+        setTheme(darkMode);
+      }
+    );
+
     return mountPromptlyRoot();
   },
 });

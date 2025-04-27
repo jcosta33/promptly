@@ -129,12 +129,12 @@ export const useInference = (options?: UseInferenceOptions) => {
         const errorMsg = "Inference request timed out";
         // --- Set Error State (Timeout) ---
         setState((state) =>
-          // Avoid setting state if request ID changed (e.g., new request started before timeout)
-          {
-            return state.requestId === requestId
-              ? { ...state, status: "error", error: errorMsg }
-              : state;
-          }
+        // Avoid setting state if request ID changed (e.g., new request started before timeout)
+        {
+          return state.requestId === requestId
+            ? { ...state, status: "error", error: errorMsg }
+            : state;
+        }
         );
         options?.onError?.(errorMsg);
         cleanupStream(); // Clean up the timed-out stream

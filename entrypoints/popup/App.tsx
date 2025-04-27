@@ -1,12 +1,12 @@
-import React from "react";
-import "../../src/theme";
-import "@/src/normalize.css";
-import { SettingsPanel } from "$/modules/settings/presentations/views/SettingsPanel";
+import { type FC } from "react";
+import "$/theme";
+import "$/normalize.css";
+import { SettingsPanel } from "$/modules/configuration/presentations/views/SettingsPanel";
 
 /**
  * Main App component for the extension popup
  */
-const App: React.FC = () => {
+const App: FC = () => {
   return <SettingsPanel />;
 };
 
