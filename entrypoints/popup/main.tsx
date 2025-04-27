@@ -21,23 +21,23 @@ initTheme();
 
 // Listen for theme updates from settings changes
 subscribe<ExtensionSettings>(
-    EventType.SETTINGS_UPDATE,
-    (event: MessageEvent<ExtensionSettings>) => {
-        const newThemePref = event.payload.themePreference;
-        // Determine dark mode based on preference (could be moved to theme.ts)
-        let darkMode = false;
-        if (newThemePref === "dark") {
-            darkMode = true;
-        } else if (newThemePref === "system") {
-            darkMode = window.matchMedia("(prefers-color-scheme: dark)").matches;
-        }
-        setTheme(darkMode); // Apply the theme directly
+  EventType.SETTINGS_UPDATE,
+  (event: MessageEvent<ExtensionSettings>) => {
+    const newThemePref = event.payload.themePreference;
+    // Determine dark mode based on preference (could be moved to theme.ts)
+    let darkMode = false;
+    if (newThemePref === "dark") {
+      darkMode = true;
+    } else if (newThemePref === "system") {
+      darkMode = window.matchMedia("(prefers-color-scheme: dark)").matches;
     }
+    setTheme(darkMode); // Apply the theme directly
+  }
 );
 
 // Wrap App with QueryClientProvider
 root.render(
-    <QueryClientProvider client={queryClient}>
-        <App />
-    </QueryClientProvider>
+  <QueryClientProvider client={queryClient}>
+    <App />
+  </QueryClientProvider>
 );

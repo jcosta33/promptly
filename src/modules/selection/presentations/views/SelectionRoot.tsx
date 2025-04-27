@@ -9,8 +9,8 @@ import "$/normalize.css";
  * Main component that serves as the entry point for the Promptly extension UI
  */
 const PromptlyRoot: FC = () => {
-  const { selection, mousePosition, clearSelection } = useSelection();
   const [showOverlay, setShowOverlay] = useState(false);
+  const { selection, mousePosition, clearSelection } = useSelection({ enabled: !showOverlay });
 
   const handleTriggerClick = () => {
     setShowOverlay(true);

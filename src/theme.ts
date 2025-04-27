@@ -74,12 +74,12 @@ export const CSS_VARIABLES = {
   "--space-xl": "48px",
   "--space-xxl": "64px",
 
-  "--font-size-xs": "10px",
-  "--font-size-sm": "12px",
-  "--font-size-md": "14px",
-  "--font-size-lg": "18px",
-  "--font-size-xl": "22px",
-  "--font-size-xxl": "32px",
+  "--font-size-xs": "8px",
+  "--font-size-sm": "10px",
+  "--font-size-md": "12px",
+  "--font-size-lg": "14px",
+  "--font-size-xl": "16px",
+  "--font-size-xxl": "18px",
 
   "--font-weight-normal": "400",
   "--font-weight-medium": "500",

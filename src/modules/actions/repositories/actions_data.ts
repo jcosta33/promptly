@@ -3,7 +3,6 @@ import { PARAMETER_PRESETS } from "../../inference/models/inference_model";
 import { SelectionType } from "../../selection/models/selection";
 import type { ActionDefinition } from "../models/action_models";
 
-// Helper constant for actions applicable to all page categories
 const ALL_PAGE_CATEGORIES = Object.values(PageCategory);
 
 export const PREDEFINED_ACTIONS: ActionDefinition[] = [
@@ -13,8 +12,6 @@ export const PREDEFINED_ACTIONS: ActionDefinition[] = [
         description: "Provide a dictionary definition",
         selectionTypes: [
             SelectionType.WORD,
-            SelectionType.SENTENCE,
-            SelectionType.DEFINITION,
         ],
         pageCategories: ALL_PAGE_CATEGORIES,
         systemPrompt:
@@ -54,10 +51,9 @@ export const PREDEFINED_ACTIONS: ActionDefinition[] = [
     },
     {
         id: "explain_selection",
-        name: "Explain This",
+        name: "Explain",
         description: "Provide context or clarification",
         selectionTypes: [
-            SelectionType.WORD,
             SelectionType.SENTENCE,
             SelectionType.PARAGRAPH,
             SelectionType.QUOTE,
@@ -77,7 +73,7 @@ export const PREDEFINED_ACTIONS: ActionDefinition[] = [
     },
     {
         id: "explain_technical_term",
-        name: "Explain Technical Term",
+        name: "Technical Breakdown",
         description: "Explain jargon in simple terms",
         selectionTypes: [
             SelectionType.WORD,
@@ -93,8 +89,6 @@ export const PREDEFINED_ACTIONS: ActionDefinition[] = [
             PageCategory.FINANCE,
             PageCategory.LAW,
             PageCategory.WIKI,
-            PageCategory.BLOG,
-            PageCategory.FORUM,
             PageCategory.TEXTBOOKS,
             PageCategory.JOURNALS,
         ],
@@ -277,8 +271,8 @@ export const PREDEFINED_ACTIONS: ActionDefinition[] = [
         highlight: true,
     },
     {
-        id: "extract_information",
-        name: "Extract Information",
+        id: "extract_metadata",
+        name: "Extract Metadata",
         description: "Pull out specific details (names, dates, actions)",
         selectionTypes: [
             SelectionType.PARAGRAPH,
@@ -316,38 +310,8 @@ export const PREDEFINED_ACTIONS: ActionDefinition[] = [
         emoji: "📋",
     },
     {
-        id: "extract_form_requirements",
-        name: "Extract Requirements",
-        description: "List requirements from documentation",
-        selectionTypes: [
-            SelectionType.PARAGRAPH,
-            SelectionType.LONG_TEXT,
-            SelectionType.LIST,
-            SelectionType.TABLE,
-            SelectionType.MARKDOWN,
-        ],
-        pageCategories: [
-            PageCategory.DOCUMENTATION,
-            PageCategory.DEV_DOCS,
-            PageCategory.GOVERNMENT,
-            PageCategory.LAW,
-            PageCategory.JOBS,
-            PageCategory.FINANCE,
-            PageCategory.HEALTH,
-            PageCategory.WIKI,
-            PageCategory.TEXTBOOKS,
-            PageCategory.LEGISLATION,
-        ],
-        systemPrompt:
-            "You are a documentation analyst. Extract all requirements, eligibility criteria, or necessary documents mentioned in the selected text. Organize them in a clear, structured list. \n\n**IMPORTANT:** Present the requirements using Markdown. Use a numbered list (`1.`) or bullet points (`*`). Use bold (`**requirement**`).",
-        userPrompt:
-            "Extract the requirements from this documentation: {{selection}}",
-        llmParams: PARAMETER_PRESETS.PRECISE,
-        emoji: "📑",
-    },
-    {
-        id: "generate_reply_options",
-        name: "Generate Reply Options",
+        id: "draft_response",
+        name: "Draft Response",
         description: "Draft potential responses (context-aware)",
         selectionTypes: [
             SelectionType.SENTENCE,
@@ -372,8 +336,8 @@ export const PREDEFINED_ACTIONS: ActionDefinition[] = [
         emoji: "↩️",
     },
     {
-        id: "brainstorm_ideas",
-        name: "Brainstorm Ideas",
+        id: "brainstorm",
+        name: "Brainstorm",
         description: "Generate related ideas or topics",
         selectionTypes: [
             SelectionType.WORD,
@@ -404,11 +368,6 @@ export const PREDEFINED_ACTIONS: ActionDefinition[] = [
         ],
         pageCategories: [
             PageCategory.ECOMMERCE,
-            PageCategory.BLOG,
-            PageCategory.NEWS,
-            PageCategory.FORUM,
-            PageCategory.MAGAZINES,
-            PageCategory.WIKI,
         ],
         systemPrompt:
             "You are a product analysis assistant. Analyze the product description, feature list, or specification table to identify key features, specifications, potential pros and cons, and comparable alternatives if possible from the text. Organize information clearly. Note if important information seems missing. \n\n**IMPORTANT:** Present the analysis using Markdown. Use headings (`## Features`, `## Pros/Cons`) and bullet points (`*`).",
@@ -421,7 +380,6 @@ export const PREDEFINED_ACTIONS: ActionDefinition[] = [
         name: "Roast",
         description: "Humorously critique (light-hearted)",
         selectionTypes: [
-            SelectionType.WORD,
             SelectionType.SENTENCE,
             SelectionType.PARAGRAPH,
             SelectionType.QUOTE,
@@ -592,7 +550,6 @@ export const PREDEFINED_ACTIONS: ActionDefinition[] = [
         description: "Sort and structure the list",
         selectionTypes: [
             SelectionType.LIST,
-            SelectionType.PARAGRAPH,
             SelectionType.MARKDOWN,
         ],
         pageCategories: ALL_PAGE_CATEGORIES,
@@ -707,24 +664,6 @@ export const PREDEFINED_ACTIONS: ActionDefinition[] = [
         userPrompt: "Analyze this claim (focus on logic/bias): {{selection}}",
         llmParams: PARAMETER_PRESETS.FACTUAL,
         emoji: "🤔",
-    },
-    {
-        id: "summarize_video_text",
-        name: "Summarize Video Text",
-        description: "Summarize video content from text (captions/desc.)",
-        selectionTypes: [
-            SelectionType.PARAGRAPH,
-            SelectionType.LONG_TEXT,
-            SelectionType.LIST,
-            SelectionType.MARKDOWN,
-        ],
-        pageCategories: [PageCategory.VIDEO],
-        systemPrompt:
-            "You are a video content analyst. Based on the selected text (likely video captions, transcript, or description), create a concise summary of what the video is likely about. Focus on main topics and key points mentioned in the text. \n\n**IMPORTANT:** Format the summary using Markdown. Use a heading (`## Video Summary (from text)`) and bullet points (`*`).",
-        userPrompt:
-            "Summarize what this video is about based on this text: {{selection}}",
-        llmParams: PARAMETER_PRESETS.BALANCED,
-        emoji: "🎬",
     },
     {
         id: "analyze_lyrics",

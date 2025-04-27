@@ -1,12 +1,11 @@
 .responseContainer {
   display: flex;
-  flex-direction: column;
+  flex-direction: column-reverse;
   gap: var(--space-sm);
   width: 100%;
   height: 400px;
   overflow-y: auto;
   font-size: var(--font-size-sm);
-  padding: var(--space-sm);
 }
 
 .loadingContainer {
@@ -64,23 +63,23 @@
 
 .followUpContainer {
   width: 100%;
-  padding-top: var(--space-sm);
 }
 
-/* Base message styling */
 .message {
   padding: var(--space-sm) var(--space-md);
   border-radius: var(--border-radius);
-  max-width: 85%;
+  max-width: 95%;
   word-wrap: break-word;
 }
 
-/* User message specific styles */
 .message[data-role="user"] {
-  background-color: var(--secondary-bg-color);
-  color: var(--text-color);
+  background-color: var(--color-background-secondary);
+  color: var(--color-text-primary);
   align-self: flex-end;
   border-bottom-right-radius: var(--border-radius-sm);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* Assistant message specific styles */

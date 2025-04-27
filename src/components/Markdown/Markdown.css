@@ -1,11 +1,18 @@
 .markdownParagraph {
-  margin-bottom: var(--space-sm);
   color: var(--color-text-primary);
+
+  &:not(:last-child) {
+    margin-bottom: var(--space-sm);
+  }
 }
 
 .markdownList {
   padding-left: var(--space-md);
   margin-bottom: var(--space-sm);
+}
+
+.markdownList:last-child {
+  margin-bottom: 0;
 }
 
 .markdownListItem {

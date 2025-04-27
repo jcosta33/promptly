@@ -47,42 +47,44 @@ export const ResponseDisplay: FC<ResponseDisplayProps> = ({
 
   return (
     <>
-      <Box className={styles.responseContainer} elevation="1" bg="secondary">
-        {messages.map((msg, index) => {
-          return (
-            msg.role !== "system" &&
-            index !== 1 && (
-              <Box key={index} className={styles.message} data-role={msg.role}>
-                <Markdown>{String(msg.content || "Thinking...")}</Markdown>
-              </Box>
-            )
-          );
-        })}
+      {messages.length > 0 ? (
+        <Box className={styles.responseContainer} elevation="1" bg="secondary">
+          {messages.toReversed().map((msg, index) => {
+            return msg.role !== "system" ? (
+              msg.role === "user" ? (
+                <Box
+                  key={index}
+                  className={styles.message}
+                  data-role={msg.role}
+                >
+                  {String(msg.content || "Thinking...")}
+                </Box>
+              ) : (
+                <Box
+                  key={index}
+                  className={styles.message}
+                  data-role={msg.role}
+                >
+                  <Markdown>{String(msg.content || "Thinking...")}</Markdown>
+                </Box>
+              )
+            ) : null;
+          })}
 
-        {isLoading && (
-          <Flex
-            className={`${styles.message} ${styles.loadingContainer}`}
-            data-role="assistant"
-            justify="center"
-            align="center"
-          >
-            <div className={styles.loadingSpinner} />
-          </Flex>
-        )}
+          {error && (
+            <Box className={styles.errorContainer}>
+              <div className={styles.errorIcon}>⚠️</div>
+              <div className={styles.errorMessage}>{error}</div>
+            </Box>
+          )}
 
-        {error && (
-          <Box className={styles.errorContainer}>
-            <div className={styles.errorIcon}>⚠️</div>
-            <div className={styles.errorMessage}>{error}</div>
-          </Box>
-        )}
-
-        <div ref={messagesEndRef} />
-      </Box>
+          <div ref={messagesEndRef} />
+        </Box>
+      ) : null}
 
       <Flex direction="row" gap="xs" className={styles.followUpContainer}>
         <Input
-          placeholder="Ask a follow-up question... (Ctrl+Enter for newline)"
+          placeholder="Ask a question..."
           value={followUpText}
           onKeyDown={handleKeyDown}
           onChange={(e) => {
@@ -94,7 +96,7 @@ export const ResponseDisplay: FC<ResponseDisplayProps> = ({
           color="primary"
           onClick={handleSubmit}
           disabled={isLoading || !followUpText.trim()}
-          aria-label="Send follow-up message"
+          aria-label="Send message"
         >
           Send
         </Button>

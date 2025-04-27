@@ -1,4 +1,4 @@
-import { type FC, type ReactNode, type HTMLAttributes } from "react";
+import { type FC, type ReactNode, type HTMLAttributes, forwardRef } from "react";
 import styles from "./Flex.module.css";
 
 export type FlexDirection = "row" | "column" | "row-reverse" | "column-reverse";
@@ -24,35 +24,41 @@ export type FlexProps = {
   children?: ReactNode;
 } & HTMLAttributes<HTMLDivElement>;
 
-export const Flex: FC<FlexProps> = ({
-  direction = "row",
-  wrap = "nowrap",
-  justify = "start",
-  align = "start",
-  gap,
-  inline = false,
-  className = "",
-  children,
-  ...rest
-}) => {
-  return (
-    <div
-      className={`
-        ${styles.flex}
-        ${className}
-      `}
-      data-promptly-flex=""
-      data-promptly-flex-direction={direction}
-      data-promptly-flex-wrap={wrap}
-      data-promptly-flex-justify={justify}
-      data-promptly-flex-align={align}
-      data-promptly-flex-gap={gap}
-      data-promptly-flex-inline={inline ? "true" : "false"}
-      {...rest}
-    >
-      {children}
-    </div>
-  );
-};
+export const Flex = forwardRef<HTMLDivElement, FlexProps>(
+  (
+    {
+      direction = "row",
+      wrap = "nowrap",
+      justify = "start",
+      align = "start",
+      gap,
+      inline = false,
+      className = "",
+      children,
+      ...rest
+    },
+    ref
+  ) => {
+    return (
+      <div
+        ref={ref}
+        className={`
+          ${styles.flex}
+          ${className}
+        `}
+        data-promptly-flex=""
+        data-promptly-flex-direction={direction}
+        data-promptly-flex-wrap={wrap}
+        data-promptly-flex-justify={justify}
+        data-promptly-flex-align={align}
+        data-promptly-flex-gap={gap}
+        data-promptly-flex-inline={inline}
+        {...rest}
+      >
+        {children}
+      </div>
+    );
+  }
+);
 
 Flex.displayName = "Flex";

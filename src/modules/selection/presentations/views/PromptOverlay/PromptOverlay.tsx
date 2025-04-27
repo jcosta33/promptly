@@ -1,4 +1,4 @@
-import { useState, useEffect, FC } from "react";
+import { useState, useEffect, FC, useRef } from "react";
 
 import { Message } from "$/modules/inference/models/inference_model";
 import { Box } from "@/src/components/Box/Box";
@@ -10,6 +10,7 @@ import { get_applicable_actions } from "@/src/modules/actions/use_cases/get_appl
 import { PageCategory } from "@/src/modules/context/models/context";
 import { get_page_context } from "@/src/modules/context/use_cases/get_page_context";
 import { SelectionData } from "@/src/modules/selection/models/selection";
+import { useDraggable } from "$/modules/selection/presentations/hooks/useDraggable";
 
 import { ResponseDisplay } from "../../components/ResponseDisplay/ResponseDisplay";
 import { useInference } from "../../hooks/useInference";
@@ -32,10 +33,18 @@ export const PromptlyOverlay: FC<PromptlyOverlayProps> = ({
   onClose,
 }) => {
   const [messages, setMessages] = useState<Message[]>([]);
-  const [selectedAction, setSelectedAction] = useState<ActionDefinition | null>(
-    null
-  );
   const [pageContext, setPageContext] = useState<{ category: PageCategory }>();
+
+  const dragHandleRef = useRef<HTMLDivElement>(null);
+
+  const {
+    position: currentPosition,
+    elementRef,
+    isDragging,
+  } = useDraggable({
+    initialPosition: position,
+    handleRef: dragHandleRef,
+  });
 
   const handleInferenceUpdate = (chunk: string) => {
     logger.debug("Inference update:", chunk);
@@ -63,6 +72,7 @@ export const PromptlyOverlay: FC<PromptlyOverlayProps> = ({
   }, [selectionData]);
 
   let actions: ActionDefinition[] = [];
+
   if (pageContext && selectionData) {
     actions = get_applicable_actions({
       selectionTypes: selectionData.types,
@@ -71,24 +81,20 @@ export const PromptlyOverlay: FC<PromptlyOverlayProps> = ({
   }
 
   const handleActionSelect = (action: ActionDefinition) => {
-    setSelectedAction(action);
-
     const contextString = `Consider the following context when formulating your response:
---- CONTEXT ---
-Page URL: ${selectionData.pageUrl}
-Page Title: ${selectionData.pageTitle || "N/A"}
-Selection Types: ${selectionData.types.join(", ")}
---- END CONTEXT ---`;
+                          --- CONTEXT ---
+                            Page URL: ${selectionData.pageUrl}
+                            Page Title: ${selectionData.pageTitle || "N/A"}
+                            Selection Types: ${selectionData.types.join(", ")}
+                          --- END CONTEXT ---`;
 
     // Combine the action's system prompt with the context
-    const systemContent = `${action.systemPrompt}
-
-${contextString}`;
+    const systemContent = `${action.systemPrompt}\n\n${contextString}`;
 
     const initialMessages: Message[] = [
       { role: "system", content: systemContent }, // Use the enhanced system content
       { role: "user", content: selectionData.llmFormattedText },
-      { role: "assistant", content: "" }, // Placeholder for streaming
+      { role: "assistant", content: "" },
     ];
 
     setMessages(initialMessages);
@@ -101,26 +107,28 @@ ${contextString}`;
     }
   };
 
-  const sendFollowUp = (followUpText: string) => {
-    if (!selectedAction) {
-      return;
+  const handleSendFollowUp = (message: string) => {
+    const userMessage: Message = { role: "user", content: message };
+
+    const newMessages: Message[] = [...messages];
+
+    if (messages.length === 0) {
+      newMessages.push(
+        {
+          role: "user",
+          content: `${selectionData.llmFormattedText}\n\n${message}`,
+        },
+        { role: "assistant", content: "" }
+      );
+    } else {
+      newMessages.push(userMessage, { role: "assistant", content: "" });
     }
 
-    const userMessage: Message = { role: "user", content: followUpText };
-    const assistantPlaceholder: Message = { role: "assistant", content: "" };
-
-    const newMessages = [...messages, userMessage, assistantPlaceholder];
     setMessages(newMessages);
 
     runInference({
       messages: newMessages.slice(0, -1),
-      parameters: selectedAction.llmParams,
     });
-  };
-
-  // Wrapper passed to ResponseDisplay
-  const handleSendFollowUp = (message: string) => {
-    sendFollowUp(message);
   };
 
   const handleClose = () => {
@@ -132,7 +140,6 @@ ${contextString}`;
     }
     resetInference();
     setMessages([]);
-    setSelectedAction(null);
     onClose();
   };
 
@@ -142,12 +149,18 @@ ${contextString}`;
 
   return (
     <div
+      ref={elementRef}
       className={styles.overlayContainer}
-      style={{ left: position.x, top: position.y }}
+      style={{
+        left: currentPosition.x,
+        top: currentPosition.y,
+        position: "absolute",
+        userSelect: isDragging ? "none" : "auto",
+      }}
     >
       <Box p="md" bg="secondary" elevation="2">
         <Flex direction="column" gap="md">
-          <Flex justify="between" align="center">
+          <Flex ref={dragHandleRef} justify="between" align="center">
             <Text as="h2" weight="bold" size="xl">
               Promptly
             </Text>
@@ -157,7 +170,14 @@ ${contextString}`;
             </Button>
           </Flex>
 
-          <Text as="blockquote" size="xs" color="muted">
+          <Text
+            as="blockquote"
+            size="xs"
+            color="muted"
+            onClick={() => {
+              setMessages([]);
+            }}
+          >
             &quot;{selectionData.text.substring(0, 100)}
             {selectionData.text.length > 100 ? "..." : ""}&quot;
           </Text>
@@ -172,31 +192,29 @@ ${contextString}`;
                       return handleActionSelect(action);
                     }}
                     size="sm"
-                    disabled={inferenceState.status === "loading"} // Disable during initial action loading maybe?
                   >
                     {action.emoji}
                     {action.name}
                   </Button>
                 );
               })}
+
               {actions.length === 0 && !pageContext && (
                 <Text>Loading context...</Text>
               )}
+
               {actions.length === 0 && pageContext && (
                 <Text>No actions available for this selection/page.</Text>
               )}
             </Flex>
           )}
 
-          {/* Response area - Show when messages exist */}
-          {messages.length > 0 && (
-            <ResponseDisplay
-              messages={messages}
-              isLoading={isLoading}
-              error={inferenceState.error}
-              onSendFollowUp={handleSendFollowUp}
-            />
-          )}
+          <ResponseDisplay
+            messages={messages}
+            isLoading={isLoading}
+            error={inferenceState.error}
+            onSendFollowUp={handleSendFollowUp}
+          />
         </Flex>
       </Box>
     </div>

@@ -1,11 +1,7 @@
 import { EventType } from "../src/modules/messaging/models/event_types";
 import { listen_for_streams } from "../src/modules/messaging/repositories/message_bus";
-import {
-  DEFAULT_INFERENCE_PARAMETERS,
-} from "../src/modules/inference/models/inference_model";
-import type {
-  Message,
-} from "../src/modules/inference/models/inference_model";
+import { DEFAULT_INFERENCE_PARAMETERS } from "../src/modules/inference/models/inference_model";
+import type { Message } from "../src/modules/inference/models/inference_model";
 import { get_settings } from "../src/modules/configuration/use_cases/get_settings";
 import { MLCEngine } from "@mlc-ai/web-llm";
 import { generate_text_stream } from "../src/modules/inference/repositories/generate_text_stream";
@@ -134,7 +130,9 @@ export default defineBackground(() => {
 
       try {
         if (!messages || !Array.isArray(messages) || messages.length === 0) {
-          logger.error("No valid messages provided for text generation", { requestId });
+          logger.error("No valid messages provided for text generation", {
+            requestId,
+          });
           stream.send(EventType.INFERENCE_ERROR, {
             requestId,
             error: "No valid messages provided for text generation",
@@ -144,13 +142,19 @@ export default defineBackground(() => {
 
         const settings = await get_settings();
         const selectedModelId = settings.selectedModelId;
-        logger.debug("Current settings for inference:", { selectedModelId, currentModel });
+        logger.debug("Current settings for inference:", {
+          selectedModelId,
+          currentModel,
+        });
 
         if (
           !llmEngine ||
           (selectedModelId && selectedModelId !== currentModel)
         ) {
-          logger.info("LLM engine not loaded or model changed, initiating load...", { selectedModelId, currentModel });
+          logger.info(
+            "LLM engine not loaded or model changed, initiating load...",
+            { selectedModelId, currentModel }
+          );
           stream.send(EventType.MODEL_LOADING_PROGRESS, {
             requestId,
             model: selectedModelId,
@@ -186,7 +190,10 @@ export default defineBackground(() => {
           } catch (error) {
             const errorMessage =
               error instanceof Error ? error.message : String(error);
-            logger.error("Failed to load model during inference request:", error);
+            logger.error(
+              "Failed to load model during inference request:",
+              error
+            );
             stream.send(EventType.INFERENCE_ERROR, {
               requestId,
               error: "Failed to load model: " + errorMessage,
@@ -199,7 +206,9 @@ export default defineBackground(() => {
           EventType.CANCEL_INFERENCE,
           (cancelPayload) => {
             if (cancelPayload.requestId === requestId) {
-              logger.log("Received inference cancellation request", { requestId });
+              logger.log("Received inference cancellation request", {
+                requestId,
+              });
               llmEngine?.interruptGenerate();
             }
           }
@@ -208,7 +217,13 @@ export default defineBackground(() => {
         try {
           logger.debug("Starting generate_text_stream", { requestId });
           let fullResponseText = "";
-          let usage: { prompt_tokens?: number; completion_tokens?: number; total_tokens?: number; } | undefined = undefined;
+          let usage:
+            | {
+                prompt_tokens?: number;
+                completion_tokens?: number;
+                total_tokens?: number;
+              }
+            | undefined = undefined;
 
           const inferenceParams = {
             ...DEFAULT_INFERENCE_PARAMETERS,
@@ -233,7 +248,9 @@ export default defineBackground(() => {
           logger.debug("generate_text_stream completed", { requestId });
 
           if (!usage) {
-            logger.warn("Usage info not provided by WebLLM, approximating...", { requestId });
+            logger.warn("Usage info not provided by WebLLM, approximating...", {
+              requestId,
+            });
             const inputLength = messages.reduce(
               (acc, msg: Message) => acc + (msg.content?.length || 0),
               0
@@ -260,7 +277,10 @@ export default defineBackground(() => {
             inferenceError instanceof Error
               ? inferenceError.message
               : String(inferenceError);
-          logger.error("Error during inference execution:", { requestId, error: errorMessage });
+          logger.error("Error during inference execution:", {
+            requestId,
+            error: errorMessage,
+          });
           stream.send(EventType.INFERENCE_ERROR, {
             requestId,
             error: "Error during inference: " + errorMessage,
@@ -270,7 +290,10 @@ export default defineBackground(() => {
       } catch (error) {
         const errorMessage =
           error instanceof Error ? error.message : String(error);
-        logger.error("Error processing REQUEST_ACTION:", { requestId, error: errorMessage });
+        logger.error("Error processing REQUEST_ACTION:", {
+          requestId,
+          error: errorMessage,
+        });
         stream.send(EventType.INFERENCE_ERROR, {
           requestId,
           error: "Error processing request: " + errorMessage,
@@ -282,4 +305,13 @@ export default defineBackground(() => {
       logger.log("Inference connection disconnected", { identifier });
     };
   });
+
+  // keep alive
+
+  setInterval(
+    () => {
+      logger.log("Keep alive");
+    },
+    1000 * 60 * 5
+  );
 });

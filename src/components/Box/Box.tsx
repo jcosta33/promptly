@@ -30,7 +30,7 @@ export type BoxProps = BoxBaseProps &
 
 export const Box: FC<BoxProps> = ({
   as: Component = "div",
-  p = "md",
+  p = "sm",
   m,
   elevation,
   bg,

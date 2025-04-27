@@ -1,7 +1,7 @@
 ---
 description: 
 globs: 
-alwaysApply: false
+alwaysApply: true
 ---
 
 ## 1. Imports and Configuration
@@ -52,9 +52,11 @@ alwaysApply: false
 * **Rule 4.2: Explicit Returns.**
   * Functions/methods **MUST** have explicit return type annotations. `void` MUST be used if nothing is returned.
 * **Rule 4.3: Conventional Conditionals.**
-  * **MUST** use standard `if (...) { ... } else { ... }` statements for conditional logic/rendering blocks. Logical AND (`&&`) MAY be used ONLY for simple, inline conditional rendering of a single element/value.
-* **Rule 4.4: No Chained Ternaries.**
-  * **MUST NOT** use nested or complex chained ternary operators. Refactor into `if/else if/else` or helper functions for clarity.
+  * **MUST** use standard `if (...) { ... } else { ... }` statements for conditional logic and rendering blocks.
+  * **MUST NOT** use logical AND (`&&`) for rendering conditional *blocks* of JSX or executing multi-statement logic. `&&` MAY be used ONLY for simple, inline conditional rendering of a *single* element or value.
+* **Rule 4.4: Avoid Complex Ternaries.**
+  * **MUST NOT** use nested or complex chained ternary operators (`? :`).
+  * **MUST NOT** use ternary operators for conditional rendering of JSX blocks or complex logic. Prefer `if/else` statements or refactoring into helper functions for clarity.
 * **Rule 4.5: Early Returns/Guard Clauses.**
   * **MUST** use early returns (guard clauses) to handle invalid conditions or edge cases at the start of functions to reduce nesting and improve clarity.
 * **Rule 4.6: Avoid Unclear Shortcuts.**

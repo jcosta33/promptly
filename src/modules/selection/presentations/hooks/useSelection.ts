@@ -3,12 +3,17 @@ import { useState, useEffect } from "react";
 import { SelectionData } from "$/modules/selection/models/selection";
 import { add_selection_listener } from "$/modules/selection/repositories/selection_repository";
 import { process_selection } from "$/modules/selection/use_cases/analyze_selection";
+import { logger } from "$/utils/logger";
+
+type UseSelectionOptions = {
+  enabled: boolean;
+};
 
 /**
  * Custom hook to detect and track text selections on the page
  * @returns Current selection state and a function to clear the selection
  */
-export function useSelection() {
+export function useSelection({ enabled }: UseSelectionOptions) {
   const [selection, setSelection] = useState<SelectionData | null>(null);
   const [mousePosition, setMousePosition] = useState<{
     x: number;
@@ -23,6 +28,10 @@ export function useSelection() {
 
   // Set up event listeners
   useEffect(() => {
+    if (!enabled) {
+      return;
+    }
+
     // Use the repository's selection listener functionality
     const removeListener = add_selection_listener({
       callback: ({ selection, mousePosition }) => {
@@ -42,7 +51,7 @@ export function useSelection() {
     return () => {
       removeListener();
     };
-  }, []);
+  }, [enabled]);
 
   return { selection, mousePosition, clearSelection };
 }

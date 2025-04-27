@@ -1,3 +1,5 @@
+import { logger } from "$/utils/logger";
+
 type AddSelectionListenerParams = {
   callback: (params: {
     selection: Selection | null;
