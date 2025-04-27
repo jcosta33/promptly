@@ -1,0 +1,165 @@
+.grid {
+  display: grid;
+}
+
+.inlineGrid {
+  display: inline-grid;
+}
+
+/* Columns */
+.cols-1 {
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+}
+
+.cols-2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.cols-3 {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.cols-4 {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.cols-5 {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+.cols-6 {
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+}
+
+.cols-7 {
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+}
+
+.cols-8 {
+  grid-template-columns: repeat(8, minmax(0, 1fr));
+}
+
+.cols-9 {
+  grid-template-columns: repeat(9, minmax(0, 1fr));
+}
+
+.cols-10 {
+  grid-template-columns: repeat(10, minmax(0, 1fr));
+}
+
+.cols-11 {
+  grid-template-columns: repeat(11, minmax(0, 1fr));
+}
+
+.cols-12 {
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+}
+
+/* Alignment */
+.align-start {
+  align-items: start;
+}
+
+.align-end {
+  align-items: end;
+}
+
+.align-center {
+  align-items: center;
+}
+
+.align-stretch {
+  align-items: stretch;
+}
+
+/* Justify */
+.justify-start {
+  justify-items: start;
+}
+
+.justify-end {
+  justify-items: end;
+}
+
+.justify-center {
+  justify-items: center;
+}
+
+.justify-stretch {
+  justify-items: stretch;
+}
+
+/* Gap */
+.gap-xxs {
+  gap: var(--space-xxs);
+}
+
+.gap-xs {
+  gap: var(--space-xs);
+}
+
+.gap-sm {
+  gap: var(--space-sm);
+}
+
+.gap-md {
+  gap: var(--space-md);
+}
+
+.gap-lg {
+  gap: var(--space-lg);
+}
+
+.gap-xl {
+  gap: var(--space-xl);
+}
+
+/* Row Gap */
+.row-gap-xxs {
+  row-gap: var(--space-xxs);
+}
+
+.row-gap-xs {
+  row-gap: var(--space-xs);
+}
+
+.row-gap-sm {
+  row-gap: var(--space-sm);
+}
+
+.row-gap-md {
+  row-gap: var(--space-md);
+}
+
+.row-gap-lg {
+  row-gap: var(--space-lg);
+}
+
+.row-gap-xl {
+  row-gap: var(--space-xl);
+}
+
+/* Column Gap */
+.col-gap-xxs {
+  column-gap: var(--space-xxs);
+}
+
+.col-gap-xs {
+  column-gap: var(--space-xs);
+}
+
+.col-gap-sm {
+  column-gap: var(--space-sm);
+}
+
+.col-gap-md {
+  column-gap: var(--space-md);
+}
+
+.col-gap-lg {
+  column-gap: var(--space-lg);
+}
+
+.col-gap-xl {
+  column-gap: var(--space-xl);
+}

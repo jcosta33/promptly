@@ -1,0 +1,110 @@
+.checkboxWrapper {
+  display: inline-flex;
+  align-items: center;
+  position: relative;
+  cursor: pointer;
+
+  &[data-promptly-checkbox-disabled="true"] {
+    cursor: not-allowed;
+    opacity: 0.7;
+  }
+}
+
+.checkboxInput {
+  /* Hide the default checkbox visually but keep it accessible */
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+
+  &:focus + .checkboxCustom {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 2px;
+  }
+
+  &:checked + .checkboxCustom {
+    background-color: var(--primary-color);
+
+    &::after {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+
+  &:disabled + .checkboxCustom {
+    background-color: var(--color-gray-300);
+    border-color: var(--color-gray-400);
+    cursor: not-allowed;
+  }
+}
+
+.checkboxCustom {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: var(--control-size-md);
+  height: var(--control-size-md);
+  transition: all var(--transition-fast);
+  position: relative;
+  border: var(--border-width) solid var(--border-color);
+  border-radius: var(--border-radius-sm);
+  background-color: var(--input-bg-color);
+  box-shadow: var(--brutalist-shadow);
+
+  &::after {
+    content: "";
+    display: block;
+    width: 35%;
+    height: 70%;
+    border-right: var(--border-width) solid var(--color-white);
+    border-bottom: var(--border-width) solid var(--color-white);
+    transform: rotate(45deg) scale(0);
+    opacity: 0;
+    transition: transform var(--transition-fast);
+  }
+}
+
+.label {
+  margin-left: var(--space-sm);
+  font-size: var(--font-size-sm);
+  user-select: none;
+  color: var(--text-color);
+
+  &[data-promptly-checkbox-disabled="true"] {
+    color: var(--disabled-color);
+  }
+}
+
+.errorMessage {
+  color: var(--color-red-error);
+  font-size: var(--font-size-xs);
+  margin-top: var(--space-xxs);
+}
+
+/* Sizes */
+.sm .checkboxCustom {
+  width: var(--control-size-sm);
+  height: var(--control-size-sm);
+}
+
+.sm .label {
+  font-size: var(--font-size-xs);
+}
+
+.md .checkboxCustom {
+  width: var(--control-size-md);
+  height: var(--control-size-md);
+}
+
+.md .label {
+  font-size: var(--font-size-sm);
+}
+
+.lg .checkboxCustom {
+  width: var(--control-size-lg);
+  height: var(--control-size-lg);
+}
+
+.lg .label {
+  font-size: var(--font-size-md);
+}

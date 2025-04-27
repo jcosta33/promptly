@@ -1,0 +1,113 @@
+.inputWrapper {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  flex-grow: 1;
+}
+
+.fullWidth {
+  width: 100%;
+}
+
+.label {
+  margin-bottom: var(--space-xs);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--text-color);
+
+  &[data-promptly-input-disabled="true"] {
+    color: var(--disabled-color);
+  }
+}
+
+.inputContainer {
+  display: flex;
+  align-items: center;
+  position: relative;
+  background-color: var(--input-bg-color);
+  border: var(--border-width) solid var(--border-color);
+  border-radius: var(--border-radius);
+  box-shadow: var(--brutalist-shadow);
+  transition: all var(--transition-medium);
+
+  &[data-promptly-input-error="true"] {
+    border-color: var(--color-red-error);
+  }
+
+  &[data-promptly-input-disabled="true"] {
+    background-color: var(--color-gray-300);
+    opacity: 0.7;
+    box-shadow: none;
+    cursor: not-allowed;
+  }
+}
+
+.input {
+  flex: 1;
+  width: 100%;
+  background: transparent;
+  color: var(--input-text-color);
+  border: none;
+  font-family: inherit;
+  outline: none;
+  padding: 0 var(--space-md);
+
+  &:focus {
+    outline: none;
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    background-color: transparent;
+    color: var(--disabled-color);
+  }
+}
+
+.startAdornment,
+.endAdornment {
+  display: flex;
+  align-items: center;
+  padding: 0 var(--space-sm);
+  color: var(--text-color);
+}
+
+.startAdornment {
+  padding-left: var(--space-md);
+  padding-right: 0;
+}
+
+.endAdornment {
+  padding-right: var(--space-md);
+  padding-left: 0;
+}
+
+.errorMessage {
+  margin-top: var(--space-xs);
+  color: var(--color-red-error);
+  font-size: var(--font-size-xs);
+}
+
+/* Size variants */
+.inputWrapper[data-promptly-input-size="sm"] .inputContainer {
+  height: var(--control-height-sm);
+}
+
+.inputWrapper[data-promptly-input-size="sm"] .input {
+  font-size: var(--font-size-xs);
+}
+
+.inputWrapper[data-promptly-input-size="md"] .inputContainer {
+  height: var(--control-height-md);
+}
+
+.inputWrapper[data-promptly-input-size="md"] .input {
+  font-size: var(--font-size-sm);
+}
+
+.inputWrapper[data-promptly-input-size="lg"] .inputContainer {
+  height: var(--control-height-lg);
+}
+
+.inputWrapper[data-promptly-input-size="lg"] .input {
+  font-size: var(--font-size-md);
+}

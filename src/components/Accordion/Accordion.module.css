@@ -1,0 +1,113 @@
+.accordion {
+  border: var(--border-width) solid var(--border-color);
+  border-radius: var(--border-radius);
+  box-shadow: var(--brutalist-shadow);
+  overflow: hidden;
+}
+
+.accordionItem {
+  border-bottom: var(--border-width) solid var(--border-color);
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  &[data-promptly-accordion-disabled="true"] {
+    opacity: 0.7;
+    background-color: var(--color-gray-100);
+  }
+}
+
+.accordionHeader {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: var(--space-md);
+  background-color: var(--light-bg-color);
+  cursor: pointer;
+  user-select: none;
+  text-align: left;
+  border: none;
+  font-family: inherit;
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-medium);
+  color: var(--text-color);
+  transition: background-color var(--transition-fast);
+
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--primary-color);
+  }
+
+  &:hover {
+    background-color: var(--color-gray-200);
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    color: var(--disabled-color);
+  }
+}
+
+.iconLeft {
+  flex-direction: row;
+}
+
+.iconRight {
+  flex-direction: row-reverse;
+  justify-content: space-between;
+}
+
+.accordionTitle {
+  flex: 1;
+}
+
+.accordionIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  position: relative;
+  transform-origin: center;
+  transition: transform var(--transition-medium);
+  margin: 0 var(--space-sm);
+
+  &::before,
+  &::after {
+    content: "";
+    position: absolute;
+    background-color: var(--text-color);
+    border-radius: 1px;
+  }
+
+  &::before {
+    width: 10px;
+    height: 2px;
+  }
+
+  &::after {
+    width: 2px;
+    height: 10px;
+    transition: transform var(--transition-medium);
+  }
+}
+
+.accordionItem[data-promptly-accordion-expanded="true"] .accordionIcon::after {
+  transform: scaleY(0);
+}
+
+.accordionItem[data-promptly-accordion-expanded="true"] .accordionHeader {
+  background-color: var(--color-gray-200);
+}
+
+.accordionContent {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height var(--transition-medium);
+}
+
+.accordionContentInner {
+  padding: var(--space-md);
+  background-color: var(--bg-color);
+}

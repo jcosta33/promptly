@@ -1,0 +1,38 @@
+.actionsContainer {
+  padding: 12px;
+  border-radius: 4px;
+  border: 1px solid #e5e5e5;
+  background-color: #f9f9f9;
+}
+
+.actionsHeader {
+  margin-bottom: 8px;
+}
+
+.actionsTitle {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+}
+
+.actionButtons {
+  margin-top: 12px;
+}
+
+.actionButton {
+  margin: 4px;
+  flex-grow: 0;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  max-width: fit-content;
+}
+
+.noActions {
+  width: 100%;
+  padding: 12px;
+  text-align: center;
+  color: #666;
+  font-style: italic;
+}

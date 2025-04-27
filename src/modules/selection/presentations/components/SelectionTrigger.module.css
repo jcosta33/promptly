@@ -1,0 +1,26 @@
+.triggerContainer {
+  pointer-events: auto;
+  transform: translate(10px, -50%);
+  transition: opacity 0.2s ease-in-out;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+}
+
+.triggerButton {
+  padding: 6px 12px;
+  white-space: nowrap;
+}
+
+.triggerContent {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.triggerIcon {
+  color: currentColor;
+}
+
+.triggerText {
+  font-size: 14px;
+  font-weight: 500;
+} 

@@ -1,0 +1,126 @@
+.text {
+  margin: 0;
+  padding: 0;
+  color: var(--text-color);
+
+  /* Apply styles based on data attributes */
+  &[data-promptly-text-size="xs"] {
+    font-size: var(--font-size-xs);
+  }
+
+  &[data-promptly-text-size="sm"] {
+    font-size: var(--font-size-sm);
+  }
+
+  &[data-promptly-text-size="md"] {
+    font-size: var(--font-size-md);
+  }
+
+  &[data-promptly-text-size="lg"] {
+    font-size: var(--font-size-lg);
+  }
+
+  &[data-promptly-text-size="xl"] {
+    font-size: var(--font-size-xl);
+  }
+
+  &[data-promptly-text-size="2xl"] {
+    font-size: var(--font-size-xxl);
+  }
+
+  &[data-promptly-text-weight="normal"] {
+    font-weight: var(--font-weight-normal);
+  }
+
+  &[data-promptly-text-weight="medium"] {
+    font-weight: var(--font-weight-medium);
+  }
+
+  &[data-promptly-text-weight="bold"] {
+    font-weight: var(--font-weight-bold);
+  }
+
+  &[data-promptly-text-color="primary"] {
+    color: var(--primary-color);
+  }
+
+  &[data-promptly-text-color="secondary"] {
+    color: var(--secondary-color);
+  }
+
+  &[data-promptly-text-color="muted"] {
+    color: var(--color-text-muted);
+  }
+
+  &[data-promptly-text-color="error"] {
+    color: var(--color-red-error);
+  }
+
+  &[data-promptly-text-color="success"] {
+    color: var(--color-green-success);
+  }
+
+  &[data-promptly-text-align="left"] {
+    text-align: left;
+  }
+
+  &[data-promptly-text-align="center"] {
+    text-align: center;
+  }
+
+  &[data-promptly-text-align="right"] {
+    text-align: right;
+  }
+
+  &[data-promptly-text-truncate="true"] {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+blockquote.text {
+  position: relative;
+  padding: var(--space-md);
+  background-color: var(--secondary-bg-color);
+  border-left: var(--border-width-thick) solid var(--primary-color);
+  box-shadow: var(--brutalist-shadow);
+  font-style: italic;
+  background-image: linear-gradient(
+    135deg,
+    var(--secondary-bg-color) 25%,
+    var(--light-bg-color) 25%,
+    var(--light-bg-color) 50%,
+    var(--secondary-bg-color) 50%,
+    var(--secondary-bg-color) 75%,
+    var(--light-bg-color) 75%,
+    var(--light-bg-color) 100%
+  );
+  background-size: 8px 8px;
+  border-top: 1px solid var(--inner-highlight);
+  border-right: 1px solid var(--inner-highlight);
+  border-bottom: 1px solid var(--inner-shadow);
+}
+
+/* Quotation marks */
+blockquote.text::before {
+  content: "\201C";
+  position: absolute;
+  top: 0;
+  left: var(--space-xs);
+  font-size: var(--font-size-xxl);
+  line-height: 1;
+  color: var(--color-accent-primary);
+  opacity: 0.5;
+}
+
+blockquote.text::after {
+  content: "\201D";
+  position: absolute;
+  bottom: -10px;
+  right: var(--space-xs);
+  font-size: var(--font-size-xxl);
+  line-height: 1;
+  color: var(--color-accent-primary);
+  opacity: 0.5;
+}

@@ -1,0 +1,99 @@
+.progressBarWrapper {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.label {
+  margin-bottom: var(--space-xs);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--text-color);
+}
+
+.helperText {
+  margin-top: var(--space-xs);
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+}
+
+.progressBarContainer {
+  width: 100%;
+  background-color: var(--color-gray-300);
+  border: var(--border-width) solid var(--border-color);
+  box-shadow: var(--inset-border);
+  position: relative;
+  overflow: hidden;
+}
+
+.progressBar {
+  height: 100%;
+  width: 0;
+  transition: width var(--transition-medium) ease-in-out;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.percentage {
+  color: var(--inverted-text-color);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  z-index: 1;
+  text-shadow: 1px 1px 0 var(--color-black);
+}
+
+/* Size variants */
+.progressBarContainer[data-promptly-progress-size="sm"] {
+  height: var(--control-height-sm);
+}
+
+.progressBarContainer[data-promptly-progress-size="md"] {
+  height: var(--control-height-md);
+}
+
+.progressBarContainer[data-promptly-progress-size="lg"] {
+  height: var(--control-height-lg);
+}
+
+/* Color variants */
+.progressBarContainer[data-promptly-progress-variant="primary"] .progressBar {
+  background-color: var(--primary-color);
+}
+
+.progressBarContainer[data-promptly-progress-variant="secondary"] .progressBar {
+  background-color: var(--secondary-color);
+}
+
+.progressBarContainer[data-promptly-progress-variant="tertiary"] .progressBar {
+  background-color: var(--light-bg-color);
+}
+
+.progressBarContainer[data-promptly-progress-variant="tertiary"] .percentage {
+  color: var(--text-color);
+}
+
+/* Indeterminate animation */
+.progressBarContainer[data-promptly-progress-indeterminate="true"]
+  .progressBar {
+  width: 50%;
+  background: repeating-linear-gradient(
+    45deg,
+    var(--primary-color),
+    var(--primary-color) 10px,
+    var(--color-orange-300) 10px,
+    var(--color-orange-300) 20px
+  );
+  animation: indeterminateProgress 1.5s linear infinite;
+  background-size: 200% 100%;
+}
+
+@keyframes indeterminateProgress {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}

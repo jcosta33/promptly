@@ -1,0 +1,184 @@
+.switchContainer {
+  display: flex;
+  flex-direction: column;
+}
+
+.switchWrapper {
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+  user-select: none;
+}
+
+.switchWrapper[data-promptly-switch-disabled="true"] {
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.label-left {
+  flex-direction: row;
+}
+
+.label-right {
+  flex-direction: row-reverse;
+}
+
+.label {
+  font-size: var(--font-size-sm);
+  color: var(--text-color);
+}
+
+.label[data-promptly-switch-disabled="true"] {
+  color: var(--disabled-color);
+}
+
+.label-left .label {
+  margin-right: var(--space-sm);
+}
+
+.label-right .label {
+  margin-left: var(--space-sm);
+}
+
+.switchInput {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.switchControl {
+  position: relative;
+  display: inline-block;
+  transition: all var(--transition-medium);
+}
+
+.switchControl[data-promptly-switch-error="true"] .switchTrack {
+  border-color: var(--color-red-error);
+}
+
+.switchTrack {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background-color: var(--color-gray-300);
+  border: var(--border-width) solid var(--border-color);
+  border-radius: 0;
+  transition: all var(--transition-medium);
+  overflow: hidden;
+  box-shadow: var(--outset-border);
+}
+
+.switchControl[data-promptly-switch-checked="true"] .switchTrack {
+  background-color: var(--primary-color);
+}
+
+.switchControl[data-promptly-switch-disabled="true"] .switchTrack {
+  background-color: var(--color-gray-300);
+  cursor: not-allowed;
+  border-color: var(--color-gray-400);
+  box-shadow: none;
+}
+
+.switchThumb {
+  position: absolute;
+  left: var(--space-xxs);
+  top: var(--space-xxs);
+  background-color: var(--color-contrast);
+  border: var(--border-width) solid var(--border-color);
+  border-radius: 0;
+  transition: transform var(--transition-medium);
+  box-shadow: var(--brutalist-shadow);
+  z-index: 1;
+}
+
+.switchControl[data-promptly-switch-checked="true"] .switchThumb {
+  transform: translateX(calc(var(--thumb-travel)));
+}
+
+.switchControl[data-promptly-switch-disabled="true"] .switchThumb {
+  background-color: var(--color-gray-400);
+  border-color: var(--color-gray-500);
+  box-shadow: none;
+}
+
+.switchLabels {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  padding: 0 var(--space-md);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+}
+
+.switchOn {
+  color: var(--color-contrast);
+  opacity: 0;
+  transition: opacity var(--transition-medium);
+  margin-right: var(--space-sm);
+}
+
+.switchOff {
+  color: var(--text-color);
+  opacity: 1;
+  transition: opacity var(--transition-medium);
+  margin-left: var(--space-sm);
+}
+
+.switchControl[data-promptly-switch-checked="true"] .switchOn {
+  opacity: 1;
+}
+
+.switchControl[data-promptly-switch-checked="true"] .switchOff {
+  opacity: 0;
+}
+
+.errorMessage {
+  color: var(--color-red-error);
+  font-size: var(--font-size-xs);
+  margin-top: var(--space-xxs);
+}
+
+/* Sizes */
+.switchWrapper[data-promptly-switch-size="sm"] .switchTrack {
+  width: 48px;
+  height: var(--control-height-sm);
+}
+
+.switchWrapper[data-promptly-switch-size="sm"] .switchThumb {
+  width: calc(var(--control-height-sm) - (var(--space-xxs) * 2));
+  height: calc(var(--control-height-sm) - (var(--space-xxs) * 2));
+  --thumb-travel: 24px;
+}
+
+.switchWrapper[data-promptly-switch-size="sm"] .switchLabels {
+  font-size: var(--font-size-xxs);
+  padding: 0 var(--space-xs);
+}
+
+.switchWrapper[data-promptly-switch-size="md"] .switchTrack {
+  width: 56px;
+  height: var(--control-height-md);
+}
+
+.switchWrapper[data-promptly-switch-size="md"] .switchThumb {
+  width: calc(var(--control-height-md) - (var(--space-xxs) * 2));
+  height: calc(var(--control-height-md) - (var(--space-xxs) * 2));
+  --thumb-travel: 24px;
+}
+
+.switchWrapper[data-promptly-switch-size="lg"] .switchTrack {
+  width: 72px;
+  height: var(--control-height-lg);
+}
+
+.switchWrapper[data-promptly-switch-size="lg"] .switchThumb {
+  width: calc(var(--control-height-lg) - (var(--space-xxs) * 2));
+  height: calc(var(--control-height-lg) - (var(--space-xxs) * 2));
+  --thumb-travel: 32px;
+}
+
+.switchWrapper[data-promptly-switch-size="lg"] .switchLabels {
+  font-size: var(--font-size-sm);
+  padding: 0 var(--space-md);
+}
