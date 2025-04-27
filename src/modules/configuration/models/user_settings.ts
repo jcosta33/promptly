@@ -1,25 +1,29 @@
 import { AVAILABLE_MODELS } from "$/modules/inference/repositories/get_available_models";
 
 /**
- * User theme preference enum
+ * User theme preference constant object
  */
-export enum ThemePreference {
-  LIGHT = "light",
-  DARK = "dark",
-  SYSTEM = "system", // Follow system preference
-}
+export const ThemePreference = {
+  LIGHT: "light",
+  DARK: "dark",
+  SYSTEM: "system", // Follow system preference
+} as const;
+
+export type ThemePreference = typeof ThemePreference[keyof typeof ThemePreference];
 
 /**
- * Code highlight theme enum
+ * Code highlight theme constant object
  */
-export enum CodeHighlightTheme {
-  ATOM_ONE_DARK = "atom-one-dark",
-  ATOM_ONE_LIGHT = "atom-one-light",
-  MONOKAI = "monokai",
-  DRACULA = "dracula",
-  GITHUB = "github",
-  GITHUB_DARK = "github-dark",
-}
+export const CodeHighlightTheme = {
+  ATOM_ONE_DARK: "atom-one-dark",
+  ATOM_ONE_LIGHT: "atom-one-light",
+  MONOKAI: "monokai",
+  DRACULA: "dracula",
+  GITHUB: "github",
+  GITHUB_DARK: "github-dark",
+} as const;
+
+export type CodeHighlightTheme = typeof CodeHighlightTheme[keyof typeof CodeHighlightTheme];
 
 /**
  * Extension settings type

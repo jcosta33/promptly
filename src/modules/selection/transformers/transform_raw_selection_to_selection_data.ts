@@ -5,7 +5,7 @@ import { detect_code_language } from "../helpers/detect_code_language";
 import { detect_selection_types } from "../helpers/detect_selection_types";
 import { extract_selection_html } from "../helpers/extract_selection_html";
 import { extract_text_from_html } from "../helpers/extract_text_from_html";
-import { SelectionData, SelectionType } from "../models/selection";
+import { type SelectionData, SelectionType } from "../models/selection";
 
 import { format_code_block } from "./format_code_block";
 import { format_list_from_html } from "./format_list_from_html";

@@ -1,12 +1,12 @@
-import { FC, useEffect, useState } from "react";
+import { type FC, useEffect, useState } from "react";
 
 import { Box } from "$/components/Box/Box";
 import { Flex } from "$/components/Flex/Flex";
 import { Select } from "$/components/Select/Select";
 import { Text } from "$/components/Text/Text";
+import styles from "./ModelSelector.module.css";
 
-// Define the model structure based on the new AVAILABLE_MODELS format
-export interface ModelRecord {
+export type ModelRecord = {
   name: string;
   display_name: string;
   provider: string;
@@ -14,9 +14,14 @@ export interface ModelRecord {
   memory_requirements: string;
   short_description: string;
   tags?: string[];
-  recommended_config?: Record<string, any>;
-  [key: string]: any; // For any other properties
-}
+  recommended_config?: Record<string, unknown>;
+  version?: number | string;
+  parameter_count?: string;
+  quantization?: string;
+  precision?: string;
+  model_type?: string;
+  huggingface_link?: string;
+};
 
 export type ModelGroups = Record<string, ModelRecord[]>;
 
@@ -92,7 +97,6 @@ export const ModelSelector: FC<ModelSelectorProps> = ({
     setSelectedFamily(value);
   };
 
-  // Handle model change
   const handleModelChange = (value: string) => {
     const model = modelGroups[selectedFamily]?.find((m) => {
       return m.name === value;
@@ -161,7 +165,7 @@ export const ModelSelector: FC<ModelSelectorProps> = ({
                     key={index}
                     p="xs"
                     bg="secondary"
-                    style={{ width: "fit-content" }}
+                    className={styles.tagBox} // Apply class
                   >
                     <Text size="sm">{tag}</Text>
                   </Box>

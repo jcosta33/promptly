@@ -1,11 +1,11 @@
-import React from "react";
+import { forwardRef, type ReactNode, type ButtonHTMLAttributes } from "react";
 import styles from "./Button.module.css";
 
 export type ButtonSize = "sm" | "md" | "lg";
-export type ButtonColor = "primary" | "secondary" | "tertiary" | "danger";
+export type ButtonColor = "primary" | "secondary" | "tertiary" | "danger" | "default";
 
 export type ButtonProps = {
-  children?: React.ReactNode;
+  children?: ReactNode;
   size?: ButtonSize;
   color?: ButtonColor;
   fullWidth?: boolean;
@@ -21,9 +21,9 @@ export type ButtonProps = {
   "aria-expanded"?: boolean;
   "aria-controls"?: string;
   "aria-haspopup"?: boolean | "menu" | "listbox" | "tree" | "grid" | "dialog";
-} & React.ButtonHTMLAttributes<HTMLButtonElement>;
+} & ButtonHTMLAttributes<HTMLButtonElement>;
 
-export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
+export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   (
     {
       children,

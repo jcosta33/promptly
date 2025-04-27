@@ -1,4 +1,4 @@
-import { ChangeEvent, FC, useEffect } from "react";
+import { type ChangeEvent, type FC, useEffect } from "react";
 
 import { Box } from "$/components/Box/Box";
 import { Flex } from "$/components/Flex/Flex";
@@ -6,10 +6,11 @@ import { Switch } from "$/components/Switch/Switch";
 import { Text } from "$/components/Text/Text";
 import { AVAILABLE_MODELS } from "$/modules/inference/repositories/get_available_models";
 
-import { ModelLoadingStatus } from "../components/ModelLoadingStatus";
+import { ModelLoadingStatus } from "../components/ModelLoadingStatus/ModelLoadingStatus";
 import { ModelSelector } from "../components/ModelSelector";
 import { useModelLoading } from "../hooks/useModelLoading";
 import { useSettings } from "../hooks/useSettings";
+import { logger } from "$/utils/logger";
 
 /**
  * Main settings panel component for the popup
@@ -45,21 +46,16 @@ export const SettingsPanel: FC = () => {
   // Handle model load button
   const handleLoadModel = async () => {
     if (!settings || !settings.selectedModelId) {
-      console.log("No model selected");
+      logger.warn("No model selected, cannot trigger load.");
       return;
     }
-
+    logger.info("Triggering model load from settings panel", { modelId: settings.selectedModelId });
     loadModel(settings.selectedModelId);
   };
 
   // Log loading state changes for debugging
   useEffect(() => {
-    console.log("SettingsPanel loading states:", {
-      isLoading,
-      progress,
-      status,
-      loadingError,
-    });
+    logger.debug("SettingsPanel state update", { isLoading, progress, status, loadingError });
   }, [isLoading, progress, status, loadingError]);
 
   return (

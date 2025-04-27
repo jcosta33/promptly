@@ -11,8 +11,8 @@ import { PageCategory } from "@/src/modules/context/models/context";
 import { get_page_context } from "@/src/modules/context/use_cases/get_page_context";
 import { SelectionData } from "@/src/modules/selection/models/selection";
 
-import { ResponseDisplay } from "../components/ResponseDisplay";
-import { useInference } from "../hooks/useInference";
+import { ResponseDisplay } from "../../components/ResponseDisplay/ResponseDisplay";
+import { useInference } from "../../hooks/useInference";
 
 import styles from "./PromptOverlay.module.css";
 
@@ -39,7 +39,7 @@ export const PromptlyOverlay: FC<PromptlyOverlayProps> = ({
 
   // --- Inference Hook & Callbacks ---
   const handleInferenceUpdate = (chunk: string) => {
-    console.log("Inference update:", chunk);
+    // console.log("Inference update:", chunk);
     setMessages((prevMessages) => {
       const lastMessage = prevMessages[prevMessages.length - 1];
       if (lastMessage?.role === "assistant") {

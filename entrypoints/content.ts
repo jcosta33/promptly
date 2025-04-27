@@ -5,7 +5,7 @@ export default defineContentScript({
   matches: ["*://*/*"],
 
   main() {
-    console.log("Promptly content script initialized");
+    // console.log("Promptly content script initialized");
 
     // Inject fonts
     const fontLink = document.createElement("link");

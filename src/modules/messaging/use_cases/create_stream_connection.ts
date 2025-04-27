@@ -1,6 +1,6 @@
-import { EventType, PayloadForEvent } from "../models/event_types";
+import { type EventType, type PayloadForEvent } from "../models/event_types";
 import { create_stream } from "../repositories/message_bus";
-import { MessageStreamOptions, TypedMessageHandler } from "../models/message_types";
+import type { MessageStreamOptions, TypedMessageHandler } from "../models/message_types";
 
 /**
  * Create a stream connection for persistent bidirectional messaging

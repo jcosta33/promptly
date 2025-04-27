@@ -1,6 +1,6 @@
-import { PageCategory } from "$/modules/context/models/context";
-import { InferenceParameters } from "$/modules/inference/models/inference_model";
-import { SelectionType } from "$/modules/selection/models/selection";
+import type { PageCategory } from "$/modules/context/models/context";
+import type { InferenceParameters } from "$/modules/inference/models/inference_model";
+import type { SelectionType } from "$/modules/selection/models/selection";
 
 /**
  * Action definition type

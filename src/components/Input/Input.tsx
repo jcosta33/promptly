@@ -1,4 +1,4 @@
-import React from "react";
+import { forwardRef, type ReactNode, type InputHTMLAttributes } from "react";
 import styles from "./Input.module.css";
 
 export type InputSize = "sm" | "md" | "lg";
@@ -9,12 +9,12 @@ export type InputProps = {
   error?: boolean;
   errorMessage?: string;
   fullWidth?: boolean;
-  startAdornment?: React.ReactNode;
-  endAdornment?: React.ReactNode;
+  startAdornment?: ReactNode;
+  endAdornment?: ReactNode;
   className?: string;
-} & Omit<React.InputHTMLAttributes<HTMLInputElement>, "size">;
+} & Omit<InputHTMLAttributes<HTMLInputElement>, "size">;
 
-export const Input = React.forwardRef<HTMLInputElement, InputProps>(
+export const Input = forwardRef<HTMLInputElement, InputProps>(
   (
     {
       label,

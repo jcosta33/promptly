@@ -1,4 +1,4 @@
-import React from "react";
+import { type ElementType, type HTMLAttributes, type FC } from "react";
 import styles from "./Box.module.css";
 
 type BoxPadding = "xxs" | "xs" | "sm" | "md" | "lg" | "xl";
@@ -13,7 +13,7 @@ type BoxBgColor =
 type BoxRadius = "sm" | "md" | "lg" | "full";
 
 export type BoxBaseProps = {
-  as?: React.ElementType;
+  as?: ElementType;
   p?: BoxPadding;
   m?: BoxMargin;
   elevation?: BoxElevation;
@@ -26,9 +26,9 @@ export type BoxBaseProps = {
 };
 
 export type BoxProps = BoxBaseProps &
-  Omit<React.HTMLAttributes<HTMLElement>, keyof BoxBaseProps>;
+  Omit<HTMLAttributes<HTMLElement>, keyof BoxBaseProps>;
 
-export const Box: React.FC<BoxProps> = ({
+export const Box: FC<BoxProps> = ({
   as: Component = "div",
   p = "md",
   m,

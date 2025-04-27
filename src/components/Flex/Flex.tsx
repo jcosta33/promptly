@@ -1,4 +1,4 @@
-import React from "react";
+import { type FC, type ReactNode, type HTMLAttributes } from "react";
 import styles from "./Flex.module.css";
 
 export type FlexDirection = "row" | "column" | "row-reverse" | "column-reverse";
@@ -21,10 +21,10 @@ export type FlexProps = {
   gap?: FlexGap;
   inline?: boolean;
   className?: string;
-  children?: React.ReactNode;
-} & React.HTMLAttributes<HTMLDivElement>;
+  children?: ReactNode;
+} & HTMLAttributes<HTMLDivElement>;
 
-export const Flex: React.FC<FlexProps> = ({
+export const Flex: FC<FlexProps> = ({
   direction = "row",
   wrap = "nowrap",
   justify = "start",

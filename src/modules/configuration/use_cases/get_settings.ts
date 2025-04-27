@@ -1,4 +1,4 @@
-import { ExtensionSettings } from "../models/user_settings";
+import type { ExtensionSettings } from "../models/user_settings";
 import { load_settings } from "../repositories/settings_repository";
 
 /**

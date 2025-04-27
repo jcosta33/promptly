@@ -32,8 +32,9 @@ export function useSelection() {
         }
 
         setMousePosition(mousePosition);
-        setSelection(process_selection(selection));
-        console.log("processed selection", process_selection(selection));
+        const processedSelection = process_selection(selection);
+        setSelection(processedSelection);
+        // console.log("processed selection", processedSelection);
       },
     });
 

@@ -1,4 +1,5 @@
-import { ConnectionOptions, MessageHandler } from "../models/message_types";
+import type { ConnectionOptions, MessageHandler } from "../models/message_types";
+import { logger } from "$/utils/logger";
 
 // Store active connections
 const activeConnections = new Map<string, Map<number | string, chrome.runtime.Port>>();
@@ -25,7 +26,7 @@ export function create_connection(options: ConnectionOptions): chrome.runtime.Po
     
     return port;
   } catch (error) {
-    console.error("Error creating connection:", error);
+    logger.error("Error creating connection:", error);
     throw error;
   }
 }
@@ -45,13 +46,12 @@ export function setup_connection_listener(
     try {
       onConnect(port);
     } catch (error) {
-      console.error(`Error handling connection ${port.name}:`, error);
+      logger.error(`Error handling connection ${port.name}:`, error);
     }
   };
   
   chrome.runtime.onConnect.addListener(listener);
   
-  // Return function to remove listener
   return () => {
     chrome.runtime.onConnect.removeListener(listener);
   };
@@ -67,7 +67,7 @@ export function send_connection_message<T = unknown>(
   try {
     port.postMessage(message);
   } catch (error) {
-    console.error("Error sending message through connection:", error);
+    logger.error("Error sending message through connection:", error);
     throw error;
   }
 }
@@ -83,7 +83,7 @@ export function listen_to_connection<T = unknown>(
     try {
       handler(message);
     } catch (error) {
-      console.error("Error handling connection message:", error);
+      logger.error("Error handling connection message:", error);
     }
   };
   
@@ -97,7 +97,7 @@ export function listen_to_connection<T = unknown>(
         for (const [id, storedPort] of connections.entries()) {
           if (storedPort === port) {
             connections.delete(id);
-            console.log(`Removed disconnected port: ${name}/${id}`);
+            logger.debug(`Removed disconnected port: ${name}/${id}`);
             if (connections.size === 0) {
               activeConnections.delete(name);
             }
@@ -106,7 +106,7 @@ export function listen_to_connection<T = unknown>(
         }
       }
     } catch (error) {
-      console.error("Error cleaning up disconnected port:", error);
+      logger.error("Error cleaning up disconnected port:", error);
     }
   };
   
@@ -170,7 +170,7 @@ export function remove_connection(
     try {
       port.disconnect();
     } catch (error) {
-      console.error("Error disconnecting port:", error);
+      logger.warn("Error disconnecting port (might already be disconnected):", error);
     }
   }
   

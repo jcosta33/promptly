@@ -1,4 +1,4 @@
-import React from "react";
+import { type FC, type SelectHTMLAttributes, type ChangeEvent } from "react";
 import styles from "./Select.module.css";
 
 export type SelectOption = {
@@ -10,7 +10,7 @@ export type SelectOption = {
 export type SelectSize = "sm" | "md" | "lg";
 
 export type SelectProps = Omit<
-  React.SelectHTMLAttributes<HTMLSelectElement>,
+  SelectHTMLAttributes<HTMLSelectElement>,
   "onChange" | "size"
 > & {
   options: SelectOption[];
@@ -26,7 +26,7 @@ export type SelectProps = Omit<
   fullWidth?: boolean;
 };
 
-export const Select: React.FC<SelectProps> = ({
+export const Select: FC<SelectProps> = ({
   options,
   value,
   placeholder = "Select an option",
@@ -40,7 +40,7 @@ export const Select: React.FC<SelectProps> = ({
   fullWidth = false,
   ...rest
 }) => {
-  const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+  const handleChange = (e: ChangeEvent<HTMLSelectElement>) => {
     onChange?.(e.target.value);
   };
 

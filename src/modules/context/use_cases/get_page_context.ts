@@ -1,4 +1,4 @@
-import { PageContext } from "../models/context";
+import type { PageContext } from "../models/context";
 import { determine_page_context } from "./determine_page_context";
 
 /**

@@ -1,6 +1,6 @@
-import { PageCategory } from "../../context/models/context";
-import { SelectionType } from "../../selection/models/selection";
-import { ActionDefinition } from "../models/action_models";
+import type { PageCategory } from "../../context/models/context";
+import type { SelectionType } from "../../selection/models/selection";
+import type { ActionDefinition } from "../models/action_models";
 import { get_all_actions } from "../repositories/actions_repository";
 
 /**

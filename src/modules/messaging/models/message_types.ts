@@ -1,4 +1,4 @@
-import { EventType, PayloadForEvent } from "./event_types";
+import type { EventType, PayloadForEvent } from "./event_types";
 
 /**
  * Function type for message handlers with event-specific payload typing

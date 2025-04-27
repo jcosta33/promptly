@@ -1,4 +1,6 @@
 import { listen_for_streams } from "../repositories/message_bus";
+import type { EventType, PayloadForEvent } from "../models/event_types";
+import type { TypedMessageHandler } from "../models/message_types";
 
 /**
  * Set up a listener for incoming connections
@@ -11,10 +13,16 @@ export function setup_connection_listener(
   connectionType: string,
   onConnection: (
     stream: {
-      send: <T = unknown>(eventType: any, payload: T) => void;
+      send: <TEventType extends EventType>(
+        eventType: TEventType,
+        payload: PayloadForEvent<TEventType>
+      ) => void;
       close: () => void;
-      onMessage: <T = unknown>(eventType: any, handler: (data: T) => void) => () => void;
-    }, 
+      onMessage: <TEventType extends EventType>(
+        eventType: TEventType,
+        handler: TypedMessageHandler<TEventType>
+      ) => () => void;
+    },
     identifier: number | string
   ) => void
 ): () => void {

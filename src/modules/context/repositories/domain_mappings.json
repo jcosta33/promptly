@@ -1,0 +1,2146 @@
+[
+    {
+        "domain": "nytimes.com",
+        "category": "news"
+    },
+    {
+        "domain": "washingtonpost.com",
+        "category": "news"
+    },
+    {
+        "domain": "bbc.com",
+        "category": "news"
+    },
+    {
+        "domain": "bbc.co.uk",
+        "category": "news"
+    },
+    {
+        "domain": "reuters.com",
+        "category": "news"
+    },
+    {
+        "domain": "apnews.com",
+        "category": "news"
+    },
+    {
+        "domain": "cnn.com",
+        "category": "news"
+    },
+    {
+        "domain": "foxnews.com",
+        "category": "news"
+    },
+    {
+        "domain": "aljazeera.com",
+        "category": "news"
+    },
+    {
+        "domain": "news.google.com",
+        "category": "news"
+    },
+    {
+        "domain": "theguardian.com",
+        "category": "news"
+    },
+    {
+        "domain": "bloomberg.com",
+        "category": "news"
+    },
+    {
+        "domain": "wsj.com",
+        "category": "news"
+    },
+    {
+        "domain": "economist.com",
+        "category": "news"
+    },
+    {
+        "domain": "nbcnews.com",
+        "category": "news"
+    },
+    {
+        "domain": "abcnews.go.com",
+        "category": "news"
+    },
+    {
+        "domain": "cbsnews.com",
+        "category": "news"
+    },
+    {
+        "domain": "usatoday.com",
+        "category": "news"
+    },
+    {
+        "domain": "latimes.com",
+        "category": "news"
+    },
+    {
+        "domain": "chicagotribune.com",
+        "category": "news"
+    },
+    {
+        "domain": "newsweek.com",
+        "category": "news"
+    },
+    {
+        "domain": "time.com",
+        "category": "news"
+    },
+    {
+        "domain": "politico.com",
+        "category": "news"
+    },
+    {
+        "domain": "thehill.com",
+        "category": "news"
+    },
+    {
+        "domain": "nypost.com",
+        "category": "news"
+    },
+    {
+        "domain": "ft.com",
+        "category": "news"
+    },
+    {
+        "domain": "cnbc.com",
+        "category": "news"
+    },
+    {
+        "domain": "businessinsider.com",
+        "category": "news"
+    },
+    {
+        "domain": "forbes.com",
+        "category": "news"
+    },
+    {
+        "domain": "huffpost.com",
+        "category": "news"
+    },
+    {
+        "domain": "slate.com",
+        "category": "news"
+    },
+    {
+        "domain": "vox.com",
+        "category": "news"
+    },
+    {
+        "domain": "axios.com",
+        "category": "news"
+    },
+    {
+        "domain": "theatlantic.com",
+        "category": "news"
+    },
+    {
+        "domain": "npr.org",
+        "category": "news"
+    },
+    {
+        "domain": "pbs.org",
+        "category": "news"
+    },
+    {
+        "domain": "france24.com",
+        "category": "news"
+    },
+    {
+        "domain": "dw.com",
+        "category": "news"
+    },
+    {
+        "domain": "euronews.com",
+        "category": "news"
+    },
+    {
+        "domain": "independent.co.uk",
+        "category": "news"
+    },
+    {
+        "domain": "dailymail.co.uk",
+        "category": "news"
+    },
+    {
+        "domain": "mirror.co.uk",
+        "category": "news"
+    },
+    {
+        "domain": "theaustralian.com.au",
+        "category": "news"
+    },
+    {
+        "domain": "smh.com.au",
+        "category": "news"
+    },
+    {
+        "domain": "globeandmail.com",
+        "category": "news"
+    },
+    {
+        "domain": "cbc.ca",
+        "category": "news"
+    },
+    {
+        "domain": "straitstimes.com",
+        "category": "news"
+    },
+    {
+        "domain": "scmp.com",
+        "category": "news"
+    },
+    {
+        "domain": "irishtimes.com",
+        "category": "news"
+    },
+    {
+        "domain": "japantimes.co.jp",
+        "category": "news"
+    },
+    {
+        "domain": "marketwatch.com",
+        "category": "news"
+    },
+    {
+        "domain": "seekingalpha.com",
+        "category": "news"
+    },
+    {
+        "domain": "medium.com",
+        "category": "blog"
+    },
+    {
+        "domain": "substack.com",
+        "category": "blog"
+    },
+    {
+        "domain": "wordpress.com",
+        "category": "blog"
+    },
+    {
+        "domain": "blogger.com",
+        "category": "blog"
+    },
+    {
+        "domain": "tumblr.com",
+        "category": "blog"
+    },
+    {
+        "domain": "blogspot.com",
+        "category": "blog"
+    },
+    {
+        "domain": "dev.to",
+        "category": "blog"
+    },
+    {
+        "domain": "hashnode.com",
+        "category": "blog"
+    },
+    {
+        "domain": "ghost.org",
+        "category": "blog"
+    },
+    {
+        "domain": "wix.com",
+        "category": "blog"
+    },
+    {
+        "domain": "squarespace.com",
+        "category": "blog"
+    },
+    {
+        "domain": "typepad.com",
+        "category": "blog"
+    },
+    {
+        "domain": "livejournal.com",
+        "category": "blog"
+    },
+    {
+        "domain": "svbtle.com",
+        "category": "blog"
+    },
+    {
+        "domain": "beehiiv.com",
+        "category": "blog"
+    },
+    {
+        "domain": "mirror.xyz",
+        "category": "blog"
+    },
+    {
+        "domain": "steemit.com",
+        "category": "blog"
+    },
+    {
+        "domain": "write.as",
+        "category": "blog"
+    },
+    {
+        "domain": "posthaven.com",
+        "category": "blog"
+    },
+    {
+        "domain": "telegra.ph",
+        "category": "blog"
+    },
+    {
+        "domain": "weebly.com",
+        "category": "blog"
+    },
+    {
+        "domain": "hubpages.com",
+        "category": "blog"
+    },
+    {
+        "domain": "minds.com",
+        "category": "blog"
+    },
+    {
+        "domain": "webflow.com",
+        "category": "blog"
+    },
+    {
+        "domain": "notion.site",
+        "category": "blog"
+    },
+    {
+        "domain": "wordpress.org",
+        "category": "blog"
+    },
+    {
+        "domain": "mataroa.blog",
+        "category": "blog"
+    },
+    {
+        "domain": "bear.blog",
+        "category": "blog"
+    },
+    {
+        "domain": "developer.mozilla.org",
+        "category": "devdocs"
+    },
+    {
+        "domain": "docs.github.com",
+        "category": "devdocs"
+    },
+    {
+        "domain": "react.dev",
+        "category": "devdocs"
+    },
+    {
+        "domain": "reactjs.org",
+        "category": "devdocs"
+    },
+    {
+        "domain": "angular.io",
+        "category": "devdocs"
+    },
+    {
+        "domain": "vuejs.org",
+        "category": "devdocs"
+    },
+    {
+        "domain": "nodejs.org",
+        "category": "devdocs"
+    },
+    {
+        "domain": "docs.python.org",
+        "category": "devdocs"
+    },
+    {
+        "domain": "docs.docker.com",
+        "category": "devdocs"
+    },
+    {
+        "domain": "kubernetes.io",
+        "category": "devdocs"
+    },
+    {
+        "domain": "readthedocs.io",
+        "category": "devdocs"
+    },
+    {
+        "domain": "developer.android.com",
+        "category": "devdocs"
+    },
+    {
+        "domain": "developer.apple.com",
+        "category": "devdocs"
+    },
+    {
+        "domain": "docs.aws.amazon.com",
+        "category": "devdocs"
+    },
+    {
+        "domain": "cloud.google.com",
+        "category": "devdocs"
+    },
+    {
+        "domain": "azure.microsoft.com",
+        "category": "devdocs"
+    },
+    {
+        "domain": "learn.microsoft.com",
+        "category": "devdocs"
+    },
+    {
+        "domain": "docs.microsoft.com",
+        "category": "devdocs"
+    },
+    {
+        "domain": "docs.npmjs.com",
+        "category": "devdocs"
+    },
+    {
+        "domain": "svelte.dev",
+        "category": "devdocs"
+    },
+    {
+        "domain": "nextjs.org",
+        "category": "devdocs"
+    },
+    {
+        "domain": "nuxtjs.org",
+        "category": "devdocs"
+    },
+    {
+        "domain": "docs.oracle.com",
+        "category": "devdocs"
+    },
+    {
+        "domain": "docs.djangoproject.com",
+        "category": "devdocs"
+    },
+    {
+        "domain": "flask.palletsprojects.com",
+        "category": "devdocs"
+    },
+    {
+        "domain": "laravel.com",
+        "category": "devdocs"
+    },
+    {
+        "domain": "docs.swift.org",
+        "category": "devdocs"
+    },
+    {
+        "domain": "kotlinlang.org",
+        "category": "devdocs"
+    },
+    {
+        "domain": "rust-lang.org",
+        "category": "devdocs"
+    },
+    {
+        "domain": "docs.scala-lang.org",
+        "category": "devdocs"
+    },
+    {
+        "domain": "docs.mongodb.com",
+        "category": "devdocs"
+    },
+    {
+        "domain": "www.postgresql.org",
+        "category": "devdocs"
+    },
+    {
+        "domain": "redis.io",
+        "category": "devdocs"
+    },
+    {
+        "domain": "docs.unity3d.com",
+        "category": "devdocs"
+    },
+    {
+        "domain": "docs.unrealengine.com",
+        "category": "devdocs"
+    },
+    {
+        "domain": "docs.godotengine.org",
+        "category": "devdocs"
+    },
+    {
+        "domain": "www.terraform.io",
+        "category": "devdocs"
+    },
+    {
+        "domain": "docs.ansible.com",
+        "category": "devdocs"
+    },
+    {
+        "domain": "docs.gitlab.com",
+        "category": "devdocs"
+    },
+    {
+        "domain": "developer.atlassian.com",
+        "category": "devdocs"
+    },
+    {
+        "domain": "fastapi.tiangolo.com",
+        "category": "devdocs"
+    },
+    {
+        "domain": "expressjs.com",
+        "category": "devdocs"
+    },
+    {
+        "domain": "spring.io",
+        "category": "devdocs"
+    },
+    {
+        "domain": "firebase.google.com",
+        "category": "devdocs"
+    },
+    {
+        "domain": "tailwindcss.com",
+        "category": "devdocs"
+    },
+    {
+        "domain": "mui.com",
+        "category": "devdocs"
+    },
+    {
+        "domain": "getbootstrap.com",
+        "category": "devdocs"
+    },
+    {
+        "domain": "docs.expo.dev",
+        "category": "devdocs"
+    },
+    {
+        "domain": "graphql.org",
+        "category": "devdocs"
+    },
+    {
+        "domain": "apollographql.com",
+        "category": "devdocs"
+    },
+    {
+        "domain": "webpack.js.org",
+        "category": "devdocs"
+    },
+    {
+        "domain": "babeljs.io",
+        "category": "devdocs"
+    },
+    {
+        "domain": "eslint.org",
+        "category": "devdocs"
+    },
+    {
+        "domain": "prettier.io",
+        "category": "devdocs"
+    },
+    {
+        "domain": "jestjs.io",
+        "category": "devdocs"
+    },
+    {
+        "domain": "testing-library.com",
+        "category": "devdocs"
+    },
+    {
+        "domain": "vitejs.dev",
+        "category": "devdocs"
+    },
+    {
+        "domain": "wxt.dev",
+        "category": "devdocs"
+    },
+    {
+        "domain": "arxiv.org",
+        "category": "scientific"
+    },
+    {
+        "domain": "nature.com",
+        "category": "scientific"
+    },
+    {
+        "domain": "science.org",
+        "category": "scientific"
+    },
+    {
+        "domain": "ncbi.nlm.nih.gov",
+        "category": "scientific"
+    },
+    {
+        "domain": "pubmed.ncbi.nlm.nih.gov",
+        "category": "scientific"
+    },
+    {
+        "domain": "researchgate.net",
+        "category": "scientific"
+    },
+    {
+        "domain": "sciencedirect.com",
+        "category": "scientific"
+    },
+    {
+        "domain": "scholar.google.com",
+        "category": "scientific"
+    },
+    {
+        "domain": "pnas.org",
+        "category": "scientific"
+    },
+    {
+        "domain": "cell.com",
+        "category": "scientific"
+    },
+    {
+        "domain": "nejm.org",
+        "category": "scientific"
+    },
+    {
+        "domain": "plos.org",
+        "category": "scientific"
+    },
+    {
+        "domain": "frontiersin.org",
+        "category": "scientific"
+    },
+    {
+        "domain": "ieee.org",
+        "category": "scientific"
+    },
+    {
+        "domain": "acm.org",
+        "category": "scientific"
+    },
+    {
+        "domain": "jamanetwork.com",
+        "category": "scientific"
+    },
+    {
+        "domain": "bmj.com",
+        "category": "scientific"
+    },
+    {
+        "domain": "thelancet.com",
+        "category": "scientific"
+    },
+    {
+        "domain": "ssrn.com",
+        "category": "scientific"
+    },
+    {
+        "domain": "biorxiv.org",
+        "category": "scientific"
+    },
+    {
+        "domain": "medrxiv.org",
+        "category": "scientific"
+    },
+    {
+        "domain": "acs.org",
+        "category": "scientific"
+    },
+    {
+        "domain": "wiley.com",
+        "category": "scientific"
+    },
+    {
+        "domain": "springer.com",
+        "category": "scientific"
+    },
+    {
+        "domain": "mdpi.com",
+        "category": "scientific"
+    },
+    {
+        "domain": "aps.org",
+        "category": "scientific"
+    },
+    {
+        "domain": "rsc.org",
+        "category": "scientific"
+    },
+    {
+        "domain": "jneurosci.org",
+        "category": "scientific"
+    },
+    {
+        "domain": "plosone.org",
+        "category": "scientific"
+    },
+    {
+        "domain": "hindawi.com",
+        "category": "scientific"
+    },
+    {
+        "domain": "tandfonline.com",
+        "category": "scientific"
+    },
+    {
+        "domain": "sagepub.com",
+        "category": "scientific"
+    },
+    {
+        "domain": "scielo.org",
+        "category": "scientific"
+    },
+    {
+        "domain": "aaas.org",
+        "category": "scientific"
+    },
+    {
+        "domain": "peerj.com",
+        "category": "scientific"
+    },
+    {
+        "domain": "jstage.jst.go.jp",
+        "category": "scientific"
+    },
+    {
+        "domain": "emerald.com",
+        "category": "scientific"
+    },
+    {
+        "domain": "annualreviews.org",
+        "category": "scientific"
+    },
+    {
+        "domain": "biomedcentral.com",
+        "category": "scientific"
+    },
+    {
+        "domain": "iop.org",
+        "category": "scientific"
+    },
+    {
+        "domain": "academic.oup.com",
+        "category": "scientific"
+    },
+    {
+        "domain": "twitter.com",
+        "category": "social"
+    },
+    {
+        "domain": "x.com",
+        "category": "social"
+    },
+    {
+        "domain": "facebook.com",
+        "category": "social"
+    },
+    {
+        "domain": "instagram.com",
+        "category": "social"
+    },
+    {
+        "domain": "linkedin.com",
+        "category": "social"
+    },
+    {
+        "domain": "tiktok.com",
+        "category": "social"
+    },
+    {
+        "domain": "threads.net",
+        "category": "social"
+    },
+    {
+        "domain": "pinterest.com",
+        "category": "social"
+    },
+    {
+        "domain": "snapchat.com",
+        "category": "social"
+    },
+    {
+        "domain": "whatsapp.com",
+        "category": "social"
+    },
+    {
+        "domain": "telegram.org",
+        "category": "social"
+    },
+    {
+        "domain": "messenger.com",
+        "category": "social"
+    },
+    {
+        "domain": "wechat.com",
+        "category": "social"
+    },
+    {
+        "domain": "weibo.com",
+        "category": "social"
+    },
+    {
+        "domain": "line.me",
+        "category": "social"
+    },
+    {
+        "domain": "vk.com",
+        "category": "social"
+    },
+    {
+        "domain": "discord.com",
+        "category": "social"
+    },
+    {
+        "domain": "signal.org",
+        "category": "social"
+    },
+    {
+        "domain": "viber.com",
+        "category": "social"
+    },
+    {
+        "domain": "kakaocorp.com",
+        "category": "social"
+    },
+    {
+        "domain": "clubhouse.com",
+        "category": "social"
+    },
+    {
+        "domain": "mastodon.social",
+        "category": "social"
+    },
+    {
+        "domain": "stackoverflow.com",
+        "category": "forum"
+    },
+    {
+        "domain": "stackexchange.com",
+        "category": "forum"
+    },
+    {
+        "domain": "quora.com",
+        "category": "forum"
+    },
+    {
+        "domain": "reddit.com",
+        "category": "forum"
+    },
+    {
+        "domain": "discourse.org",
+        "category": "forum"
+    },
+    {
+        "domain": "ycombinator.com",
+        "category": "forum"
+    },
+    {
+        "domain": "4chan.org",
+        "category": "forum"
+    },
+    {
+        "domain": "8kun.top",
+        "category": "forum"
+    },
+    {
+        "domain": "gaia.com",
+        "category": "forum"
+    },
+    {
+        "domain": "lemmy.ml",
+        "category": "forum"
+    },
+    {
+        "domain": "forums.macrumors.com",
+        "category": "forum"
+    },
+    {
+        "domain": "theverge.com/forums",
+        "category": "forum"
+    },
+    {
+        "domain": "androidcentral.com/forums",
+        "category": "forum"
+    },
+    {
+        "domain": "community.spotify.com",
+        "category": "forum"
+    },
+    {
+        "domain": "community.xbox.com",
+        "category": "forum"
+    },
+    {
+        "domain": "community.playstation.com",
+        "category": "forum"
+    },
+    {
+        "domain": "resetera.com",
+        "category": "forum"
+    },
+    {
+        "domain": "neogaf.com",
+        "category": "forum"
+    },
+    {
+        "domain": "gamefaqs.gamespot.com",
+        "category": "forum"
+    },
+    {
+        "domain": "bodybuilding.com/forum",
+        "category": "forum"
+    },
+    {
+        "domain": "mumsnet.com",
+        "category": "forum"
+    },
+    {
+        "domain": "dev.to",
+        "category": "forum"
+    },
+    {
+        "domain": "community.kdenlive.org",
+        "category": "forum"
+    },
+    {
+        "domain": "forum.arduino.cc",
+        "category": "forum"
+    },
+    {
+        "domain": "raspberrypi.org/forums",
+        "category": "forum"
+    },
+    {
+        "domain": "bitcointalk.org",
+        "category": "forum"
+    },
+    {
+        "domain": "community.brave.com",
+        "category": "forum"
+    },
+    {
+        "domain": "forum.xda-developers.com",
+        "category": "forum"
+    },
+    {
+        "domain": "askubuntu.com",
+        "category": "forum"
+    },
+    {
+        "domain": "serverfault.com",
+        "category": "forum"
+    },
+    {
+        "domain": "superuser.com",
+        "category": "forum"
+    },
+    {
+        "domain": "forums.tomshardware.com",
+        "category": "forum"
+    },
+    {
+        "domain": "community.atlassian.com",
+        "category": "forum"
+    },
+    {
+        "domain": "community.amd.com",
+        "category": "forum"
+    },
+    {
+        "domain": "community.intel.com",
+        "category": "forum"
+    },
+    {
+        "domain": "answers.microsoft.com",
+        "category": "forum"
+    },
+    {
+        "domain": "answers.yahoo.com",
+        "category": "forum"
+    },
+    {
+        "domain": "ask.fm",
+        "category": "forum"
+    },
+    {
+        "domain": "forums.opera.com",
+        "category": "forum"
+    },
+    {
+        "domain": "forums.mozillazine.org",
+        "category": "forum"
+    },
+    {
+        "domain": "amazon.com",
+        "category": "ecommerce"
+    },
+    {
+        "domain": "ebay.com",
+        "category": "ecommerce"
+    },
+    {
+        "domain": "walmart.com",
+        "category": "ecommerce"
+    },
+    {
+        "domain": "etsy.com",
+        "category": "ecommerce"
+    },
+    {
+        "domain": "shopify.com",
+        "category": "ecommerce"
+    },
+    {
+        "domain": "aliexpress.com",
+        "category": "ecommerce"
+    },
+    {
+        "domain": "bestbuy.com",
+        "category": "ecommerce"
+    },
+    {
+        "domain": "target.com",
+        "category": "ecommerce"
+    },
+    {
+        "domain": "newegg.com",
+        "category": "ecommerce"
+    },
+    {
+        "domain": "wish.com",
+        "category": "ecommerce"
+    },
+    {
+        "domain": "wayfair.com",
+        "category": "ecommerce"
+    },
+    {
+        "domain": "ikea.com",
+        "category": "ecommerce"
+    },
+    {
+        "domain": "homedepot.com",
+        "category": "ecommerce"
+    },
+    {
+        "domain": "lowes.com",
+        "category": "ecommerce"
+    },
+    {
+        "domain": "costco.com",
+        "category": "ecommerce"
+    },
+    {
+        "domain": "samsclub.com",
+        "category": "ecommerce"
+    },
+    {
+        "domain": "apple.com/store",
+        "category": "ecommerce"
+    },
+    {
+        "domain": "samsung.com",
+        "category": "ecommerce"
+    },
+    {
+        "domain": "microsoft.com/store",
+        "category": "ecommerce"
+    },
+    {
+        "domain": "kohls.com",
+        "category": "ecommerce"
+    },
+    {
+        "domain": "macys.com",
+        "category": "ecommerce"
+    },
+    {
+        "domain": "nordstrom.com",
+        "category": "ecommerce"
+    },
+    {
+        "domain": "nike.com",
+        "category": "ecommerce"
+    },
+    {
+        "domain": "adidas.com",
+        "category": "ecommerce"
+    },
+    {
+        "domain": "underarmour.com",
+        "category": "ecommerce"
+    },
+    {
+        "domain": "zappos.com",
+        "category": "ecommerce"
+    },
+    {
+        "domain": "overstock.com",
+        "category": "ecommerce"
+    },
+    {
+        "domain": "chewy.com",
+        "category": "ecommerce"
+    },
+    {
+        "domain": "petco.com",
+        "category": "ecommerce"
+    },
+    {
+        "domain": "petsmart.com",
+        "category": "ecommerce"
+    },
+    {
+        "domain": "staples.com",
+        "category": "ecommerce"
+    },
+    {
+        "domain": "officedepot.com",
+        "category": "ecommerce"
+    },
+    {
+        "domain": "bhphotovideo.com",
+        "category": "ecommerce"
+    },
+    {
+        "domain": "adorama.com",
+        "category": "ecommerce"
+    },
+    {
+        "domain": "sweetwater.com",
+        "category": "ecommerce"
+    },
+    {
+        "domain": "guitarcenter.com",
+        "category": "ecommerce"
+    },
+    {
+        "domain": "sephora.com",
+        "category": "ecommerce"
+    },
+    {
+        "domain": "ulta.com",
+        "category": "ecommerce"
+    },
+    {
+        "domain": "walgreens.com",
+        "category": "ecommerce"
+    },
+    {
+        "domain": "cvs.com",
+        "category": "ecommerce"
+    },
+    {
+        "domain": "jcpenney.com",
+        "category": "ecommerce"
+    },
+    {
+        "domain": "houzz.com",
+        "category": "ecommerce"
+    },
+    {
+        "domain": "williams-sonoma.com",
+        "category": "ecommerce"
+    },
+    {
+        "domain": "crateandbarrel.com",
+        "category": "ecommerce"
+    },
+    {
+        "domain": "potterybarn.com",
+        "category": "ecommerce"
+    },
+    {
+        "domain": "rei.com",
+        "category": "ecommerce"
+    },
+    {
+        "domain": "dickssportinggoods.com",
+        "category": "ecommerce"
+    },
+    {
+        "domain": "cabelas.com",
+        "category": "ecommerce"
+    },
+    {
+        "domain": "basecamp.com",
+        "category": "ecommerce"
+    },
+    {
+        "domain": "footlocker.com",
+        "category": "ecommerce"
+    },
+    {
+        "domain": "wikipedia.org",
+        "category": "wiki"
+    },
+    {
+        "domain": "fandom.com",
+        "category": "wiki"
+    },
+    {
+        "domain": "wikia.com",
+        "category": "wiki"
+    },
+    {
+        "domain": "wiktionary.org",
+        "category": "wiki"
+    },
+    {
+        "domain": "britannica.com",
+        "category": "wiki"
+    },
+    {
+        "domain": "wikihow.com",
+        "category": "wiki"
+    },
+    {
+        "domain": "mediawiki.org",
+        "category": "wiki"
+    },
+    {
+        "domain": "wikidata.org",
+        "category": "wiki"
+    },
+    {
+        "domain": "wikiquote.org",
+        "category": "wiki"
+    },
+    {
+        "domain": "wikisource.org",
+        "category": "wiki"
+    },
+    {
+        "domain": "wikinews.org",
+        "category": "wiki"
+    },
+    {
+        "domain": "wikibooks.org",
+        "category": "wiki"
+    },
+    {
+        "domain": "wikivoyage.org",
+        "category": "wiki"
+    },
+    {
+        "domain": "wikispecies.org",
+        "category": "wiki"
+    },
+    {
+        "domain": "wikiversity.org",
+        "category": "wiki"
+    },
+    {
+        "domain": "memory-alpha.fandom.com",
+        "category": "wiki"
+    },
+    {
+        "domain": "bulbapedia.bulbagarden.net",
+        "category": "wiki"
+    },
+    {
+        "domain": "towel.blinkenlights.nl",
+        "category": "wiki"
+    },
+    {
+        "domain": "tvtropes.org",
+        "category": "wiki"
+    },
+    {
+        "domain": "conservapedia.com",
+        "category": "wiki"
+    },
+    {
+        "domain": "rationalwiki.org",
+        "category": "wiki"
+    },
+    {
+        "domain": "uncyclopedia.com",
+        "category": "wiki"
+    },
+    {
+        "domain": "everipedia.org",
+        "category": "wiki"
+    },
+    {
+        "domain": "infogalactic.com",
+        "category": "wiki"
+    },
+    {
+        "domain": "scholarpedia.org",
+        "category": "wiki"
+    },
+    {
+        "domain": "wiki.archlinux.org",
+        "category": "wiki"
+    },
+    {
+        "domain": "dokuwiki.org",
+        "category": "wiki"
+    },
+    {
+        "domain": "gamepedia.com",
+        "category": "wiki"
+    },
+    {
+        "domain": "marvelcinematicuniverse.fandom.com",
+        "category": "wiki"
+    },
+    {
+        "domain": "harrypotter.fandom.com",
+        "category": "wiki"
+    },
+    {
+        "domain": "starwars.fandom.com",
+        "category": "wiki"
+    },
+    {
+        "domain": "minecraft.fandom.com",
+        "category": "wiki"
+    },
+    {
+        "domain": "elderscrolls.fandom.com",
+        "category": "wiki"
+    },
+    {
+        "domain": "tardis.fandom.com",
+        "category": "wiki"
+    },
+    {
+        "domain": "jedipedia.net",
+        "category": "wiki"
+    },
+    {
+        "domain": "wookieepedia.com",
+        "category": "wiki"
+    },
+    {
+        "category": "email",
+        "domain": "mail.google.com"
+    },
+    {
+        "category": "email",
+        "domain": "outlook.com"
+    },
+    {
+        "category": "email",
+        "domain": "yahoo.com/mail"
+    },
+    {
+        "category": "email",
+        "domain": "protonmail.com"
+    },
+    {
+        "category": "email",
+        "domain": "zoho.com/mail"
+    },
+    {
+        "category": "email",
+        "domain": "aol.com"
+    },
+    {
+        "category": "email",
+        "domain": "mail.com"
+    },
+    {
+        "category": "email",
+        "domain": "gmail.com"
+    },
+    {
+        "category": "email",
+        "domain": "outlook.office.com"
+    },
+    {
+        "category": "email",
+        "domain": "mail.yahoo.com"
+    },
+    {
+        "category": "email",
+        "domain": "icloud.com/mail"
+    },
+    {
+        "category": "email",
+        "domain": "mail.protonmail.com"
+    },
+    {
+        "category": "email",
+        "domain": "fastmail.com"
+    },
+    {
+        "category": "email",
+        "domain": "tutanota.com"
+    },
+    {
+        "category": "email",
+        "domain": "mail.zoho.com"
+    },
+    {
+        "category": "email",
+        "domain": "gmx.com"
+    },
+    {
+        "category": "productivity",
+        "domain": "docs.google.com"
+    },
+    {
+        "category": "productivity",
+        "domain": "sheets.google.com"
+    },
+    {
+        "category": "productivity",
+        "domain": "slides.google.com"
+    },
+    {
+        "category": "productivity",
+        "domain": "office.com"
+    },
+    {
+        "category": "productivity",
+        "domain": "office.live.com"
+    },
+    {
+        "category": "productivity",
+        "domain": "office365.com"
+    },
+    {
+        "category": "productivity",
+        "domain": "notion.so"
+    },
+    {
+        "category": "productivity",
+        "domain": "evernote.com"
+    },
+    {
+        "category": "productivity",
+        "domain": "trello.com"
+    },
+    {
+        "category": "productivity",
+        "domain": "asana.com"
+    },
+    {
+        "category": "productivity",
+        "domain": "monday.com"
+    },
+    {
+        "category": "productivity",
+        "domain": "clickup.com"
+    },
+    {
+        "category": "productivity",
+        "domain": "todoist.com"
+    },
+    {
+        "category": "productivity",
+        "domain": "calendar.google.com"
+    },
+    {
+        "category": "productivity",
+        "domain": "keep.google.com"
+    },
+    {
+        "category": "productivity",
+        "domain": "onenote.com"
+    },
+    {
+        "category": "productivity",
+        "domain": "airtable.com"
+    },
+    {
+        "category": "productivity",
+        "domain": "miro.com"
+    },
+    {
+        "category": "productivity",
+        "domain": "figma.com"
+    },
+    {
+        "category": "productivity",
+        "domain": "drive.google.com"
+    },
+    {
+        "category": "productivity",
+        "domain": "onedrive.live.com"
+    },
+    {
+        "domain": "youtube.com",
+        "category": "video"
+    },
+    {
+        "domain": "vimeo.com",
+        "category": "video"
+    },
+    {
+        "domain": "netflix.com",
+        "category": "video"
+    },
+    {
+        "domain": "hulu.com",
+        "category": "video"
+    },
+    {
+        "domain": "twitch.tv",
+        "category": "video"
+    },
+    {
+        "domain": "disneyplus.com",
+        "category": "video"
+    },
+    {
+        "domain": "primevideo.com",
+        "category": "video"
+    },
+    {
+        "domain": "dailymotion.com",
+        "category": "video"
+    },
+    {
+        "domain": "tiktok.com",
+        "category": "video"
+    },
+    {
+        "domain": "hbomax.com",
+        "category": "video"
+    },
+    {
+        "domain": "peacocktv.com",
+        "category": "video"
+    },
+    {
+        "domain": "paramountplus.com",
+        "category": "video"
+    },
+    {
+        "domain": "appletv.apple.com",
+        "category": "video"
+    },
+    {
+        "domain": "crunchyroll.com",
+        "category": "video"
+    },
+    {
+        "domain": "funimation.com",
+        "category": "video"
+    },
+    {
+        "domain": "curiositystream.com",
+        "category": "video"
+    },
+    {
+        "domain": "nebula.app",
+        "category": "video"
+    },
+    {
+        "domain": "odysee.com",
+        "category": "video"
+    },
+    {
+        "domain": "metacafe.com",
+        "category": "video"
+    },
+    {
+        "domain": "vevo.com",
+        "category": "video"
+    },
+    {
+        "domain": "rutube.ru",
+        "category": "video"
+    },
+    {
+        "domain": "youku.com",
+        "category": "video"
+    },
+    {
+        "domain": "bilibili.com",
+        "category": "video"
+    },
+    {
+        "domain": "iqiyi.com",
+        "category": "video"
+    },
+    {
+        "domain": "tudou.com",
+        "category": "video"
+    },
+    {
+        "domain": "veoh.com",
+        "category": "video"
+    },
+    {
+        "domain": "mixer.com",
+        "category": "video"
+    },
+    {
+        "domain": "trovo.live",
+        "category": "video"
+    },
+    {
+        "domain": "facebook.com/watch",
+        "category": "video"
+    },
+    {
+        "domain": "plex.tv",
+        "category": "video"
+    },
+    {
+        "domain": "starz.com",
+        "category": "video"
+    },
+    {
+        "domain": "showtime.com",
+        "category": "video"
+    },
+    {
+        "domain": "amc.com",
+        "category": "video"
+    },
+    {
+        "domain": "espn.com",
+        "category": "video"
+    },
+    {
+        "domain": "nba.com",
+        "category": "video"
+    },
+    {
+        "domain": "mlb.com",
+        "category": "video"
+    },
+    {
+        "domain": "nfl.com",
+        "category": "video"
+    },
+    {
+        "domain": "nick.com",
+        "category": "video"
+    },
+    {
+        "domain": "cartoonnetwork.com",
+        "category": "video"
+    },
+    {
+        "domain": "adultswim.com",
+        "category": "video"
+    },
+    {
+        "domain": "ted.com",
+        "category": "video"
+    },
+    {
+        "domain": "spotify.com",
+        "category": "music"
+    },
+    {
+        "domain": "apple.com/music",
+        "category": "music"
+    },
+    {
+        "domain": "soundcloud.com",
+        "category": "music"
+    },
+    {
+        "domain": "bandcamp.com",
+        "category": "music"
+    },
+    {
+        "domain": "genius.com",
+        "category": "music"
+    },
+    {
+        "domain": "tidal.com",
+        "category": "music"
+    },
+    {
+        "domain": "deezer.com",
+        "category": "music"
+    },
+    {
+        "domain": "irs.gov",
+        "category": "documentation"
+    },
+    {
+        "domain": "usa.gov",
+        "category": "documentation"
+    },
+    {
+        "domain": "gov.uk",
+        "category": "documentation"
+    },
+    {
+        "domain": "europa.eu",
+        "category": "documentation"
+    },
+    {
+        "domain": "canada.ca",
+        "category": "documentation"
+    },
+    {
+        "domain": "australia.gov.au",
+        "category": "documentation"
+    },
+    {
+        "domain": "booking.com",
+        "category": "travel"
+    },
+    {
+        "domain": "airbnb.com",
+        "category": "travel"
+    },
+    {
+        "domain": "expedia.com",
+        "category": "travel"
+    },
+    {
+        "domain": "tripadvisor.com",
+        "category": "travel"
+    },
+    {
+        "domain": "hotels.com",
+        "category": "travel"
+    },
+    {
+        "domain": "kayak.com",
+        "category": "travel"
+    },
+    {
+        "domain": "webmd.com",
+        "category": "health"
+    },
+    {
+        "domain": "mayoclinic.org",
+        "category": "health"
+    },
+    {
+        "domain": "nih.gov",
+        "category": "health"
+    },
+    {
+        "domain": "cdc.gov",
+        "category": "health"
+    },
+    {
+        "domain": "who.int",
+        "category": "health"
+    },
+    {
+        "domain": "healthline.com",
+        "category": "health"
+    },
+    {
+        "domain": "chase.com",
+        "category": "finance"
+    },
+    {
+        "domain": "wellsfargo.com",
+        "category": "finance"
+    },
+    {
+        "domain": "bankofamerica.com",
+        "category": "finance"
+    },
+    {
+        "domain": "citibank.com",
+        "category": "finance"
+    },
+    {
+        "domain": "americanexpress.com",
+        "category": "finance"
+    },
+    {
+        "domain": "capitalone.com",
+        "category": "finance"
+    },
+    {
+        "domain": "schwab.com",
+        "category": "finance"
+    },
+    {
+        "domain": "fidelity.com",
+        "category": "finance"
+    },
+    {
+        "domain": "vanguard.com",
+        "category": "finance"
+    },
+    {
+        "domain": "robinhood.com",
+        "category": "finance"
+    },
+    {
+        "domain": "etrade.com",
+        "category": "finance"
+    },
+    {
+        "domain": "tdameritrade.com",
+        "category": "finance"
+    },
+    {
+        "domain": "interactivebrokers.com",
+        "category": "finance"
+    },
+    {
+        "domain": "morningstar.com",
+        "category": "finance"
+    },
+    {
+        "domain": "investopedia.com",
+        "category": "finance"
+    },
+    {
+        "domain": "nerdwallet.com",
+        "category": "finance"
+    },
+    {
+        "domain": "creditkarma.com",
+        "category": "finance"
+    },
+    {
+        "domain": "paypal.com",
+        "category": "finance"
+    },
+    {
+        "domain": "wise.com",
+        "category": "finance"
+    },
+    {
+        "domain": "stripe.com",
+        "category": "finance"
+    },
+    {
+        "domain": "coinbase.com",
+        "category": "finance"
+    },
+    {
+        "domain": "binance.com",
+        "category": "finance"
+    },
+    {
+        "domain": "coursera.org",
+        "category": "learning"
+    },
+    {
+        "domain": "edx.org",
+        "category": "learning"
+    },
+    {
+        "domain": "udemy.com",
+        "category": "learning"
+    },
+    {
+        "domain": "khanacademy.org",
+        "category": "learning"
+    },
+    {
+        "domain": "codecademy.com",
+        "category": "learning"
+    },
+    {
+        "domain": "brilliant.org",
+        "category": "learning"
+    },
+    {
+        "domain": "duolingo.com",
+        "category": "learning"
+    },
+    {
+        "domain": "skillshare.com",
+        "category": "learning"
+    },
+    {
+        "domain": "masterclass.com",
+        "category": "learning"
+    },
+    {
+        "domain": "datacamp.com",
+        "category": "learning"
+    },
+    {
+        "domain": "freecodecamp.org",
+        "category": "learning"
+    },
+    {
+        "domain": "pluralsight.com",
+        "category": "learning"
+    },
+    {
+        "domain": "linkedin.com",
+        "category": "learning"
+    },
+    {
+        "domain": "udacity.com",
+        "category": "learning"
+    },
+    {
+        "domain": "futurelearn.com",
+        "category": "learning"
+    },
+    {
+        "domain": "mit.edu",
+        "category": "learning"
+    },
+    {
+        "domain": "harvard.edu",
+        "category": "learning"
+    },
+    {
+        "domain": "stanford.edu",
+        "category": "learning"
+    },
+    {
+        "domain": "cam.ac.uk",
+        "category": "learning"
+    },
+    {
+        "domain": "ox.ac.uk",
+        "category": "learning"
+    },
+    {
+        "domain": "notion.so",
+        "category": "productivity"
+    },
+    {
+        "domain": "evernote.com",
+        "category": "productivity"
+    },
+    {
+        "domain": "todoist.com",
+        "category": "productivity"
+    },
+    {
+        "domain": "trello.com",
+        "category": "productivity"
+    },
+    {
+        "domain": "asana.com",
+        "category": "productivity"
+    },
+    {
+        "domain": "miro.com",
+        "category": "productivity"
+    },
+    {
+        "domain": "monday.com",
+        "category": "productivity"
+    },
+    {
+        "domain": "clickup.com",
+        "category": "productivity"
+    },
+    {
+        "domain": "airtable.com",
+        "category": "productivity"
+    },
+    {
+        "domain": "slack.com",
+        "category": "productivity"
+    },
+    {
+        "domain": "zoom.us",
+        "category": "productivity"
+    },
+    {
+        "domain": "drive.google.com",
+        "category": "productivity"
+    },
+    {
+        "domain": "docs.google.com",
+        "category": "productivity"
+    },
+    {
+        "domain": "sheets.google.com",
+        "category": "productivity"
+    },
+    {
+        "domain": "slides.google.com",
+        "category": "productivity"
+    },
+    {
+        "domain": "office.com",
+        "category": "productivity"
+    },
+    {
+        "domain": "onedrive.live.com",
+        "category": "productivity"
+    },
+    {
+        "domain": "dropbox.com",
+        "category": "productivity"
+    },
+    {
+        "domain": "box.com",
+        "category": "productivity"
+    },
+    {
+        "domain": "calendly.com",
+        "category": "productivity"
+    },
+    {
+        "domain": "zapier.com",
+        "category": "productivity"
+    },
+    {
+        "domain": "ifttt.com",
+        "category": "productivity"
+    },
+    {
+        "domain": "canva.com",
+        "category": "productivity"
+    },
+    {
+        "domain": "figma.com",
+        "category": "productivity"
+    },
+    {
+        "domain": "github.com",
+        "category": "coderepo"
+    },
+    {
+        "domain": "gitlab.com",
+        "category": "coderepo"
+    },
+    {
+        "domain": "bitbucket.org",
+        "category": "coderepo"
+    },
+    {
+        "domain": "sourceforge.net",
+        "category": "coderepo"
+    },
+    {
+        "domain": "codeberg.org",
+        "category": "coderepo"
+    },
+    {
+        "domain": "npmjs.com",
+        "category": "coderepo"
+    },
+    {
+        "domain": "pypi.org",
+        "category": "coderepo"
+    },
+    {
+        "domain": "hub.docker.com",
+        "category": "coderepo"
+    },
+    {
+        "domain": "reddit.com",
+        "category": "forum"
+    },
+    {
+        "domain": "stackoverflow.com",
+        "category": "forum"
+    },
+    {
+        "domain": "quora.com",
+        "category": "forum"
+    },
+    {
+        "domain": "stackexchange.com",
+        "category": "forum"
+    },
+    {
+        "domain": "discourse.group",
+        "category": "forum"
+    },
+    {
+        "domain": "news.ycombinator.com",
+        "category": "forum"
+    },
+    {
+        "domain": "lobste.rs",
+        "category": "forum"
+    },
+    {
+        "domain": "amazon.com",
+        "category": "ecommerce"
+    },
+    {
+        "domain": "ebay.com",
+        "category": "ecommerce"
+    },
+    {
+        "domain": "etsy.com",
+        "category": "ecommerce"
+    },
+    {
+        "domain": "walmart.com",
+        "category": "ecommerce"
+    },
+    {
+        "domain": "target.com",
+        "category": "ecommerce"
+    },
+    {
+        "domain": "aliexpress.com",
+        "category": "ecommerce"
+    },
+    {
+        "domain": "alibaba.com",
+        "category": "ecommerce"
+    },
+    {
+        "domain": "bestbuy.com",
+        "category": "ecommerce"
+    },
+    {
+        "domain": "homedepot.com",
+        "category": "ecommerce"
+    },
+    {
+        "domain": "lowes.com",
+        "category": "ecommerce"
+    },
+    {
+        "domain": "craigslist.org",
+        "category": "ecommerce"
+    },
+    {
+        "domain": "youtube.com",
+        "category": "video"
+    },
+    {
+        "domain": "vimeo.com",
+        "category": "video"
+    },
+    {
+        "domain": "twitch.tv",
+        "category": "video"
+    },
+    {
+        "domain": "dailymotion.com",
+        "category": "video"
+    },
+    {
+        "domain": "netflix.com",
+        "category": "video"
+    },
+    {
+        "domain": "hulu.com",
+        "category": "video"
+    },
+    {
+        "domain": "disneyplus.com",
+        "category": "video"
+    },
+    {
+        "domain": "hbomax.com",
+        "category": "video"
+    },
+    {
+        "domain": "primevideo.com",
+        "category": "video"
+    },
+    {
+        "domain": "google.com",
+        "category": "general"
+    },
+    {
+        "domain": "bing.com",
+        "category": "general"
+    },
+    {
+        "domain": "duckduckgo.com",
+        "category": "general"
+    },
+    {
+        "domain": "wikipedia.org",
+        "category": "general"
+    },
+    {
+        "domain": "yahoo.com",
+        "category": "general"
+    }
+]

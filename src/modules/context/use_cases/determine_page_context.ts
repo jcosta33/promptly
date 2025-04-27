@@ -1,4 +1,4 @@
-import { PageCategory, PageContext } from "../models/context";
+import { type PageContext } from "../models/context";
 import { get_url_category } from "../repositories/context_repository";
 
 /**
@@ -9,7 +9,7 @@ function extract_domain(url: string): string {
     const urlObj = new URL(url);
     return urlObj.hostname;
   } catch (error) {
-    console.error("Error parsing URL:", error);
+    // console.error("Error parsing URL:", error);
 
     // Fallback: try to extract domain with regex
     const match = url.match(

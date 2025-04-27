@@ -1,4 +1,4 @@
-import React from "react";
+import { type ElementType, type HTMLAttributes, type FC } from "react";
 import styles from "./Text.module.css";
 
 export type TextSize = "xs" | "sm" | "md" | "lg" | "xl" | "2xl";
@@ -13,7 +13,7 @@ export type TextColor =
 export type TextAlign = "left" | "center" | "right";
 
 export type TextBaseProps = {
-  as?: React.ElementType;
+  as?: ElementType;
   size?: TextSize;
   weight?: TextWeight;
   color?: TextColor;
@@ -23,9 +23,9 @@ export type TextBaseProps = {
 };
 
 export type TextProps = TextBaseProps &
-  Omit<React.HTMLAttributes<HTMLElement>, keyof TextBaseProps>;
+  Omit<HTMLAttributes<HTMLElement>, keyof TextBaseProps>;
 
-export const Text: React.FC<TextProps> = ({
+export const Text: FC<TextProps> = ({
   as: Component = "p",
   size = "md",
   weight = "normal",

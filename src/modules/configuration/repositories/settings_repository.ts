@@ -1,4 +1,5 @@
-import { DEFAULT_SETTINGS, ExtensionSettings } from "../models/user_settings";
+import { DEFAULT_SETTINGS, type ExtensionSettings } from "../models/user_settings";
+import { logger } from "$/utils/logger";
 
 // Storage key for extension settings
 const SETTINGS_STORAGE_KEY = "promptly-settings";
@@ -14,9 +15,8 @@ export async function save_settings(
 ): Promise<void> {
   try {
     await chrome.storage.local.set({ [SETTINGS_STORAGE_KEY]: settings });
-    console.log("Settings saved:", settings);
   } catch (error) {
-    console.error("Error saving settings:", error);
+    logger.error("Error saving settings:", error);
     throw new Error(
       `Failed to save settings: ${error instanceof Error ? error.message : "Unknown error"}`
     );
@@ -31,20 +31,15 @@ export async function save_settings(
 export async function load_settings(): Promise<ExtensionSettings> {
   try {
     const result = await chrome.storage.local.get(SETTINGS_STORAGE_KEY);
-    console.log("Settings loaded:", result);
 
     if (result && result[SETTINGS_STORAGE_KEY]) {
-      // Return the saved settings
       return result[SETTINGS_STORAGE_KEY] as ExtensionSettings;
     }
 
-    // If no settings found, return defaults and save them
     await save_settings(DEFAULT_SETTINGS);
     return DEFAULT_SETTINGS;
   } catch (error) {
-    console.error("Error loading settings:", error);
-
-    // On error, return defaults but don't try to save them (might fail for the same reason)
+    logger.error("Error loading settings:", error);
     return DEFAULT_SETTINGS;
   }
 }
@@ -59,23 +54,18 @@ export async function update_partial_settings(
   partialSettings: Partial<ExtensionSettings>
 ): Promise<ExtensionSettings> {
   try {
-    // Get current settings
     const currentSettings = await load_settings();
 
-    // Create updated settings by merging current with partial
     const updatedSettings: ExtensionSettings = {
       ...currentSettings,
       ...partialSettings,
     };
-    console.log("Current settings:", currentSettings);
-    console.log("Partial settings:", partialSettings);
 
-    // Save the updated settings
     await save_settings(updatedSettings);
 
     return updatedSettings;
   } catch (error) {
-    console.error("Error updating settings:", error);
+    logger.error("Error updating settings:", error);
     throw new Error(
       `Failed to update settings: ${error instanceof Error ? error.message : "Unknown error"}`
     );

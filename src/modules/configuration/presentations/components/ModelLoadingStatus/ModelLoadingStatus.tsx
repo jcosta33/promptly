@@ -1,7 +1,8 @@
-import { FC } from "react";
+import { type FC } from "react";
 
 import { Box } from "$/components/Box/Box";
 import { ProgressBar } from "$/components/ProgressBar/ProgressBar";
+import styles from "./ModelLoadingStatus.module.css";
 
 interface ModelLoadingStatusProps {
   isLoading: boolean;
@@ -36,9 +37,9 @@ export const ModelLoadingStatus: FC<ModelLoadingStatusProps> = ({
       )}
 
       {error && !isLoading && (
-        <Box p="sm" bg="transparent" style={{ color: "red" }}>
-          <h4 style={{ margin: "0 0 8px 0" }}>Error Loading Model</h4>
-          <p style={{ margin: 0 }}>{error}</p>
+        <Box p="sm" bg="transparent" className={styles.errorContainer}>
+          <h4 className={styles.errorTitle}>Error Loading Model</h4>
+          <p className={styles.errorMessage}>{error}</p>
         </Box>
       )}
     </Box>

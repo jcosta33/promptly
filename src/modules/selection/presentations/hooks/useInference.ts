@@ -1,8 +1,9 @@
 import { useState, useEffect, useRef } from "react";
 
-import { InferenceRequest } from "$/modules/inference/models/inference_model";
+import type { InferenceRequest } from "$/modules/inference/models/inference_model";
 import { EventType } from "$/modules/messaging/models/event_types";
-import { create_stream } from "$/modules/messaging/repositories/message_bus";
+import { create_stream_connection } from "$/modules/messaging/use_cases/create_stream_connection";
+import { logger } from "$/utils/logger";
 
 import type {
   InferenceChunkPayload,
@@ -35,7 +36,7 @@ const INITIAL_STATE: InferenceState = { status: "idle" };
 export const useInference = (options?: UseInferenceOptions) => {
   const [state, setState] = useState<InferenceState>(INITIAL_STATE);
 
-  const streamRef = useRef<ReturnType<typeof create_stream> | null>(null);
+  const streamRef = useRef<ReturnType<typeof create_stream_connection> | null>(null);
   const timeoutIdRef = useRef<number | null>(null);
 
   const cleanupStream = () => {
@@ -44,7 +45,7 @@ export const useInference = (options?: UseInferenceOptions) => {
       timeoutIdRef.current = null;
     }
     if (streamRef.current) {
-      console.log("Closing inference stream connection");
+      logger.info("Closing inference stream connection", { requestId: state.requestId });
       streamRef.current.close();
       streamRef.current = null;
     }
@@ -54,7 +55,7 @@ export const useInference = (options?: UseInferenceOptions) => {
     cleanupStream();
     const requestId = `req_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
 
-    const stream = create_stream({
+    const stream = create_stream_connection({
       connectionName: "promptly-inference",
     });
 

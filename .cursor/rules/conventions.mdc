@@ -1,0 +1,201 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# Promptly Chrome Extension: Coding Conventions
+
+**Preamble: Strict Enforcement**
+
+* **Purpose:** This rule set dictates mandatory standards for writing new code and refactoring existing code within the Promptly Chrome Extension project. Adherence ensures consistency, maintainability, and alignment with the defined architecture (`arch.md`) and core design principles (SOLID, KISS, DRY).
+* **Refactoring:** Applying these guidelines may involve refactoring existing code. Preserve original core functionality unless the explicit goal is architectural alignment (e.g., implementing event bus communication, extracting helpers).
+* **Consistency:** Strict adherence to these conventions is required. Use ESLint/Prettier tooling configured for this project to assist enforcement.
+
+---
+
+## 1. Imports and Configuration
+
+* **Rule 1.1: Direct React Imports.**
+  * **MUST** import specific types, hooks, and functions directly from `'react'` (e.g., `import { useState, type FC, type ReactNode, forwardRef } from 'react';`).
+  * **MUST NOT** use namespace qualifiers (e.g., `React.useState`, `React.FC`, `React.forwardRef`). Prefer direct named imports.
+* **Rule 1.2: Path Aliases (`$/`).**
+  * **MUST** use the `$/` path alias (pointing to `/src`) for all absolute imports originating from within the `src` directory (e.g., `import { Box } from '$/components/Box/Box';`).
+  * Relative imports (`./` or `../`) are ONLY acceptable for importing files within the *same immediate* module directory (e.g., importing a helper within the same domain module).
+* **Rule 1.3: Import Order.**
+  * **MUST** follow the ESLint-defined import order: `builtin`, `external`, `internal` (`$/`), `parent`, `sibling`, `index`, `type`. Rely on configured tooling (ESLint/Prettier) to enforce this.
+* **Rule 1.4: Direct Type Imports.**
+  * **MUST** use `import type { ... } from '...'` syntax when importing only types.
+* **Rule 1.5: TypeScript Strictness.**
+  * **MUST** enable and adhere to TypeScript `strict` mode and related flags (`strictNullChecks`, `noImplicitAny`, etc.) as defined in `tsconfig.json`. Code MUST comply.
+
+## 2. Types and Data Structures
+
+* **Rule 2.1: Types over Interfaces.**
+  * **MUST** use TypeScript `type` aliases instead of `interface` for defining object shapes (props, state, models, etc.).
+* **Rule 2.2: Const Objects over Enums.**
+  * **MUST** use `as const` objects instead of `enum` for fixed sets of string or number constants, unless `enum` is strictly required for external li`br`ary compatibility.
+
+## 3. Naming Conventions
+
+* **Rule 3.1: Domain/Business Logic Naming (`src/modules/*` excluding `presentations/`).**
+  * File Names: **MUST** use `snake_case.ts`.
+  * Variables: **MUST** use `snake_case`.
+  * Constants: **MUST** use `UPPER_SNAKE_CASE` (e.g., `DEFAULT_SETTINGS`).
+  * Function/Method Names: **MUST** use `snake_case`.
+  * Class Names: **MUST** use `PascalCase`.
+  * Type/Interface Names: **MUST** use `PascalCase`.
+* **Rule 3.2: Presentation Logic Naming (`src/components/*`, `src/modules/*/presentations/*`).**
+  * Component Files: **MUST** use `PascalCase.tsx`.
+  * CSS Module Files: **MUST** use `PascalCase.module.css`.
+  * Hook Files: **MUST** use `useHookName.ts`. (Strictly `.ts`, not `.tsx` unless returning JSX).
+  * Helper Files (Presentation): **MUST** use `camelCase.ts`.
+  * Component Names: **MUST** use `PascalCase`.
+  * Variables/Props/State/Functions: **MUST** use `camelCase`.
+* **Rule 3.3: Boolean Props/Variables.**
+  * **MUST** prefix boolean names descriptively (e.g., `isLoading`, `hasSelection`, `shouldChunkText`, `canExecute`).
+
+## 4. Code Structure, Style, and Simplicity (KISS)
+
+* **Rule 4.1: Mandatory Curly Braces.**
+  * **MUST** use curly braces `{}` for ALL control flow statements (`if`, `else`, `for`, `while`, etc.), even for single-line blocks.
+* **Rule 4.2: Explicit Returns.**
+  * Functions/methods **MUST** have explicit return type annotations. `void` MUST be used if nothing is returned.
+* **Rule 4.3: Conventional Conditionals.**
+  * **MUST** use standard `if (...) { ... } else { ... }` statements for conditional logic/rendering blocks. Logical AND (`&&`) MAY be used ONLY for simple, inline conditional rendering of a single element/value.
+* **Rule 4.4: No Chained Ternaries.**
+  * **MUST NOT** use nested or complex chained ternary operators. Refactor into `if/else if/else` or helper functions for clarity.
+* **Rule 4.5: Early Returns/Guard Clauses.**
+  * **MUST** use early returns (guard clauses) to handle invalid conditions or edge cases at the start of functions to reduce nesting and improve clarity.
+* **Rule 4.6: Avoid Unclear Shortcuts.**
+  * Write code for clarity. **MUST NOT** use overly terse syntax or language shortcuts if they obscure the intent or make the code harder to read. Prioritize readability.
+* **Rule 4.7: Simple Control Flow.**
+  * **MUST** avoid overly complex conditional logic within a single function. If `if/else if/else` chains become long or deeply nested, refactor the logic into smaller, well-named helper functions.
+* **Rule 4.8: Prefer Standard Functions in Domain Logic.**
+  * In domain logic layers (`models/`, `repositories/`, `transformers/`, `helpers/`, `use_cases/`), **MUST** prefer standard function declarations (`function my_function() {}`) over assigning arrow functions to variables (`const my_function = () => {}`), unless the variable assignment is necessary (e.g., for callbacks or specific export patterns). React/JSX conventions take precedence in presentation layers.
+
+## 5. Modularity, Responsibilities, and Dependencies (SOLID, DDD)
+
+* **Rule 5.1: Adhere to Architectural Layers.**
+  * Code **MUST** reside in the correct architectural layer as defined in `arch.md` (models, repositories, transformers, helpers, use_cases, presentations/*).
+  * Each layer **MUST** fulfill only its designated responsibility (e.g., Repositories ONLY handle IO, Transformers ONLY handle data mapping, Use Cases orchestrate business logic).
+* **Rule 5.2: Module Boundaries & Contract.**
+  * Code outside a domain module **MUST NOT** import from that module's internal implementation details (`repositories`, `transformers`, `helpers`, `presentations/components`, etc.).
+  * External interaction **MUST** occur ONLY through the defined contract (`events/`, `models/`, `use_cases/`).
+* **Rule 5.3: Dependency Direction.**
+  * Dependencies within a domain module generally flow towards abstractions or lower-level details (e.g., Use Cases use Repositories/Helpers).
+  * Presentation layers depend on Use Cases (via hooks) or Models/Events.
+  * **MUST NOT** create circular dependencies between modules or layers.
+  * **MUST NOT** have domain logic layers (repositories, use cases, helpers) depend directly on presentation layers (components, presentation hooks, views).
+* **Rule 5.4: Use Event Bus Abstraction.**
+  * ALL inter-module and cross-context communication **MUST** use the `messaging` module's event bus.
+  * **MUST NOT** use Chrome messaging APIs (`chrome.runtime.*`) directly outside the `messaging` module's repositories. (Dependency Inversion).
+* **Rule 5.5: Single Responsibility (Functions/Components).**
+  * Functions and components should aim to have a single, well-defined purpose. Refactor large components or functions that handle multiple distinct responsibilities into smaller, more focused units.
+
+## 6. Code Reuse and Abstraction (DRY)
+
+* **Rule 6.1: Extract Reusable Logic.**
+  * If identical or very similar blocks of logic appear in multiple places within the *same layer* and *domain*, **MUST** extract that logic into a shared helper function.
+    * Business logic -> `[Domain]/helpers/`
+    * Presentation logic -> `[Domain]/presentations/helpers/`
+    * Shared UI components -> `src/components/` or `[Domain]/presentations/components/`
+* **Rule 6.2: Avoid Premature Abstraction.**
+  * Extract reusable logic only when a clear, simple, and correct abstraction is identified. **PREFER** slight duplication over creating a complex, incorrect, or overly generic abstraction too early. Refactor later if a better abstraction becomes clear.
+
+## 7. Component Design Patterns (Presentation Layers)
+
+* **Rule 7.1: Function Components.**
+  * **MUST** use Function Components with Hooks exclusively. NEVER use Class Components.
+* **Rule 7.2: Props Destructuring.**
+  * **MUST** destructure props in the function signature.
+* **Rule 7.3: Named Exports.**
+  * **MUST** use named exports for components, hooks, and utilities. Avoid default exports.
+* **Rule 7.4: Composition.**
+  * Build UI and logic by composing smaller, focused components and hooks.
+* **Rule 7.5: JSDoc for Component Props.**
+  * Exported component prop `type` aliases (e.g., `ButtonProps`) **MUST** have JSDoc comments explaining the purpose of each prop, following the standard multi-line format.
+
+## 8. State Management and Communication
+
+* **Rule 8.1: Local State Preference.**
+  * **MUST** prefer local component state (`useState`, `useReducer`) for UI-related state within presentation layers. Lift state up as necessary.
+* **Rule 8.2: Domain State Persistence.**
+  * State requiring persistence (e.g., user settings) **MUST** be managed via domain repositories using `chrome.storage.local`.
+* **Rule 8.3: Event Bus Communication.**
+  * ALL inter-module and cross-context communication **MUST** occur via the abstracted event bus provided by the `messaging` module.
+* **Rule 8.4: UI Synchronization via `useSyncExternalStore`.**
+  * Presentation layers (hooks) **MUST** use `useSyncExternalStore` to subscribe to relevant events from the event bus and get snapshots of related state (e.g., settings) to ensure UI reactivity. Avoid manual subscriptions in `useEffect`.
+* **Rule 8.5: Prefer TanStack Query for Async Data.**
+  * For managing server state, async data fetching, caching, and synchronization, **MUST** prefer using `@tanstack/react-query` over manual implementation with `useEffect` and `useState`.
+* **Rule 8.6: Avoid `useEffect` for Non-Async Logic.**
+  * **MUST** avoid using `useEffect` for logic that doesn't involve managing external subscriptions, timers, or synchronizing with non-React systems. Derived state should typically be computed during rendering.
+* **Rule 8.7: Encapsulate Complex Effects in Hooks.**
+  * If `useEffect` is necessary (e.g., for complex external subscriptions not handled by TanStack Query, intricate DOM interactions), **MUST** encapsulate that effect within a dedicated custom hook (`useMyComplexEffect`).
+* **Rule 8.8: No Other Global State Libraries.**
+  * **MUST NOT** introduce external global state management libraries other than the allowed TanStack Query (e.g., Redux, Zustand, etc.).
+
+## 9. Styling
+
+* **Rule 9.1: CSS Modules.**
+  * **MUST** use CSS Modules (`*.module.css`) for component styling.
+* **Rule 9.2: `data-*` Attributes for Variants.**
+  * **MUST** prefer using `data-*` attributes (e.g., `data-variant="primary"`, `data-is-active="true"`) on elements to represent state or prop variations.
+  * CSS Module rules **MUST** target these attributes for styling (e.g., `.button[data-variant="primary"] { ... }`).
+  * Avoid complex dynamic class name concatenation in component logic.
+* **Rule 9.3: No External CSS Frameworks/Libraries.**
+  * **MUST NOT** use external CSS frameworks (like Tailwind) or UI component libraries. All UI components MUST be built in-house using CSS Modules and potentially shared components from `src/components`.
+* **Rule 9.4: Avoid Inline Styles.**
+  * **MUST NOT** use the `style` prop for static or conditional styling. Use CSS Modules. The `style` prop MAY be used ONLY for truly dynamic values derived directly from JS (e.g., calculated positions, animation values).
+
+## 10. Error Handling
+
+* **Rule 10.1: Error Boundaries.**
+  * **MUST** use React Error Boundaries strategically to catch rendering errors in component subtrees and display fallback UI. Place around major UI sections or routes.
+* **Rule 10.2: Async/API Error Handling.**
+  * Handle errors from asynchronous operations (e.g., LLM inference, Chrome API calls) gracefully within use cases or repositories. Propagate errors appropriately (e.g., via event bus messages or rejected promises) so UI layers can display user-friendly error states or messages.
+* **Rule 10.3: Error Reporting.**
+  * Integrate and use an error reporting service. Report caught errors (from Error Boundaries, async operations) with relevant context.
+
+## 11. Testing
+
+* **Rule 11.1: Test Runner/Library.**
+  * Use the project's designated test runner and libraries (Specify if known, e.g., Vitest, React Testing Library).
+* **Rule 11.2: Focus.**
+  * Test component behavior via user interactions (React Testing Library). Test pure functions (helpers, transformers) directly. Test use cases by mocking dependencies (repositories).
+* **Rule 11.3: Mocking.**
+  * Mock external dependencies (Chrome APIs, WebLLM) and repository interactions appropriately.
+
+## 12. Accessibility (a11y)
+
+* **Rule 12.1: Semantic HTML.**
+  * **MUST** use semantic HTML elements correctly.
+* **Rule 12.2: ARIA Attributes.**
+  * **MUST** add necessary ARIA attributes for custom controls or where semantics need clarification.
+* **Rule 12.3: Keyboard Navigation.**
+  * **MUST** ensure all interactive elements are keyboard accessible and focus order is logical.
+* **Rule 12.4: Labels.**
+  * **MUST** associate a visible `<label>` with every form input.
+
+## 13. Performance Considerations
+
+* **Rule 13.1: Rely on React Compiler (React 19+).**
+  * **MUST NOT** use manual memoization APIs (`React.memo`, `useMemo`, `useCallback`). Rely on the React Compiler (assuming React 19 or later with the compiler enabled) to handle optimizations automatically.
+* **Rule 13.2: Code Splitting.**
+  * Use `React.lazy()` and `Suspense` where appropriate (e.g., potentially for large components or sections loaded conditionally) to optimize loading.
+
+## 14. Code Comments and Documentation (Clean Code)
+
+* **Rule 14.1: Explain "Why", Not "What".**
+  * Comments **MUST ONLY** explain non-obvious logic or the rationale ("why") behind a specific implementation choice. Code should self-document the "what". Avoid redundant comments.
+  * *Example (Bad):* `// Loop through users` followed by `users.forEach(...)`.
+  * *Example (Bad):* `// Handle model change` followed by `const handleModelChange = ...`.
+  * *Example (Good):* `// Fallback to default settings if loading fails to prevent UI errors.`
+* **Rule 14.2: JSDoc for Contracts.**
+  * **MUST** add clear JSDoc comments to all exported elements designated as "Part of Contract" in the architecture (`events/`, `models/`, `use_cases/`). Follow standard JSDoc syntax.
+* **Rule 14.3: TODO/FIXME.**
+  * Use `// TODO:` and `// FIXME:` with context or ticket references. Address them proactively.
+
+## 15. Dependencies
+
+* **Rule 15.1: Strict Dependency Management.**
+  * **MUST NOT** add external dependencies beyond those explicitly listed here: React, TypeScript, WebLLM, react-markdown, react-highlight, highlight.js, useSyncExternalStore, `@tanstack/react-query`. All other functionality must be built in-house.

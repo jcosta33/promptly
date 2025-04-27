@@ -1,5 +1,5 @@
-import { MLCEngine } from "@mlc-ai/web-llm";
-import {
+import type { MLCEngine } from "@mlc-ai/web-llm";
+import type {
     InferenceParameters,
     Message,
 } from "../models/inference_model";
@@ -39,7 +39,7 @@ type GenerateTextArgs = {
     /**
      * Callback for completion
      */
-    onComplete?: (text: string, usage?: any) => void;
+    onComplete?: (text: string, usage?: { prompt_tokens?: number; completion_tokens?: number; total_tokens?: number; }) => void;
 }
 
 /**
@@ -91,7 +91,7 @@ export async function generate_text_stream(args: GenerateTextArgs): Promise<stri
 
         return completeText;
     } catch (error) {
-        console.error("Error generating text:", error);
+        // console.error("Error generating text:", error);
         throw error;
     }
 }

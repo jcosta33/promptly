@@ -1,5 +1,8 @@
+import { useState } from "react";
+
 import { EventType } from "$/modules/messaging/models/event_types";
 import { create_stream_connection } from "$/modules/messaging/use_cases/create_stream_connection";
+import { logger } from "$/utils/logger";
 
 export function useModelLoading() {
   const [progress, setProgress] = useState<number>(0);
@@ -20,11 +23,11 @@ export function useModelLoading() {
     setError(null);
 
     try {
-      console.log("Starting model load for:", modelId);
+      logger.info("Starting model load for:", modelId);
 
       // Generate a random request ID for tracking
       const requestId = `req_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
-      console.log("Generated request ID:", requestId);
+      logger.debug("Generated model load request ID:", requestId);
 
       // Create a persistent connection for the model loading process
       const connection = create_stream_connection({
@@ -33,7 +36,7 @@ export function useModelLoading() {
 
       // Set up listeners for progress and errors
       connection.onMessage(EventType.MODEL_LOADING_PROGRESS, (payload) => {
-        console.log("Received model loading progress:", payload);
+        logger.debug("Received model loading progress:", payload);
         setProgress(payload.progress * 100);
         setStatus(payload.status || payload.text || "Loading model...");
 
@@ -51,7 +54,7 @@ export function useModelLoading() {
         useStream: true,
       });
 
-      console.log("Model load request sent via stream");
+      logger.info("Model load request sent via stream", { requestId });
 
       // Set up a timeout to close the connection if no response
       const timeoutId = setTimeout(() => {
@@ -68,7 +71,7 @@ export function useModelLoading() {
         connection.close();
       };
     } catch (err) {
-      console.error("Error loading model:", err);
+      logger.error("Error initiating model load:", err);
       setError(
         `Error loading model: ${err instanceof Error ? err.message : String(err)}`
       );

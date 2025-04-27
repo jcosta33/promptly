@@ -1,30 +1,32 @@
 /**
- * Enum defining the types of text selections
+ * Constant object defining the types of text selections
  */
-export enum SelectionType {
-  WORD = "word",
-  SENTENCE = "sentence",
-  PARAGRAPH = "paragraph",
-  CODE = "code",
-  LIST = "list",
-  LONG_TEXT = "long_text",
-  TABLE = "table",
-  MATH_FORMULA = "math_formula",
-  QUOTE = "quote",
-  HEADER = "header",
-  DEFINITION = "definition",
-  URL = "url",
-  JSON_DATA = "json_data",
-  EMAIL = "email",
-  MARKDOWN = "markdown",
-  NUMERIC_DATA = "numeric_data",
-  CITATION = "citation",
-  SOCIAL_MEDIA = "social_media",
-  POETRY = "poetry",
-  API_REQUEST = "api_request",
-  ERROR_MESSAGE = "error_message",
-  TERMINAL_OUTPUT = "terminal_output",
-}
+export const SelectionType = {
+  WORD: "word",
+  SENTENCE: "sentence",
+  PARAGRAPH: "paragraph",
+  CODE: "code",
+  LIST: "list",
+  LONG_TEXT: "long_text",
+  TABLE: "table",
+  MATH_FORMULA: "math_formula",
+  QUOTE: "quote",
+  HEADER: "header",
+  DEFINITION: "definition",
+  URL: "url",
+  JSON_DATA: "json_data",
+  EMAIL: "email",
+  MARKDOWN: "markdown",
+  NUMERIC_DATA: "numeric_data",
+  CITATION: "citation",
+  SOCIAL_MEDIA: "social_media",
+  POETRY: "poetry",
+  API_REQUEST: "api_request",
+  ERROR_MESSAGE: "error_message",
+  TERMINAL_OUTPUT: "terminal_output",
+} as const;
+
+export type SelectionType = typeof SelectionType[keyof typeof SelectionType];
 
 /**
  * Processed selection data with additional analysis

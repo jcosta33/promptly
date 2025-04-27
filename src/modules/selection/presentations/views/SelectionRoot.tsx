@@ -1,14 +1,14 @@
-import React, { useState } from "react";
+import React, { useState, type FC } from "react";
 import { createRoot } from "react-dom/client";
-import { SelectionTrigger } from "../components/SelectionTrigger";
-import { PromptlyOverlay } from "./PromptOverlay";
+import { SelectionTrigger } from "../components/SelectionTrigger/SelectionTrigger";
+import { PromptlyOverlay } from "./PromptOverlay/PromptOverlay";
 import { useSelection } from "../hooks/useSelection";
 import "../../../../normalize.css";
 
 /**
  * Main component that serves as the entry point for the Promptly extension UI
  */
-const PromptlyRoot: React.FC = () => {
+const PromptlyRoot: FC = () => {
   const { selection, mousePosition, clearSelection } = useSelection();
   const [showOverlay, setShowOverlay] = useState(false);
 

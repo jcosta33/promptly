@@ -1,6 +1,6 @@
 import { EventType } from "../../messaging/models/event_types";
 import { send_message } from "../../messaging/use_cases/send_message";
-import { ExtensionSettings } from "../models/user_settings";
+import type { ExtensionSettings } from "../models/user_settings";
 import { update_partial_settings } from "../repositories/settings_repository";
 
 /**

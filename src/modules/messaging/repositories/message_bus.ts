@@ -1,10 +1,9 @@
 import {
-  MessageEvent,
+  type MessageEvent,
   create_message_event,
 } from "../helpers/create_message_event";
-import { EventType, PayloadForEvent } from "../models/event_types";
-import {
-  ConnectionOptions,
+import { type EventType, type PayloadForEvent } from "../models/event_types";
+import type {
   MessageHandler,
   MessageStreamOptions,
   TypedMessageHandler,
@@ -19,6 +18,7 @@ import {
   send_connection_message,
 } from "./chrome_connection";
 import { send_message, listen_for_messages } from "./chrome_message";
+import { logger } from "$/utils/logger";
 
 // Store event listeners by event type
 const eventListeners = new Map<EventType, Set<MessageHandler<any>>>();
@@ -66,7 +66,7 @@ export async function publish<TPayload = unknown>(
   tabId?: number,
   frameId?: number
 ): Promise<any> {
-  console.log(`Publishing event: ${eventType}`, {
+  logger.log(`Publishing event: ${eventType}`, {
     payload,
     tabId: tabId || "none (to extension)",
     frameId: frameId || "none",
@@ -76,10 +76,10 @@ export async function publish<TPayload = unknown>(
 
   try {
     const result = await send_message(event, tabId, frameId);
-    console.log(`Published event ${eventType} successfully:`, result);
+    logger.debug(`Published event ${eventType} successfully:`, result);
     return result;
   } catch (error) {
-    console.error(`Error publishing event ${eventType}:`, error);
+    logger.error(`Error publishing event ${eventType}:`, error);
     throw error;
   }
 }
@@ -92,14 +92,14 @@ export function initialize_message_bus(): () => void {
   const unsubscribeMessages = listen_for_messages<MessageEvent<any>>(
     (event, sender) => {
       if (!event || !event.type) {
-        console.warn("Received malformed event:", event);
+        logger.warn("Received malformed message event:", event);
         return;
       }
 
       // We have access to sender information if needed for future message filtering
       // For now, just log it for debugging purposes
       if (process.env.NODE_ENV !== "production") {
-        console.log("Message received from:", sender);
+        logger.log("Message received from:", sender);
       }
 
       const listeners = eventListeners.get(event.type);
@@ -109,12 +109,11 @@ export function initialize_message_bus(): () => void {
           try {
             handler(event);
           } catch (error) {
-            console.error(`Error in event handler for ${event.type}:`, error);
+            logger.error(`Error in event handler for ${event.type}:`, error);
           }
         });
       }
 
-      // Return any needed response data
       return { received: true, timestamp: Date.now() };
     }
   );
@@ -143,10 +142,7 @@ export function register_connection_handler(
           try {
             h(port);
           } catch (error) {
-            console.error(
-              `Error in connection handler for ${connectionType}:`,
-              error
-            );
+            logger.error(`Error in connection handler for ${connectionType}:`, error);
           }
         });
       }
@@ -195,7 +191,7 @@ export function create_stream(options: MessageStreamOptions): {
     port,
     (event) => {
       if (!event || !event.type) {
-        console.warn("Received malformed event via stream:", event);
+        logger.warn("Received malformed event via stream:", event);
         return;
       }
 
@@ -207,7 +203,7 @@ export function create_stream(options: MessageStreamOptions): {
           try {
             handler(event.payload);
           } catch (error) {
-            console.error(`Error in stream handler for ${eventType}:`, error);
+            logger.error(`Error in stream handler for ${eventType}:`, error);
           }
         });
       }
@@ -220,6 +216,7 @@ export function create_stream(options: MessageStreamOptions): {
     payload: PayloadForEvent<TEventType>
   ): void => {
     const event = create_message_event(eventType, payload);
+    logger.debug("Sending event via stream", { eventType, payload: event.payload });
     send_connection_message(port, event);
   };
 
@@ -228,7 +225,7 @@ export function create_stream(options: MessageStreamOptions): {
     try {
       port.disconnect();
     } catch (error) {
-      console.error("Error disconnecting port:", error);
+      logger.warn("Error disconnecting port (might be normal if already disconnected):", { portName: port.name, error });
     }
   };
 
@@ -298,7 +295,7 @@ export function listen_for_streams(
       ): void => {
         const event = create_message_event(eventType, payload);
 
-        console.log("Sending event", {
+        logger.log("Sending event", {
           eventType,
           payload,
         });
@@ -309,7 +306,7 @@ export function listen_for_streams(
         try {
           port.disconnect();
         } catch (error) {
-          console.error("Error disconnecting port:", error);
+          logger.error("Error disconnecting port:", error);
         }
         remove_connection(connectionType, identifier);
       },
@@ -335,10 +332,7 @@ export function listen_for_streams(
     try {
       onConnection(stream, identifier);
     } catch (error) {
-      console.error(
-        `Error handling new stream connection (${connectionType}/${identifier}):`,
-        error
-      );
+      logger.error(`Error handling new stream connection (${connectionType}/${identifier}):`, error);
     }
   });
 }

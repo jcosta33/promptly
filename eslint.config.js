@@ -49,7 +49,7 @@ export default tseslint.config(
       ...reactHooksPlugin.configs.recommended.rules,
       ...importPlugin.configs.recommended.rules,
 
-      // Specific rule adjustments and additions
+      "@typescript-eslint/prefer-for-of": "error",
       "react/prop-types": "off",
       "react/react-in-jsx-scope": "off",
       "no-console": "warn",

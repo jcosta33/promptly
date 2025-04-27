@@ -1,4 +1,5 @@
-import { MessageHandler } from "../models/message_types";
+import type { MessageHandler } from "../models/message_types";
+import { logger } from "$/utils/logger";
 
 /**
  * Send a one-time message to a specific tab or to the extension
@@ -20,7 +21,7 @@ export async function send_message<T = unknown, R = any>(
             return await chrome.runtime.sendMessage(message) as R;
         }
     } catch (error) {
-        console.error("Error sending message:", error);
+        logger.error("Error sending message:", error);
         throw error;
     }
 }
@@ -45,10 +46,10 @@ export function listen_for_messages<T = unknown, R = any>(handler: (message: T, 
                     try {
                         sendResponse(response);
                     } catch (error) {
-                        console.error("Error sending response:", error);
+                        logger.warn("Error sending response (might be normal if receiver disconnected):", error);
                     }
                 }).catch((error) => {
-                    console.error("Error in async handler:", error);
+                    logger.error("Error in async message handler:", error);
                     sendResponse({ error: error.message });
                 });
                 return true; // Indicates that sendResponse will be called asynchronously
@@ -57,7 +58,7 @@ export function listen_for_messages<T = unknown, R = any>(handler: (message: T, 
                 sendResponse(result);
             }
         } catch (error) {
-            console.error("Error handling message:", error);
+            logger.error("Error handling message synchronously:", error);
             sendResponse({ error: error instanceof Error ? error.message : "Unknown error" });
         }
         return false; // Indicates that sendResponse has been called synchronously

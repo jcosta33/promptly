@@ -1,4 +1,4 @@
-import { EventType } from "../models/event_types";
+import type { EventType } from "../models/event_types";
 import { publish } from "../repositories/message_bus";
 
 /**

@@ -1,37 +1,39 @@
+import type { Message } from "../../inference/models/inference_model";
+
 /**
  * Event types for the messaging system
  */
-export enum EventType {
+export const EventType = {
   // Configuration events
-  SETTINGS_UPDATE = "settings_update",
+  SETTINGS_UPDATE: "settings_update",
 
   // Inference events
-  MODEL_LOADING_PROGRESS = "model_loading_progress",
-  INFERENCE_CHUNK = "inference_chunk",
-  INFERENCE_COMPLETE = "inference_complete",
-  INFERENCE_ERROR = "inference_error",
-  CANCEL_INFERENCE = "cancel_inference",
+  MODEL_LOADING_PROGRESS: "model_loading_progress",
+  INFERENCE_CHUNK: "inference_chunk",
+  INFERENCE_COMPLETE: "inference_complete",
+  INFERENCE_ERROR: "inference_error",
+  CANCEL_INFERENCE: "cancel_inference",
 
   // Action events
-  REQUEST_ACTION = "request_action",
-  FOLLOW_UP_MESSAGE = "follow_up_message",
+  REQUEST_ACTION: "request_action",
+  FOLLOW_UP_MESSAGE: "follow_up_message",
 
   // Model management events
-  LOAD_MODEL = "load_model",
-  UNLOAD_MODEL = "unload_model",
-  MODEL_LOAD_REQUEST = "model_load_request",
+  LOAD_MODEL: "load_model",
+  UNLOAD_MODEL: "unload_model",
+  MODEL_LOAD_REQUEST: "model_load_request",
 
   // Selection events
-  SELECTION_UPDATED = "selection_updated",
+  SELECTION_UPDATED: "selection_updated",
 
   // Context events
-  PAGE_CONTEXT_UPDATED = "page_context_updated"
-}
+  PAGE_CONTEXT_UPDATED: "page_context_updated",
+} as const;
 
-// Default payload type for events without specific payloads
+export type EventType = typeof EventType[keyof typeof EventType];
+
 export type DefaultPayload = Record<string, any>;
 
-// Event payload type definitions
 export type ModelLoadingProgressPayload = {
   model: string;
   progress: number;
@@ -68,8 +70,9 @@ export type ModelLoadRequestPayload = {
   useStream?: boolean;
 };
 
+
 export type RequestActionPayload = {
-  messages?: any[];
+  messages?: Message[];
   parameters?: any;
   requestId?: string;
   action?: string;

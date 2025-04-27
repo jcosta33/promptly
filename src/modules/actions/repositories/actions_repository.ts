@@ -1,11 +1,11 @@
 import { PageCategory } from "../../context/models/context";
 import { PARAMETER_PRESETS } from "../../inference/models/inference_model";
 import { SelectionType } from "../../selection/models/selection";
-import { ActionDefinition, PromptContext } from "../models/action_models";
+import type { ActionDefinition } from "../models/action_models";
 
-/**
- * Predefined actions for different selection types and contexts
- */
+// Helper constant for actions applicable to all page categories
+const ALL_PAGE_CATEGORIES = Object.values(PageCategory);
+
 export const PREDEFINED_ACTIONS: ActionDefinition[] = [
   // Word/phrase actions
   {
@@ -13,7 +13,7 @@ export const PREDEFINED_ACTIONS: ActionDefinition[] = [
     name: "Define",
     description: "Provide a dictionary-style definition",
     selectionTypes: [SelectionType.WORD],
-    pageCategories: Object.values(PageCategory),
+    pageCategories: ALL_PAGE_CATEGORIES,
     systemPrompt:
       "You are a dictionary assistant. Provide a clear, concise definition for the given word or phrase. Include the part of speech and, if applicable, example sentences. \n\n**IMPORTANT:** Format the output using extensive Markdown. Use headings (`## Definition`, `## Examples`), bold (`**word**`), italics (`*part of speech*`), and bullet points (`*`) for examples to ensure clarity and readability.",
     userPrompt: "Define the term or phrase: {{selection}}",
@@ -25,7 +25,7 @@ export const PREDEFINED_ACTIONS: ActionDefinition[] = [
     name: "Find Synonyms",
     description: "List words with similar meanings",
     selectionTypes: [SelectionType.WORD],
-    pageCategories: Object.values(PageCategory),
+    pageCategories: ALL_PAGE_CATEGORIES,
     systemPrompt:
       "You are a thesaurus assistant. Provide a list of synonyms for the given word or phrase. Organize synonyms by different shades of meaning where applicable, and include brief notes about subtle differences in connotation or usage. \n\n**IMPORTANT:** Structure your output using extensive Markdown. Use headings (`## Meaning 1`, `## Meaning 2`), bullet points (`* synonym - *note*`), bold (`**word**`), and italics (`*nuance*`) for clarity and organization.",
     userPrompt: "List synonyms for: {{selection}}",
@@ -37,7 +37,7 @@ export const PREDEFINED_ACTIONS: ActionDefinition[] = [
     name: "Word Origin",
     description: "Explore the historical origin of a word",
     selectionTypes: [SelectionType.WORD],
-    pageCategories: Object.values(PageCategory),
+    pageCategories: ALL_PAGE_CATEGORIES,
     systemPrompt:
       "You are an etymology expert. Explain the origin and historical development of the given word. Trace it back to its roots if possible. \n\n**IMPORTANT:** Present the information using clear Markdown. Use headings (`## Origin`, `## History`), bold (`**language**`), italics (`*root word*`), and potentially bullet points (`*`) to break down the timeline or related words.",
     userPrompt: "Explain the etymology of: {{selection}}",
@@ -51,7 +51,7 @@ export const PREDEFINED_ACTIONS: ActionDefinition[] = [
     name: "Check Grammar",
     description: "Fix grammar and spelling issues",
     selectionTypes: [SelectionType.SENTENCE, SelectionType.PARAGRAPH],
-    pageCategories: Object.values(PageCategory),
+    pageCategories: ALL_PAGE_CATEGORIES,
     systemPrompt:
       "You are a grammar assistant. Analyze the provided text for grammatical errors, spelling mistakes, and awkward phrasing. Suggest corrections. \n\n**IMPORTANT:** Present the corrections clearly using Markdown. You could use blockquotes (`>`) for the original text, list errors with bullet points (`* **Error:** description`), and provide suggestions (`* **Suggestion:** corrected text`). Use bold/italics for emphasis.",
     userPrompt: "Check the grammar of this text: {{selection}}",
@@ -63,7 +63,7 @@ export const PREDEFINED_ACTIONS: ActionDefinition[] = [
     name: "Rephrase",
     description: "Rewrite the sentence in a different way",
     selectionTypes: [SelectionType.SENTENCE, SelectionType.PARAGRAPH],
-    pageCategories: Object.values(PageCategory),
+    pageCategories: ALL_PAGE_CATEGORIES,
     systemPrompt:
       "You are a rephrasing assistant. Rewrite the provided text in a different way, maintaining its original meaning. \n\n**IMPORTANT:** Format the rewritten text using clear Markdown. Use a heading (`## Rephrased Text`) and blockquotes (`>`) for the output. Use bold (`**key term**`) for emphasis.",
     userPrompt: "Rephrase this text: {{selection}}",
@@ -75,7 +75,7 @@ export const PREDEFINED_ACTIONS: ActionDefinition[] = [
     name: "Make Formal",
     description: "Rewrite in a more formal tone",
     selectionTypes: [SelectionType.SENTENCE, SelectionType.PARAGRAPH],
-    pageCategories: Object.values(PageCategory),
+    pageCategories: ALL_PAGE_CATEGORIES,
     systemPrompt:
       "You are a formal tone assistant. Rewrite the provided text in a more formal tone, suitable for professional or academic contexts. \n\n**IMPORTANT:** Present the rewritten text using Markdown. Use a heading (`## Formal Version`) and blockquotes (`>`) for the output. Use bold (`**key term**`) for emphasis.",
     userPrompt: "Convert this text to a formal tone: {{selection}}",
@@ -87,7 +87,7 @@ export const PREDEFINED_ACTIONS: ActionDefinition[] = [
     name: "Make Casual",
     description: "Rewrite in a more conversational tone",
     selectionTypes: [SelectionType.SENTENCE, SelectionType.PARAGRAPH],
-    pageCategories: Object.values(PageCategory),
+    pageCategories: ALL_PAGE_CATEGORIES,
     systemPrompt:
       "You are a conversational tone assistant. Rewrite the provided text in a more casual, friendly tone, suitable for social media or informal communication. \n\n**IMPORTANT:** Format the rewritten text using Markdown. Use a heading (`## Casual Version`) and blockquotes (`>`) for the output. Use bold (`**key term**`) for emphasis.",
     userPrompt: "Convert this text to a casual tone: {{selection}}",
@@ -103,7 +103,7 @@ export const PREDEFINED_ACTIONS: ActionDefinition[] = [
       SelectionType.SENTENCE,
       SelectionType.PARAGRAPH,
     ],
-    pageCategories: Object.values(PageCategory),
+    pageCategories: ALL_PAGE_CATEGORIES,
     systemPrompt:
       "You are a translation assistant. Translate the provided text into the target language (default to English if unspecified). \n\n**IMPORTANT:** Present the translation clearly using Markdown. You might use a blockquote (`>`) for the original text and then provide the translation. If translating a list or structured text, maintain the structure using Markdown lists (`*`, `1.`). Use bold (`**key term**`) for emphasis.",
     userPrompt:
@@ -118,7 +118,7 @@ export const PREDEFINED_ACTIONS: ActionDefinition[] = [
     name: "Summarize",
     description: "Create a concise summary",
     selectionTypes: [SelectionType.PARAGRAPH, SelectionType.LONG_TEXT],
-    pageCategories: Object.values(PageCategory),
+    pageCategories: ALL_PAGE_CATEGORIES,
     systemPrompt:
       "You are a summarization assistant. Create a concise summary of the provided text, capturing the main points and key information. \n\n**IMPORTANT:** Format the summary using clear Markdown. Use bullet points (`*`) for key points if helpful, or present as a well-structured paragraph. Use bold (`**key term**`) for emphasis.",
     userPrompt: "Summarize this text: {{selection}}",
@@ -131,7 +131,7 @@ export const PREDEFINED_ACTIONS: ActionDefinition[] = [
     name: "Simplify",
     description: "Rewrite using simpler language",
     selectionTypes: [SelectionType.PARAGRAPH, SelectionType.LONG_TEXT],
-    pageCategories: Object.values(PageCategory),
+    pageCategories: ALL_PAGE_CATEGORIES,
     systemPrompt:
       "You are a simplification assistant. Rewrite the provided text using simpler language, shorter sentences, and more straightforward explanations. Aim for a middle-school reading level (grade 6-8) while preserving all the important information and meaning. \n\n**IMPORTANT:** Present the simplified text using Markdown. Use headings (`## Simplified Text`) and blockquotes (`>`) for the output. Use bold (`**key term**`) for emphasis.",
     userPrompt: "Simplify this text: {{selection}}",
@@ -143,7 +143,7 @@ export const PREDEFINED_ACTIONS: ActionDefinition[] = [
     name: "Expand",
     description: "Elaborate on the text with more details",
     selectionTypes: [SelectionType.PARAGRAPH],
-    pageCategories: Object.values(PageCategory),
+    pageCategories: ALL_PAGE_CATEGORIES,
     systemPrompt:
       "You are a content expansion specialist. Take the provided text and expand it with relevant details, examples, and explanations. Maintain the original meaning and tone while making the content more comprehensive and valuable. \n\n**IMPORTANT:** Format the expanded text using extensive Markdown. Use headings (`## Expanded Text`), bullet points (`*`), and bold (`**key term**`) for emphasis.",
     userPrompt: "Expand on this text with more details: {{selection}}",
@@ -157,7 +157,7 @@ export const PREDEFINED_ACTIONS: ActionDefinition[] = [
     name: "Extract Key Points",
     description: "Identify and list main points",
     selectionTypes: [SelectionType.LONG_TEXT],
-    pageCategories: Object.values(PageCategory),
+    pageCategories: ALL_PAGE_CATEGORIES,
     systemPrompt:
       "You are an analysis assistant. Extract and list the key points, arguments, or insights from the provided text. Focus on identifying the most important information and organizing it in a clear, structured format. \n\n**IMPORTANT:** Present the key points using Markdown. Use a numbered list (`1.`) or bullet points (`*`) for the points. Use bold (`**topic**`) for clarity.",
     userPrompt: "Extract the key points from this text: {{selection}}",
@@ -170,7 +170,7 @@ export const PREDEFINED_ACTIONS: ActionDefinition[] = [
     name: "Create Outline",
     description: "Generate a structured outline",
     selectionTypes: [SelectionType.LONG_TEXT],
-    pageCategories: Object.values(PageCategory),
+    pageCategories: ALL_PAGE_CATEGORIES,
     systemPrompt:
       "You are a structure specialist. Create a hierarchical outline from the provided text, capturing its organization, main points, and supporting details. Use a clear format with headings, subheadings, and bullet points as appropriate. \n\n**IMPORTANT:** Use extensive Markdown formatting for the outline. Employ nested bullet points (`*`, `  *`, `    *`) or numbered lists (`1.`, `  a.`, `    i.`) to show hierarchy. Use bold (`**Section Title**`) for headings.",
     userPrompt: "Create an outline for this text: {{selection}}",
@@ -182,7 +182,7 @@ export const PREDEFINED_ACTIONS: ActionDefinition[] = [
     name: "TL;DR",
     description: "Ultra-concise summary",
     selectionTypes: [SelectionType.LONG_TEXT, SelectionType.PARAGRAPH],
-    pageCategories: Object.values(PageCategory),
+    pageCategories: ALL_PAGE_CATEGORIES,
     systemPrompt:
       "You are a brevity expert. Create an extremely concise summary (TL;DR) of the provided text in 1-2 sentences. Focus only on the most essential takeaway while dropping all supporting details and examples. \n\n**IMPORTANT:** Format the summary using Markdown. Use a heading (`## TL;DR`) and bold (`**key term**`) for emphasis.",
     userPrompt: "Create a TL;DR for this text: {{selection}}",
@@ -248,7 +248,7 @@ export const PREDEFINED_ACTIONS: ActionDefinition[] = [
     name: "Organize List",
     description: "Sort and structure the list",
     selectionTypes: [SelectionType.LIST],
-    pageCategories: Object.values(PageCategory),
+    pageCategories: ALL_PAGE_CATEGORIES,
     systemPrompt:
       "You are a list organization assistant. Reorganize the provided list to make it more logical and structured. Group related items, remove duplicates, and sort items in a meaningful way (alphabetical, chronological, etc. as appropriate). Format the list for readability. \n\n**IMPORTANT:** Present the organized list using Markdown. Use headings (`## List`) and bullet points (`*`) or numbered lists (`1.`) for clarity.",
     userPrompt: "Organize this list: {{selection}}",
@@ -260,7 +260,7 @@ export const PREDEFINED_ACTIONS: ActionDefinition[] = [
     name: "Prioritize List",
     description: "Order list items by importance",
     selectionTypes: [SelectionType.LIST],
-    pageCategories: Object.values(PageCategory),
+    pageCategories: ALL_PAGE_CATEGORIES,
     systemPrompt:
       "You are a prioritization assistant. Analyze the items in the provided list and reorganize them based on likely importance or urgency. Explain your reasoning briefly for the top items. If the context is unclear, offer a few different prioritization schemes. \n\n**IMPORTANT:** Present the prioritized list using Markdown. Use headings (`## Prioritized List`) and bullet points (`*`) or numbered lists (`1.`) for clarity. Use bold (`**key term**`) for emphasis.",
     userPrompt: "Prioritize this list: {{selection}}",
@@ -454,7 +454,7 @@ export const PREDEFINED_ACTIONS: ActionDefinition[] = [
     name: "Simplify Text",
     description: "Make complex text easier to understand",
     selectionTypes: [SelectionType.SENTENCE, SelectionType.PARAGRAPH],
-    pageCategories: Object.values(PageCategory), // Applicable everywhere
+    pageCategories: ALL_PAGE_CATEGORIES, // Applicable everywhere
     systemPrompt:
       "You are a helpful assistant that simplifies complex text. Rephrase the provided text to be easily understandable by a general audience or a specific level (e.g., a 5th grader) if requested. \n\n**IMPORTANT:** Structure your output using extensive Markdown. Use headings (`##`), bullet points (`*`), bold (`**text**`), italics (`*text*`), and blockquotes (`>`) where appropriate to make the explanation clear, organized, and easy to read. Break down complex ideas into smaller, digestible points.",
     userPrompt: "Simplify the following text:\n\n{{selection}}",
@@ -470,7 +470,7 @@ export const PREDEFINED_ACTIONS: ActionDefinition[] = [
       SelectionType.SENTENCE,
       SelectionType.PARAGRAPH,
     ],
-    pageCategories: Object.values(PageCategory), // Applicable everywhere
+    pageCategories: ALL_PAGE_CATEGORIES, // Applicable everywhere
     systemPrompt:
       "You are a translation assistant. Translate the provided text into the target language (default to English if unspecified). \n\n**IMPORTANT:** Present the translation clearly using Markdown. You might use a blockquote (`>`) for the original text and then provide the translation. If translating a list or structured text, maintain the structure using Markdown lists (`*`, `1.`). Use bold (`**text**`) for emphasis.",
     // TODO: Add mechanism to specify target language in userPrompt
@@ -487,7 +487,7 @@ export const PREDEFINED_ACTIONS: ActionDefinition[] = [
       SelectionType.SENTENCE,
       SelectionType.PARAGRAPH,
     ],
-    pageCategories: Object.values(PageCategory), // Applicable everywhere
+    pageCategories: ALL_PAGE_CATEGORIES, // Applicable everywhere
     systemPrompt:
       "You are an explanatory assistant. Provide a clear explanation, context, or background information for the selected text. Tailor the explanation to the likely context (e.g., explain jargon, define a concept, clarify a historical reference, explain a code snippet). \n\n**IMPORTANT:** Use extensive Markdown formatting for the explanation. Employ headings (`##`), bullet points (`*`), numbered lists (`1.`), bold (`**text**`), italics (`*text*`), code blocks (\`\`\`code\`\`\` or \`code\`), and blockquotes (`>`) to structure the explanation effectively. Make it highly readable and well-organized.",
     userPrompt: "Explain the following:\n\n{{selection}}",

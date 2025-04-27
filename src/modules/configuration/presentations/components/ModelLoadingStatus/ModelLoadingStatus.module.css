@@ -1,0 +1,17 @@
+.errorContainer {
+  padding: var(--space-sm);
+  background-color: transparent; /* Or a specific error background color */
+  color: var(--color-red-error);
+  border: 1px solid var(--color-red-error);
+  border-radius: var(--border-radius);
+}
+
+.errorTitle {
+  margin: 0 0 var(--space-sm) 0;
+  font-weight: var(--font-weight-bold);
+}
+
+.errorMessage {
+  margin: 0;
+  font-size: var(--font-size-sm);
+} 
