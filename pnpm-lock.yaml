@@ -12,8 +12,8 @@ importers:
         specifier: ^9.24.0
         version: 9.24.0
       '@mlc-ai/web-llm':
-        specifier: ^0.2.78
-        version: 0.2.78
+        specifier: ^0.2.79
+        version: 0.2.79
       '@tanstack/react-query':
         specifier: ^5.74.4
         version: 5.74.4(react@19.1.0)
@@ -520,8 +520,8 @@ packages:
       '@types/react': '>=16'
       react: '>=16'
 
-  '@mlc-ai/web-llm@0.2.78':
-    resolution: {integrity: sha512-ptqDNzHnfDyNZj7vjp9IaY5U/QDweXMe5wNzErOmRT1gqj8AaMvcqbj7HroPDzhXJGM7BZpDjANV5MhXhKOosA==}
+  '@mlc-ai/web-llm@0.2.79':
+    resolution: {integrity: sha512-Hy1ZHQ0o2bZGZoVnGK48+fts/ZSKwLe96xjvqL/6C59Mem9HoHTcFE07NC2E23mRmhd01tL655N6CPeYmwWgwQ==}
 
   '@napi-rs/wasm-runtime@0.2.9':
     resolution: {integrity: sha512-OKRBiajrrxB9ATokgEQoG87Z25c67pCpYcCwmXYX8PBftC9pBfN18gnm/fh1wurSLEKIAt+QRFLFCQISrb66Jg==}
@@ -4602,7 +4602,7 @@ snapshots:
       '@types/react': 19.1.0
       react: 19.1.0
 
-  '@mlc-ai/web-llm@0.2.78':
+  '@mlc-ai/web-llm@0.2.79':
     dependencies:
       loglevel: 1.9.2
 
