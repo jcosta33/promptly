@@ -2,7 +2,7 @@ const LOG_PREFIX = "[Promptly]";
 
 type LogLevel = "log" | "warn" | "error" | "info" | "debug";
 
-const isDebugMode = false; // Or: process.env.NODE_ENV !== 'production';
+const isDebugMode = true; // Or: process.env.NODE_ENV !== 'production';
 
 function logInternal(level: LogLevel, ...args: any[]): void {
   if (!isDebugMode) {

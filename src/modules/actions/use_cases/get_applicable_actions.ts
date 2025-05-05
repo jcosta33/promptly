@@ -33,18 +33,9 @@ export function get_applicable_actions(
       return criteria.dataTypes.includes(type);
     });
 
-    const matchesPageCategory = action.pageCategories.includes(
-      criteria.pageCategory
-    );
-
-    console.log(
-      "matchesContextType",
-      matchesContextType,
-      "matchesDataType",
-      matchesDataType,
-      "matchesPageCategory",
-      matchesPageCategory
-    );
+    const matchesPageCategory = action.pageCategories.some((category) => {
+      return criteria.pageCategory.includes(category);
+    });
 
     return matchesContextType && matchesDataType && matchesPageCategory;
   });

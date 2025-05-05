@@ -8,6 +8,7 @@ import { looks_like_api_request } from "./looks_like_api_request";
 import { looks_like_citation } from "./looks_like_citation";
 import { looks_like_numeric_data } from "./looks_like_numeric_data";
 import { detect_code_language } from "./detect_code_language";
+import { logger } from "$/utils/logger";
 
 const MAX_WORDS_FOR_WORD_TYPE = 3;
 const MAX_CHARS_FOR_SENTENCE_TYPE = 200;
@@ -33,6 +34,20 @@ export function detect_selection_types(
   const detectedContextTypes: Set<SelectionContextType> = new Set();
   const detectedDataTypes: Set<SelectionDataType> = new Set();
 
+  // --- Active Element Check (Primary Input Detection) ---
+  const activeElement = document.activeElement;
+  if (
+    activeElement &&
+    (activeElement instanceof HTMLInputElement ||
+      activeElement instanceof HTMLTextAreaElement ||
+      (activeElement instanceof HTMLElement && activeElement.isContentEditable))
+  ) {
+    logger.log(
+      "Active element is an input, textarea, or contenteditable element"
+    );
+    detectedContextTypes.add(SelectionContextType.INPUT);
+  }
+
   const range = selection.rangeCount > 0 ? selection.getRangeAt(0) : null;
   const container = range?.commonAncestorContainer;
 
@@ -47,12 +62,16 @@ export function detect_selection_types(
   if (range && parentElement) {
     // Helper to check if the parentElement is inside a specific tag
     const isInside = (selector: string): boolean => {
-      // Use the single parentElement variable
       return parentElement.closest(selector) !== null;
     };
 
+    logger.log("Checking for specific HTML tags");
     // Check for specific HTML tags more reliably
-    if (isInside("input, textarea")) {
+    if (
+      !detectedContextTypes.has(SelectionContextType.INPUT) && // Avoid redundant check
+      isInside("input, textarea, [contenteditable]")
+    ) {
+      logger.log("Adding input context type");
       detectedContextTypes.add(SelectionContextType.INPUT);
     } else if (isInside("table")) {
       detectedContextTypes.add(SelectionContextType.TABLE);

@@ -88,7 +88,6 @@ export const PREDEFINED_ACTIONS: ActionDefinition[] = [
     contextTypes: [
       SelectionContextType.GENERAL,
       SelectionContextType.QUOTE,
-      SelectionContextType.CODE_BLOCK,
       SelectionContextType.MATH,
       SelectionContextType.DEFINITION_LIST,
       SelectionContextType.HEADER,
@@ -97,9 +96,7 @@ export const PREDEFINED_ACTIONS: ActionDefinition[] = [
       SelectionDataType.TEXT,
       SelectionDataType.SENTENCE,
       SelectionDataType.PARAGRAPH,
-      SelectionDataType.CODE_LIKE,
       SelectionDataType.LATEX,
-      SelectionDataType.ERROR_LIKE,
       SelectionDataType.TERMINAL_LIKE,
       SelectionDataType.PLAIN_TEXT,
     ],
@@ -493,10 +490,7 @@ export const PREDEFINED_ACTIONS: ActionDefinition[] = [
     id: "explain_code",
     name: "Explain",
     description: "Explain what the code does",
-    contextTypes: [
-      SelectionContextType.CODE_BLOCK,
-      SelectionContextType.GENERAL,
-    ],
+    contextTypes: [SelectionContextType.CODE_BLOCK],
     dataTypes: [SelectionDataType.CODE_LIKE, SelectionDataType.TERMINAL_LIKE],
     pageCategories: [
       PageCategory.DEV_DOCS,
@@ -600,14 +594,11 @@ export const PREDEFINED_ACTIONS: ActionDefinition[] = [
     icon: PiChatCenteredText,
   },
   {
-    id: "explain_error_message",
+    id: "explain_technical_error",
     name: "Explain",
     description: "Explain a technical error",
-    contextTypes: [
-      SelectionContextType.GENERAL,
-      SelectionContextType.CODE_BLOCK,
-    ],
-    dataTypes: [SelectionDataType.ERROR_LIKE, SelectionDataType.CODE_LIKE],
+    contextTypes: [SelectionContextType.CODE_BLOCK],
+    dataTypes: [SelectionDataType.ERROR_LIKE],
     pageCategories: ALL_PAGE_CATEGORIES,
     systemPrompt:
       "You are a helpful debugging assistant. The user has selected text that appears to be a technical error message. Explain what this error likely means in simple terms. Suggest potential common causes or general troubleshooting steps relevant to this type of error. Do NOT invent specific solutions without more context. \n\n**IMPORTANT:** Format the explanation using Markdown. Use headings (`## Error Explanation`, `## Possible Causes`) and bullet points (`*`). Use inline code (`code`) for technical terms.",
