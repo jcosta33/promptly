@@ -57,6 +57,7 @@ export default {
   name: "wxt/auto-imports",
   languageOptions: {
     globals,
+    /** @type {import('eslint').Linter.SourceType} */
     sourceType: "module",
   },
 };

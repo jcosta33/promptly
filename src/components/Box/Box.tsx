@@ -3,7 +3,7 @@ import styles from "./Box.module.css";
 
 type BoxPadding = "xxs" | "xs" | "sm" | "md" | "lg" | "xl";
 type BoxMargin = "xxs" | "xs" | "sm" | "md" | "lg" | "xl";
-type BoxElevation = "1" | "2";
+type BoxElevation = "0" | "1" | "2" | "3";
 type BoxBgColor =
   | "primary"
   | "secondary"

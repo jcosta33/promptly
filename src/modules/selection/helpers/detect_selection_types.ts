@@ -1,4 +1,13 @@
 import { SelectionContextType, SelectionDataType } from "../models/selection";
+import { looks_like_email } from "./looks_like_email";
+import { looks_like_markdown } from "./looks_like_markdown";
+import { looks_like_url } from "./looks_like_url";
+import { looks_like_poetry } from "./looks_like_poetry";
+import { looks_like_social_media } from "./looks_like_social_media";
+import { looks_like_api_request } from "./looks_like_api_request";
+import { looks_like_citation } from "./looks_like_citation";
+import { looks_like_numeric_data } from "./looks_like_numeric_data";
+import { detect_code_language } from "./detect_code_language";
 
 const MAX_WORDS_FOR_WORD_TYPE = 3;
 const MAX_CHARS_FOR_SENTENCE_TYPE = 200;
@@ -79,7 +88,6 @@ export function detect_selection_types(
     }
   }
 
-  // JSON Check (keep try-catch)
   if (cleanedText.startsWith("{") || cleanedText.startsWith("[")) {
     try {
       JSON.parse(cleanedText);
@@ -119,18 +127,41 @@ export function detect_selection_types(
     detectedDataTypes.add(SelectionDataType.ERROR_LIKE);
   }
 
-  if (/^[\w\-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(cleanedText.trim())) {
+  if (looks_like_email(cleanedText)) {
     detectedDataTypes.add(SelectionDataType.EMAIL);
   }
 
-  if (!detectedDataTypes.has(SelectionDataType.URL)) {
-    if (/^https?:\/\/[^\s/$.?#].[^\s]*$/.test(cleanedText.trim())) {
-      detectedDataTypes.add(SelectionDataType.URL);
-    }
+  if (looks_like_url(cleanedText)) {
+    detectedDataTypes.add(SelectionDataType.URL);
   }
 
-  if (/[\*\_\`\#\[\]\(\)!]/.test(cleanedText) && cleanedText.includes("\n")) {
+  if (looks_like_markdown(cleanedText)) {
     detectedDataTypes.add(SelectionDataType.MARKDOWN);
+  }
+
+  if (looks_like_poetry(cleanedText)) {
+    detectedDataTypes.add(SelectionDataType.POETRY);
+  }
+
+  if (looks_like_social_media(cleanedText)) {
+    detectedDataTypes.add(SelectionDataType.SOCIAL_MEDIA);
+  }
+
+  if (looks_like_api_request(cleanedText)) {
+    detectedDataTypes.add(SelectionDataType.CODE_LIKE);
+  }
+
+  if (looks_like_citation(cleanedText)) {
+    detectedDataTypes.add(SelectionDataType.CITATION);
+  }
+
+  if (looks_like_numeric_data(cleanedText)) {
+    detectedDataTypes.add(SelectionDataType.NUMERIC);
+  }
+
+  const codeLanguage = detect_code_language(cleanedText);
+  if (codeLanguage !== "plaintext") {
+    detectedDataTypes.add(SelectionDataType.CODE_LIKE);
   }
 
   const sentenceTerminators = /[.!?]$/;
@@ -157,8 +188,9 @@ export function detect_selection_types(
       ) {
         detectedDataTypes.add(SelectionDataType.SENTENCE);
       } else if (sentenceEndCount === 0) {
+        detectedDataTypes.add(SelectionDataType.TEXT);
       } else {
-        detectedDataTypes.add(SelectionDataType.PARAGRAPH); // Fragment
+        detectedDataTypes.add(SelectionDataType.PARAGRAPH);
       }
     } else {
       detectedDataTypes.add(SelectionDataType.PARAGRAPH);

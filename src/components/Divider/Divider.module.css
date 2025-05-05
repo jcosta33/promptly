@@ -4,14 +4,12 @@
   margin: 0;
 }
 
-/* Orientations */
 .horizontal {
   width: 100%;
   height: 0;
   border-top-width: var(--border-width);
   border-top-style: solid;
   border-top-color: var(--border-color);
-  margin: var(--space-md) 0;
 }
 
 .vertical {
@@ -20,7 +18,6 @@
   border-left-width: var(--border-width);
   border-left-style: solid;
   border-left-color: var(--border-color);
-  margin: 0 var(--space-md);
   display: inline-block;
 }
 

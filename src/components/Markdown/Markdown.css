@@ -27,45 +27,64 @@
 }
 
 .markdownHeading1 {
-  font-size: var(--font-size-xxl);
-  font-weight: var(--font-weight-bold);
+  font-size: var(--font-size-xl);
   margin-bottom: var(--space-md);
   color: var(--color-text-primary);
+  &:not(:first-child) {
+    margin-top: var(--space-lg);
+  }
 }
 
 .markdownHeading2 {
-  font-size: var(--font-size-xl);
-  font-weight: var(--font-weight-bold);
+  font-size: var(--font-size-lg);
   margin-bottom: var(--space-md);
   color: var(--color-text-primary);
+
+  &:not(:first-child) {
+    margin-top: var(--space-lg);
+  }
 }
 
 .markdownHeading3 {
-  font-size: var(--font-size-lg);
-  font-weight: var(--font-weight-bold);
+  font-size: var(--font-size-md);
   margin-bottom: var(--space-md);
   color: var(--color-text-primary);
+
+  &:not(:first-child) {
+    margin-top: var(--space-md);
+  }
 }
 
 .markdownHeading4 {
-  font-size: var(--font-size-md);
-  font-weight: var(--font-weight-bold);
+  font-size: var(--font-size-sm);
   margin-bottom: var(--space-md);
   color: var(--color-text-primary);
+
+  &:not(:first-child) {
+    margin-top: var(--space-md);
+  }
 }
 
 .markdownHeading5 {
-  font-size: var(--font-size-sm);
+  font-size: var(--font-size-xs);
   font-weight: var(--font-weight-bold);
-  margin-bottom: var(--space-md);
+  margin-bottom: var(--space-sm);
   color: var(--color-text-primary);
+
+  &:not(:first-child) {
+    margin-top: var(--space-md);
+  }
 }
 
 .markdownHeading6 {
-  font-size: var(--font-size-xs);
+  font-size: var(--font-size-xxs);
   font-weight: var(--font-weight-bold);
-  margin-bottom: var(--space-md);
+  margin-bottom: var(--space-sm);
   color: var(--color-text-primary);
+
+  &:not(:first-child) {
+    margin-top: var(--space-md);
+  }
 }
 
 .markdownCode {
@@ -73,6 +92,15 @@
   border-radius: var(--border-radius-sm);
   padding: 0 var(--space-sm);
   color: var(--color-text-primary);
+  max-width: 100%;
+}
+
+.markdownCodeBlock {
+  background-color: var(--color-background-tertiary);
+  border-radius: var(--border-radius);
+  padding: var(--space-sm) !important;
+  margin-bottom: var(--space-md);
+  width: 100%;
 }
 
 .markdownBlockquote {

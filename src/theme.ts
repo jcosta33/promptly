@@ -39,7 +39,7 @@ export const CSS_VARIABLES = {
   "--text-color": { light: "#000000", dark: "#ffffff" },
   "--inverted-text-color": { light: "#ffffff", dark: "#000000" },
   "--color-text-muted": { light: "#616161", dark: "#bdbdbd" },
-  "--border-color": { light: "#f1f1f1", dark: "#111111" },
+  "--border-color": { light: "#f9f9f9", dark: "#252525" },
   "--accent-color": { light: "#9c27b0", dark: "#ce93d8" },
   "--disabled-color": { light: "#9e9e9e", dark: "#616161" },
 
@@ -60,8 +60,8 @@ export const CSS_VARIABLES = {
     dark: "var(--color-accent-vibrant)",
   },
 
-  "--inner-highlight": { light: "#ffffff", dark: "#424242" },
-  "--inner-shadow": { light: "#808080", dark: "#212121" },
+  "--inner-highlight": { light: "#ffffff", dark: "#222222" },
+  "--inner-shadow": { light: "#e1e1e1", dark: "#111111" },
 
   "--color-text-primary": { light: "#000000", dark: "#ffffff" },
   "--color-text-secondary": { light: "#616161", dark: "#bdbdbd" },
@@ -81,6 +81,7 @@ export const CSS_VARIABLES = {
   "--space-xl": "48px",
   "--space-xxl": "64px",
 
+  "--font-size-xxs": "8px",
   "--font-size-xs": "10px",
   "--font-size-sm": "12px",
   "--font-size-md": "14px",
@@ -95,10 +96,11 @@ export const CSS_VARIABLES = {
 
   "--border-width": "2px",
   "--border-width-thick": "4px",
-  "--border-radius": "6px",
-  "--border-radius-sm": "3px",
+  "--border-radius": "4px",
+  "--border-radius-sm": "2px",
   "--shadow-offset": "4px",
   "--shadow-offset-lg": "8px",
+  "--shadow-offset-xl": "12px",
 
   "--control-height-sm": "28px",
   "--control-height-md": "36px",

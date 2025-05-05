@@ -2,7 +2,12 @@ import { forwardRef, type ReactNode, type ButtonHTMLAttributes } from "react";
 import styles from "./Button.module.css";
 
 export type ButtonSize = "sm" | "md" | "lg";
-export type ButtonColor = "primary" | "secondary" | "tertiary" | "danger" | "default";
+export type ButtonColor =
+  | "primary"
+  | "secondary"
+  | "tertiary"
+  | "danger"
+  | "default";
 
 export type ButtonProps = {
   children?: ReactNode;
@@ -11,6 +16,7 @@ export type ButtonProps = {
   fullWidth?: boolean;
   isLoading?: boolean;
   type?: "button" | "submit" | "reset";
+  active?: boolean;
   disabled?: boolean;
   className?: string;
   id?: string;
@@ -32,6 +38,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       fullWidth = false,
       isLoading = false,
       type = "button",
+      active = false,
       disabled = false,
       className = "",
       ...rest
@@ -47,6 +54,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         data-promptly-button-color={color}
         data-promptly-button-fullwidth={fullWidth}
         data-promptly-button-loading={isLoading}
+        data-promptly-button-active={active}
         disabled={disabled || isLoading}
         {...rest}
       >

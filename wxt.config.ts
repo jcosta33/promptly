@@ -27,6 +27,12 @@ export default defineConfig({
   },
 
   manifest: {
+    content_scripts: [
+      {
+        matches: ["<all_urls>"],
+        css: ["css/normalize.css"],
+      },
+    ],
     name: "Promptly",
     description:
       "Select text on any website and analyze it using WebLLM models that run directly in your browser.",

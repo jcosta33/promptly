@@ -12,6 +12,7 @@ import styles from "./ResponseDisplay.module.css";
 
 export type ResponseDisplayProps = {
   messages: Message[];
+  hideFirstMessage: boolean;
   isLoading: boolean;
   error?: string;
   onSendFollowUp: (message: string) => void;
@@ -23,6 +24,7 @@ export type ResponseDisplayProps = {
  */
 export const ResponseDisplay: FC<ResponseDisplayProps> = ({
   messages,
+  hideFirstMessage,
   isLoading,
   error,
   onSendFollowUp,
@@ -55,28 +57,31 @@ export const ResponseDisplay: FC<ResponseDisplayProps> = ({
   return (
     <>
       {messages.length > 0 ? (
-        <Box className={styles.responseContainer} elevation="1" bg="secondary">
-          {messages.toReversed().map((msg, index) => {
-            return msg.role !== "system" ? (
-              msg.role === "user" ? (
-                <Box
-                  key={index}
-                  className={styles.message}
-                  data-role={msg.role}
-                >
-                  {String(msg.content || "Thinking...")}
-                </Box>
-              ) : (
-                <Box
-                  key={index}
-                  className={styles.message}
-                  data-role={msg.role}
-                >
-                  <Markdown>{String(msg.content || "Thinking...")}</Markdown>
-                </Box>
-              )
-            ) : null;
-          })}
+        <Box className={styles.responseContainer} elevation="0" bg="secondary">
+          {messages
+            .filter(
+              (msg, index) =>
+                (!hideFirstMessage || index !== 1) && msg.role !== "system"
+            )
+            .toReversed()
+            .map((msg, index) => {
+              return msg.role !== "system" ? (
+                msg.role === "user" ? (
+                  <Box
+                    key={index}
+                    className={styles.message}
+                    elevation="0"
+                    data-role={msg.role}
+                  >
+                    {msg.content}
+                  </Box>
+                ) : msg.content ? (
+                  <Markdown className={styles.message}>{msg.content}</Markdown>
+                ) : (
+                  <span className={styles.thinking}>Thinking...</span>
+                )
+              ) : null;
+            })}
 
           {error && (
             <Box className={styles.errorContainer}>

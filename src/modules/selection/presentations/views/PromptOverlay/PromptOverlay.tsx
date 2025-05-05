@@ -17,7 +17,8 @@ import { useInference } from "../../hooks/useInference";
 
 import styles from "./PromptOverlay.module.css";
 import { logger } from "$/utils/logger";
-import { PiSkipBackBold, PiXCircleBold } from "react-icons/pi";
+import { PiXCircleBold } from "react-icons/pi";
+import { Divider } from "$/components/Divider/Divider";
 
 export type PromptlyOverlayProps = {
   selectionData: SelectionData;
@@ -35,6 +36,10 @@ export const PromptlyOverlay: FC<PromptlyOverlayProps> = ({
 }) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [pageContext, setPageContext] = useState<{ category: PageCategory }>();
+  const [hideFirstMessage, setHideFirstMessage] = useState(false);
+  const [activeAction, setActiveAction] = useState<ActionDefinition | null>(
+    null
+  );
 
   const dragHandleRef = useRef<HTMLDivElement>(null);
 
@@ -82,6 +87,9 @@ export const PromptlyOverlay: FC<PromptlyOverlayProps> = ({
   }
 
   const handleActionSelect = (action: ActionDefinition) => {
+    setActiveAction(action);
+    setHideFirstMessage(true);
+
     const contextString = `Consider the following context when formulating your response:
                           --- CONTEXT ---
                             Page URL: ${selectionData.pageUrl}
@@ -162,22 +170,9 @@ export const PromptlyOverlay: FC<PromptlyOverlayProps> = ({
         userSelect: isDragging ? "none" : "auto",
       }}
     >
-      <Box p="md" bg="secondary" elevation="2">
+      <Box p="md" bg="secondary" elevation="3">
         <Flex direction="column" gap="md">
           <Flex ref={dragHandleRef} justify="between">
-            {messages.length > 0 && (
-              <Button
-                size="sm"
-                onClick={() => {
-                  cancelInference();
-                  setMessages([]);
-                }}
-                aria-label="Back"
-              >
-                <PiSkipBackBold />
-              </Button>
-            )}
-
             <Text as="h2" weight="bold" size="xl">
               Promptly
             </Text>
@@ -191,46 +186,48 @@ export const PromptlyOverlay: FC<PromptlyOverlayProps> = ({
             </button>
           </Flex>
 
+          <Divider />
+
           <Text as="blockquote" size="xs" color="muted">
             &quot;{selectionData.text.substring(0, 100)}
             {selectionData.text.length > 100 ? "..." : ""}&quot;
           </Text>
 
-          {messages.length === 0 && (
-            <Flex wrap="wrap" gap="sm">
-              {actions.map((action) => {
-                return (
-                  <Button
-                    key={action.id}
-                    onClick={() => {
-                      return handleActionSelect(action);
-                    }}
-                  >
-                    <Flex align="center" gap="sm">
-                      <action.icon className={styles.actionIcon} />
-                      {action.name}
-                    </Flex>
-                  </Button>
-                );
-              })}
-
-              {actions.length === 0 && !pageContext && (
-                <Text>Loading context...</Text>
-              )}
-
-              {actions.length === 0 && pageContext && (
-                <Text>No actions available for this selection/page.</Text>
-              )}
-            </Flex>
-          )}
-
           <ResponseDisplay
             messages={messages}
+            hideFirstMessage={hideFirstMessage}
             isLoading={isLoading}
             error={inferenceState.error}
             onSendFollowUp={handleSendFollowUp}
             onStop={handleStop}
           />
+
+          <Flex wrap="wrap" gap="sm">
+            {actions.map((action) => {
+              return (
+                <Button
+                  key={action.id}
+                  onClick={() => {
+                    return handleActionSelect(action);
+                  }}
+                  active={activeAction?.id === action.id}
+                >
+                  <Flex align="center" gap="sm">
+                    <action.icon className={styles.actionIcon} />
+                    {action.name}
+                  </Flex>
+                </Button>
+              );
+            })}
+
+            {actions.length === 0 && !pageContext && (
+              <Text>Loading context...</Text>
+            )}
+
+            {actions.length === 0 && pageContext && (
+              <Text>No actions available for this selection/page.</Text>
+            )}
+          </Flex>
         </Flex>
       </Box>
     </div>

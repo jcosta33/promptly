@@ -22,6 +22,7 @@ export type SelectionContextType =
  */
 export const SelectionDataType = {
   WORD: "word", // Few words, no sentence structure
+  TEXT: "text", // Any text longer than a word, but not a sentence
   SENTENCE: "sentence", // A single complete sentence
   PARAGRAPH: "paragraph", // Multi-sentence text block
   LONG_TEXT: "long_text", // Exceeds a certain word/char count

@@ -28,12 +28,13 @@ export const SelectionTrigger: FC<SelectionTriggerProps> = ({
       }}
     >
       <Button
-        color="tertiary"
+        color="primary"
+        size="sm"
         onClick={onClick}
         aria-label="Open Promptly"
         className={styles.triggerButton}
       >
-        <PiLightbulbFilamentDuotone className={styles.triggerIcon} size={16} />
+        <PiLightbulbFilamentDuotone size={16} />
       </Button>
     </div>
   );

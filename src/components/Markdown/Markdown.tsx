@@ -34,7 +34,9 @@ export const Markdown: FC<MarkdownProps> = ({ children, className }) => {
             const isMultiLine = codeText.includes("\n");
 
             if (isMultiLine) {
-              return <Highlight>{codeText}</Highlight>;
+              return (
+                <Highlight className="markdownCodeBlock">{codeText}</Highlight>
+              );
             } else {
               return (
                 <code className="markdownCode" {...props}>

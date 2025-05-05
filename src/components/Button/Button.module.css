@@ -22,7 +22,8 @@
     transform: translateY(-1px);
   }
 
-  &:active:not(:disabled) {
+  &:active:not(:disabled),
+  &[data-promptly-button-active="true"]:not(:disabled) {
     box-shadow: var(--inset-border);
     transform: translateY(1px) translateX(1px);
   }

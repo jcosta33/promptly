@@ -3,7 +3,6 @@ import { createRoot } from "react-dom/client";
 import { SelectionTrigger } from "../components/SelectionTrigger/SelectionTrigger";
 import { PromptlyOverlay } from "./PromptOverlay/PromptOverlay";
 import { useSelection } from "../hooks/useSelection";
-import "$/normalize.css";
 import { logger } from "$/utils/logger";
 
 /**
@@ -12,7 +11,7 @@ import { logger } from "$/utils/logger";
 const PromptlyRoot: FC = () => {
   const [showOverlay, setShowOverlay] = useState(false);
   const { selection, mousePosition, clearSelection } = useSelection({
-    enabled: !showOverlay,
+    enabled: true,
   });
 
   const handleTriggerClick = () => {
@@ -49,6 +48,7 @@ const PromptlyRoot: FC = () => {
  */
 export function mountPromptlyRoot(): () => void {
   const container = document.createElement("promptly-root");
+  container.id = "promptly-root";
   document.body.parentElement?.appendChild(container);
 
   const root = createRoot(container);

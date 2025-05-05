@@ -47,8 +47,8 @@ export const PREDEFINED_ACTIONS: ActionDefinition[] = [
     name: "Define",
     description: "Provide a dictionary definition",
     pageCategories: ALL_PAGE_CATEGORIES,
-    contextTypes: [SelectionContextType.GENERAL],
-    dataTypes: [SelectionDataType.WORD],
+    contextTypes: ANY_CONTEXT,
+    dataTypes: [SelectionDataType.WORD, SelectionDataType.TEXT],
     systemPrompt:
       "You are a dictionary assistant. Provide a clear, concise definition for the given word or phrase. Include the part of speech and, if applicable, example sentences. \n\n**IMPORTANT:** Format the output using extensive Markdown. Use headings (`## Definition`, `## Examples`), bold (`**word**`), italics (`*part of speech*`), and bullet points (`*`) for examples.",
     userPrompt: "Define the term or phrase: {{selection}}",
@@ -60,8 +60,8 @@ export const PREDEFINED_ACTIONS: ActionDefinition[] = [
     name: "Synonyms",
     description: "List words with similar meanings",
     pageCategories: ALL_PAGE_CATEGORIES,
-    contextTypes: [SelectionContextType.GENERAL],
-    dataTypes: [SelectionDataType.WORD, SelectionDataType.SENTENCE],
+    contextTypes: ANY_CONTEXT,
+    dataTypes: [SelectionDataType.WORD, SelectionDataType.TEXT],
     systemPrompt:
       "You are a thesaurus assistant. Provide a list of synonyms for the given word or phrase. Organize synonyms by different shades of meaning where applicable, and include brief notes about subtle differences in connotation or usage. \n\n**IMPORTANT:** Structure your output using extensive Markdown. Use headings (`## Meaning 1`), bullet points (`* synonym - *note*`), bold (`**word**`), and italics (`*nuance*`).",
     userPrompt: "List synonyms for: {{selection}}",
@@ -72,8 +72,8 @@ export const PREDEFINED_ACTIONS: ActionDefinition[] = [
     id: "etymology",
     name: "Etymology",
     description: "Explore the historical origin of a word",
-    contextTypes: [SelectionContextType.GENERAL],
-    dataTypes: [SelectionDataType.WORD],
+    contextTypes: ANY_CONTEXT,
+    dataTypes: [SelectionDataType.WORD, SelectionDataType.TEXT],
     pageCategories: ALL_PAGE_CATEGORIES,
     systemPrompt:
       "You are an etymology expert. Explain the origin and historical development of the given word. Trace it back to its roots if possible. \n\n**IMPORTANT:** Present the information using clear Markdown. Use headings (`## Origin`, `## History`), bold (`**language**`), italics (`*root word*`), and potentially bullet points (`*`).",
@@ -94,6 +94,7 @@ export const PREDEFINED_ACTIONS: ActionDefinition[] = [
       SelectionContextType.HEADER,
     ],
     dataTypes: [
+      SelectionDataType.TEXT,
       SelectionDataType.SENTENCE,
       SelectionDataType.PARAGRAPH,
       SelectionDataType.CODE_LIKE,
@@ -110,7 +111,7 @@ export const PREDEFINED_ACTIONS: ActionDefinition[] = [
     icon: PiLightbulb,
   },
   {
-    id: "explain_technical_term",
+    id: "breakdown",
     name: "Breakdown",
     description: "Explain jargon in simple terms",
     contextTypes: [
@@ -118,7 +119,7 @@ export const PREDEFINED_ACTIONS: ActionDefinition[] = [
       SelectionContextType.CODE_BLOCK,
     ],
     dataTypes: [
-      SelectionDataType.WORD,
+      SelectionDataType.TEXT,
       SelectionDataType.SENTENCE,
       SelectionDataType.CODE_LIKE,
     ],
@@ -146,6 +147,7 @@ export const PREDEFINED_ACTIONS: ActionDefinition[] = [
     description: "Fix grammar and spelling issues",
     contextTypes: [SelectionContextType.INPUT],
     dataTypes: [
+      SelectionDataType.TEXT,
       SelectionDataType.SENTENCE,
       SelectionDataType.PARAGRAPH,
       SelectionDataType.LONG_TEXT,
@@ -161,11 +163,25 @@ export const PREDEFINED_ACTIONS: ActionDefinition[] = [
     icon: PiPencilSimpleLine,
   },
   {
+    id: "spellcheck",
+    name: "Spellcheck",
+    description: "Fix spelling issues",
+    contextTypes: [SelectionContextType.INPUT],
+    dataTypes: [SelectionDataType.WORD],
+    pageCategories: ALL_PAGE_CATEGORIES,
+    systemPrompt:
+      "You are a spellcheck assistant. Analyze the provided text for spelling mistakes. Suggest corrections. \n\n**IMPORTANT:** Present the corrections clearly using Markdown. Use blockquotes (`>`) for the original text, list errors with bullet points (`* **Error:** description`), and provide suggestions (`* **Suggestion:** corrected text`). Use bold/italics for emphasis.",
+    userPrompt: "Check the spelling of this text: {{selection}}",
+    llmParams: PARAMETER_PRESETS.PRECISE,
+    icon: PiPencilSimpleLine,
+  },
+  {
     id: "rephrase",
     name: "Rephrase",
     description: "Rewrite in a different way",
     contextTypes: [SelectionContextType.INPUT],
     dataTypes: [
+      SelectionDataType.TEXT,
       SelectionDataType.SENTENCE,
       SelectionDataType.PARAGRAPH,
       SelectionDataType.PLAIN_TEXT,
@@ -187,6 +203,7 @@ export const PREDEFINED_ACTIONS: ActionDefinition[] = [
       SelectionContextType.QUOTE,
     ],
     dataTypes: [
+      SelectionDataType.TEXT,
       SelectionDataType.SENTENCE,
       SelectionDataType.PARAGRAPH,
       SelectionDataType.LONG_TEXT,
@@ -211,7 +228,7 @@ export const PREDEFINED_ACTIONS: ActionDefinition[] = [
       SelectionContextType.DEFINITION_LIST,
     ],
     dataTypes: [
-      SelectionDataType.WORD,
+      SelectionDataType.TEXT,
       SelectionDataType.SENTENCE,
       SelectionDataType.PARAGRAPH,
       SelectionDataType.PLAIN_TEXT,
@@ -229,6 +246,7 @@ export const PREDEFINED_ACTIONS: ActionDefinition[] = [
     description: "Rewrite in a more formal tone",
     contextTypes: [SelectionContextType.INPUT],
     dataTypes: [
+      SelectionDataType.TEXT,
       SelectionDataType.SENTENCE,
       SelectionDataType.PARAGRAPH,
       SelectionDataType.LONG_TEXT,
@@ -250,6 +268,7 @@ export const PREDEFINED_ACTIONS: ActionDefinition[] = [
     description: "Rewrite in a more conversational tone",
     contextTypes: [SelectionContextType.INPUT],
     dataTypes: [
+      SelectionDataType.TEXT,
       SelectionDataType.SENTENCE,
       SelectionDataType.PARAGRAPH,
       SelectionDataType.LONG_TEXT,
@@ -390,6 +409,7 @@ export const PREDEFINED_ACTIONS: ActionDefinition[] = [
     ],
     dataTypes: [
       SelectionDataType.WORD,
+      SelectionDataType.TEXT,
       SelectionDataType.SENTENCE,
       SelectionDataType.PARAGRAPH,
       SelectionDataType.PLAIN_TEXT,
@@ -411,6 +431,7 @@ export const PREDEFINED_ACTIONS: ActionDefinition[] = [
       SelectionContextType.TABLE,
     ],
     dataTypes: [
+      SelectionDataType.TEXT,
       SelectionDataType.PARAGRAPH,
       SelectionDataType.LONG_TEXT,
       SelectionDataType.MARKDOWN,
@@ -433,6 +454,7 @@ export const PREDEFINED_ACTIONS: ActionDefinition[] = [
       SelectionContextType.CODE_BLOCK,
     ],
     dataTypes: [
+      SelectionDataType.TEXT,
       SelectionDataType.SENTENCE,
       SelectionDataType.PARAGRAPH,
       SelectionDataType.SOCIAL_MEDIA,

@@ -1,9 +1,9 @@
 .responseContainer {
   display: flex;
   flex-direction: column-reverse;
-  gap: var(--space-sm);
+  gap: var(--space-md);
   width: 100%;
-  height: 400px;
+  max-height: 500px;
   overflow-y: auto;
   font-size: var(--font-size-sm);
 }
@@ -65,28 +65,31 @@
   width: 100%;
 }
 
+.thinking {
+  display: block;
+  color: var(--color-text-muted);
+  text-align: center;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  width: 100%;
+}
+
 .message {
-  padding: var(--space-sm) var(--space-md);
   border-radius: var(--border-radius);
   max-width: 98%;
-  min-height: 38px;
   word-wrap: break-word;
+  flex-shrink: 0;
 }
 
 .message[data-role="user"] {
-  background-color: var(--color-background-secondary);
+  padding: var(--space-sm) var(--space-md);
+  min-height: 32px;
+  border: none;
+  background-color: var(--bg-color);
   color: var(--color-text-primary);
   align-self: flex-end;
   border-bottom-right-radius: var(--border-radius-sm);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-}
-
-/* Assistant message specific styles */
-.message[data-role="assistant"] {
-  background-color: var(--bg-color);
-  color: var(--text-color);
-  align-self: flex-start;
-  border-bottom-left-radius: var(--border-radius-sm);
 }

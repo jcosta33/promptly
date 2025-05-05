@@ -21,6 +21,11 @@
       var(--color-black);
   }
 
+  &[data-promptly-box-elevation="3"] {
+    box-shadow: var(--shadow-offset-xl) var(--shadow-offset-xl) 0px 0
+      var(--color-black);
+  }
+
   &[data-promptly-box-bg="primary"] {
     background-color: var(--primary-color);
     color: var(--inverted-text-color);

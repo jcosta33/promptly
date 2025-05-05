@@ -1,0 +1,381 @@
+/**
+ * Comprehensive CSS Reset for Promptly
+ * Based on normalize.css v8.0.1 and expanded for aggressive reset within scope.
+ * Scoped to only apply within promptly-root and promptly-root elements.
+ * Aims for maximum consistency across diverse host page styles by resetting defaults.
+ */
+
+promptly-root {
+  display: block;
+  box-sizing: border-box;
+  line-height: 1.15;
+  -webkit-text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
+  font-family: "JetBrains Mono", monospace;
+  color: inherit;
+  background: none;
+
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+    display: revert;
+  }
+
+  margin: 0;
+  padding: 0;
+  border: 0; /* Reset border */
+  font-size: 100%;
+  font: inherit;
+  font-family:
+    "JetBrains Mono", monospace; /* Ensure descendants inherit base font */
+  vertical-align: baseline;
+  color: inherit;
+  background: none;
+
+  &::-webkit-scrollbar {
+    width: 16px;
+    height: 16px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: var(--bg-color);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: var(--primary-color);
+    border: 2px solid var(--border-color);
+    border-radius: 4px;
+    box-shadow:
+      inset 0 0 0 1px var(--color-text-muted),
+      0 2px 0 var(--accent-color);
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background: var(--accent-color);
+  }
+
+  &::-webkit-scrollbar-corner {
+    background: var(--bg-color);
+  }
+
+  article,
+  aside,
+  details,
+  figcaption,
+  figure,
+  footer,
+  header,
+  hgroup,
+  main,
+  menu,
+  nav,
+  section,
+  summary {
+    display: block;
+  }
+
+  /* Typography Resets */
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: "Press Start 2P", cursive;
+    font-size: 1em;
+    font-weight: inherit;
+    line-height: inherit;
+    margin: 0;
+  }
+
+  p,
+  blockquote,
+  pre,
+  address,
+  dl,
+  dd,
+  ol,
+  ul,
+  fieldset,
+  form,
+  table {
+    margin: 0;
+    padding: 0;
+  }
+
+  ol,
+  ul {
+    list-style: none;
+  }
+
+  blockquote,
+  q {
+    quotes: none;
+    &::before,
+    &::after {
+      content: "";
+      content: none;
+    }
+  }
+
+  abbr[title] {
+    text-decoration: none;
+    border-bottom: none;
+    cursor: help;
+  }
+
+  b,
+  strong {
+    font-weight: bold; /* Normalize boldness */
+  }
+
+  i,
+  em,
+  cite,
+  dfn {
+    font-style: italic; /* Normalize italics */
+  }
+
+  small {
+    font-size: 80%; /* Normalize small size */
+  }
+
+  sub,
+  sup {
+    font-size: 75%;
+    line-height: 0;
+    position: relative;
+    vertical-align: baseline;
+  }
+
+  sub {
+    bottom: -0.25em;
+  }
+
+  sup {
+    top: -0.5em;
+  }
+
+  /* Links */
+  a {
+    color: inherit;
+    text-decoration: inherit; /* Inherit decoration */
+    background-color: transparent;
+  }
+
+  /* Code */
+  pre,
+  code,
+  kbd,
+  samp {
+    font-family: monospace, monospace;
+    font-size: 1em;
+    background: none;
+    border: none;
+  }
+
+  pre {
+    /* Reset whitespace handling */
+    white-space: revert;
+    word-wrap: revert;
+  }
+
+  /* Tables */
+  table {
+    border-collapse: collapse;
+    border-spacing: 0;
+    /* width: auto; - Let content or component define width */
+    text-align: inherit; /* Inherit alignment */
+  }
+
+  th,
+  td {
+    padding: 0;
+    vertical-align: baseline; /* Reset alignment */
+    border: none;
+    text-align: inherit; /* Inherit alignment */
+  }
+
+  caption {
+    caption-side: revert; /* Revert caption position */
+    text-align: inherit;
+  }
+
+  /* Forms */
+  button,
+  input,
+  optgroup,
+  select,
+  textarea {
+    font: inherit;
+    line-height: inherit;
+    color: inherit;
+    margin: 0;
+    padding: 0;
+    border: none; /* Remove borders by default */
+    background: none; /* Remove backgrounds by default */
+    vertical-align: middle;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+
+    &:focus {
+      outline: none;
+    }
+  }
+
+  button,
+  [type="button"],
+  [type="reset"],
+  [type="submit"] {
+    cursor: pointer;
+    -webkit-appearance: button;
+    appearance: button;
+    /* Reset any specific styling added previously */
+    border: none;
+    background: none;
+    color: inherit;
+    padding: 0;
+    text-transform: none;
+
+    &::-moz-focus-inner {
+      border-style: none;
+      padding: 0;
+    }
+
+    &:-moz-focusring {
+      /* Remove default dotted outline in Firefox */
+      outline: none;
+    }
+
+    &:disabled {
+      cursor: default;
+      /* Opacity might be styling, consider removing */
+      /* opacity: 0.7; */
+    }
+  }
+
+  input {
+    /* Override general appearance: none for specific types if needed */
+    &[type="search"] {
+      -webkit-appearance: textfield;
+      appearance: textfield;
+      outline-offset: -2px; /* Keep for consistency */
+
+      &::-webkit-search-decoration,
+      &::-webkit-search-cancel-button,
+      &::-webkit-search-results-button,
+      &::-webkit-search-results-decoration {
+        -webkit-appearance: none;
+        appearance: none;
+      }
+    }
+
+    &[type="number"] {
+      -moz-appearance: textfield; /* Firefox */
+      &::-webkit-inner-spin-button,
+      &::-webkit-outer-spin-button {
+        height: auto;
+        -webkit-appearance: none;
+        margin: 0;
+      }
+    }
+
+    &[type="radio"],
+    &[type="checkbox"] {
+      /* Revert appearance to allow default rendering or custom styling */
+      appearance: auto;
+      -webkit-appearance: auto;
+      -moz-appearance: auto;
+    }
+  }
+
+  select {
+    /* Appearance is already 'none', needs custom styling */
+    /* Consider reverting if default select is sometimes acceptable */
+    /* appearance: revert; */
+  }
+
+  textarea {
+    overflow: auto;
+    vertical-align: top;
+    resize: vertical;
+    /* Reset appearance */
+    appearance: revert;
+    -webkit-appearance: revert;
+    -moz-appearance: revert;
+  }
+
+  fieldset {
+    /* Reset fieldset */
+    border: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  legend {
+    padding: 0;
+    display: block; /* Normalize display */
+    color: inherit;
+    white-space: normal;
+    max-width: 100%;
+  }
+
+  progress {
+    vertical-align: baseline;
+    /* Reset progress bar appearance */
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    border: none;
+    background: none;
+    color: inherit; /* Inherit color for potential text fallback */
+  }
+
+  /* Media */
+  img,
+  svg,
+  video,
+  canvas,
+  audio,
+  iframe,
+  embed,
+  object {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    vertical-align: middle; /* Normalize alignment */
+  }
+
+  img {
+    border-style: none;
+  }
+
+  svg:not([fill]) {
+    fill: currentColor;
+  }
+
+  /* Hidden */
+  [hidden],
+  [aria-hidden="true"] {
+    display: none !important;
+    visibility: hidden !important;
+  }
+
+  /* Screen reader only (Utility Class) */
+  /* Keep this utility class definition */
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+  }
+}

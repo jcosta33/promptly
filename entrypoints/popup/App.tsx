@@ -1,6 +1,5 @@
-import { type FC } from "react";
+import type { FC } from "react";
 import "$/theme";
-import "$/normalize.css";
 import { SettingsPanel } from "$/modules/configuration/presentations/views/SettingsPanel";
 
 /**

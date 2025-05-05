@@ -1,17 +1,14 @@
 .triggerContainer {
   pointer-events: auto;
-  transform: translate(16px, -50%);
+  transform: translate(24px, -50%);
   transition: opacity 0.2s ease-in-out;
 }
 
 .triggerButton {
-  height: 36px;
-  width: 36px;
-  border-radius: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
   font-family: "Press Start 2P", cursive;
-  color: var(--primary-color);
-}
-
-.triggerIcon {
-  color: var(--primary-color);
+  padding: 0;
 }
