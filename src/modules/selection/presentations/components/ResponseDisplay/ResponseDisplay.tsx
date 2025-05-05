@@ -6,6 +6,7 @@ import { Flex } from "$/components/Flex/Flex";
 import { Input } from "$/components/Input/Input";
 import { Markdown } from "$/components/Markdown/Markdown";
 import { Message } from "$/modules/inference/models/inference_model";
+import { PiPlayBold, PiPlayPauseBold } from "react-icons/pi";
 
 import styles from "./ResponseDisplay.module.css";
 
@@ -14,6 +15,7 @@ export type ResponseDisplayProps = {
   isLoading: boolean;
   error?: string;
   onSendFollowUp: (message: string) => void;
+  onStop: () => void;
 };
 
 /**
@@ -24,6 +26,7 @@ export const ResponseDisplay: FC<ResponseDisplayProps> = ({
   isLoading,
   error,
   onSendFollowUp,
+  onStop,
 }) => {
   const [followUpText, setFollowUpText] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -33,6 +36,10 @@ export const ResponseDisplay: FC<ResponseDisplayProps> = ({
       onSendFollowUp(followUpText);
       setFollowUpText("");
     }
+  };
+
+  const handleStop = () => {
+    onStop();
   };
 
   const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
@@ -92,14 +99,24 @@ export const ResponseDisplay: FC<ResponseDisplayProps> = ({
           }}
           disabled={isLoading}
         />
-        <Button
-          color="primary"
-          onClick={handleSubmit}
-          disabled={isLoading || !followUpText.trim()}
-          aria-label="Send message"
-        >
-          Send
-        </Button>
+        {isLoading ? (
+          <Button
+            color="primary"
+            onClick={handleStop}
+            aria-label="Stop response"
+          >
+            <PiPlayPauseBold />
+          </Button>
+        ) : (
+          <Button
+            color="primary"
+            onClick={handleSubmit}
+            disabled={!followUpText.trim()}
+            aria-label="Send message"
+          >
+            <PiPlayBold />
+          </Button>
+        )}
       </Flex>
     </>
   );

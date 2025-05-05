@@ -3,6 +3,7 @@ import { FC } from "react";
 import { Button } from "$/components/Button/Button";
 
 import styles from "./SelectionTrigger.module.css";
+import { PiLightbulbFilamentDuotone } from "react-icons/pi";
 
 export type SelectionTriggerProps = {
   position: { x: number; y: number };
@@ -27,15 +28,12 @@ export const SelectionTrigger: FC<SelectionTriggerProps> = ({
       }}
     >
       <Button
-        size="sm"
-        color="primary"
+        color="tertiary"
         onClick={onClick}
         aria-label="Open Promptly"
         className={styles.triggerButton}
       >
-        <div className={styles.triggerContent}>
-          <span className={styles.triggerText}>S</span>
-        </div>
+        <PiLightbulbFilamentDuotone className={styles.triggerIcon} size={16} />
       </Button>
     </div>
   );

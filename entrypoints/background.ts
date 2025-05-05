@@ -177,8 +177,10 @@ export default defineBackground(() => {
             });
 
             logger.log(`Starting model load for: ${selectedModelId}`);
+
             await llmEngine.reload(selectedModelId);
             currentModel = selectedModelId;
+
             logger.log(`Model ${selectedModelId} loaded successfully`);
 
             stream.send(EventType.MODEL_LOADING_PROGRESS, {
@@ -203,13 +205,15 @@ export default defineBackground(() => {
         }
 
         const cancelUnsubscribe = stream.onMessage(
-          EventType.CANCEL_INFERENCE,
-          (cancelPayload) => {
+          EventType.STOP_INFERENCE,
+          async (cancelPayload) => {
             if (cancelPayload.requestId === requestId) {
               logger.log("Received inference cancellation request", {
                 requestId,
               });
-              llmEngine?.interruptGenerate();
+              await llmEngine?.interruptGenerate();
+              logger.log("Inference interrupted", { requestId });
+              cancelPayload.onStop?.();
             }
           }
         );

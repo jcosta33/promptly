@@ -68,7 +68,8 @@
 .message {
   padding: var(--space-sm) var(--space-md);
   border-radius: var(--border-radius);
-  max-width: 95%;
+  max-width: 98%;
+  min-height: 38px;
   word-wrap: break-word;
 }
 
@@ -84,7 +85,7 @@
 
 /* Assistant message specific styles */
 .message[data-role="assistant"] {
-  background-color: var(--light-bg-color);
+  background-color: var(--bg-color);
   color: var(--text-color);
   align-self: flex-start;
   border-bottom-left-radius: var(--border-radius-sm);

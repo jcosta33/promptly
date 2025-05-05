@@ -20,21 +20,18 @@ export function useSelection({ enabled }: UseSelectionOptions) {
     y: number;
   } | null>(null);
 
-  // Clear selection state
   const clearSelection = () => {
     setSelection(null);
     setMousePosition(null);
   };
 
-  // Set up event listeners
   useEffect(() => {
     if (!enabled) {
       return;
     }
 
-    // Use the repository's selection listener functionality
     const removeListener = add_selection_listener({
-      callback: ({ selection, mousePosition }) => {
+      callback: ({ selection, mouse_position: mousePosition }) => {
         if (!selection) {
           clearSelection();
           return;
@@ -43,11 +40,10 @@ export function useSelection({ enabled }: UseSelectionOptions) {
         setMousePosition(mousePosition);
         const processedSelection = process_selection(selection);
         setSelection(processedSelection);
-        // console.log("processed selection", processedSelection);
+        logger.info("processed selection", processedSelection);
       },
     });
 
-    // Clean up
     return () => {
       removeListener();
     };

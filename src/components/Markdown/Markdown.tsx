@@ -19,7 +19,7 @@ export const Markdown: FC<MarkdownProps> = ({ children, className }) => {
       <ReactMarkdown
         components={{
           p: (props) => <p className="markdownParagraph" {...props} />,
-          ul: (props) => <ul className="markdownList" {...props} />, // Simplified: Spread props directly
+          ul: (props) => <ul className="markdownList" {...props} />,
           ol: (props) => <ol className="markdownList" {...props} />,
           li: (props) => <li className="markdownListItem" {...props} />,
           a: (props) => <a className="markdownLink" {...props} />,
@@ -29,7 +29,20 @@ export const Markdown: FC<MarkdownProps> = ({ children, className }) => {
           h4: (props) => <h4 className="markdownHeading4" {...props} />,
           h5: (props) => <h5 className="markdownHeading5" {...props} />,
           h6: (props) => <h6 className="markdownHeading6" {...props} />,
-          code: (props) => <Highlight>{props.children}</Highlight>,
+          code: ({ className, children, ...props }) => {
+            const codeText = String(children).trim();
+            const isMultiLine = codeText.includes("\n");
+
+            if (isMultiLine) {
+              return <Highlight>{codeText}</Highlight>;
+            } else {
+              return (
+                <code className="markdownCode" {...props}>
+                  {children}
+                </code>
+              );
+            }
+          },
           blockquote: (props) => (
             <blockquote className="markdownBlockquote" {...props} />
           ),

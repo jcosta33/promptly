@@ -36,7 +36,7 @@
 
   &[data-promptly-button-size="md"] {
     font-size: var(--font-size-sm);
-    padding: var(--space-xs) var(--space-md);
+    padding: var(--space-xs) var(--space-sm);
     height: var(--control-height-md);
   }
 

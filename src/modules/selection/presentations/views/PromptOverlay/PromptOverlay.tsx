@@ -17,6 +17,7 @@ import { useInference } from "../../hooks/useInference";
 
 import styles from "./PromptOverlay.module.css";
 import { logger } from "$/utils/logger";
+import { PiSkipBackBold, PiXCircleBold } from "react-icons/pi";
 
 export type PromptlyOverlayProps = {
   selectionData: SelectionData;
@@ -42,7 +43,6 @@ export const PromptlyOverlay: FC<PromptlyOverlayProps> = ({
     elementRef,
     isDragging,
   } = useDraggable({
-    initialPosition: position,
     handleRef: dragHandleRef,
   });
 
@@ -61,7 +61,7 @@ export const PromptlyOverlay: FC<PromptlyOverlayProps> = ({
     });
   };
 
-  const { inferenceState, runInference, resetInference, cancelInference } =
+  const { inferenceState, runInference, cancelInference, stopInference } =
     useInference({
       onUpdate: handleInferenceUpdate,
     });
@@ -75,7 +75,8 @@ export const PromptlyOverlay: FC<PromptlyOverlayProps> = ({
 
   if (pageContext && selectionData) {
     actions = get_applicable_actions({
-      selectionTypes: selectionData.types,
+      contextTypes: selectionData.contextTypes,
+      dataTypes: selectionData.dataTypes,
       pageCategory: pageContext.category,
     });
   }
@@ -85,7 +86,7 @@ export const PromptlyOverlay: FC<PromptlyOverlayProps> = ({
                           --- CONTEXT ---
                             Page URL: ${selectionData.pageUrl}
                             Page Title: ${selectionData.pageTitle || "N/A"}
-                            Selection Types: ${selectionData.types.join(", ")}
+                            Selection Types: ${selectionData.contextTypes.join(", ")}
                           --- END CONTEXT ---`;
 
     // Combine the action's system prompt with the context
@@ -131,6 +132,10 @@ export const PromptlyOverlay: FC<PromptlyOverlayProps> = ({
     });
   };
 
+  const handleStop = () => {
+    stopInference();
+  };
+
   const handleClose = () => {
     if (
       inferenceState.status === "streaming" ||
@@ -138,7 +143,6 @@ export const PromptlyOverlay: FC<PromptlyOverlayProps> = ({
     ) {
       cancelInference();
     }
-    resetInference();
     setMessages([]);
     onClose();
   };
@@ -152,32 +156,42 @@ export const PromptlyOverlay: FC<PromptlyOverlayProps> = ({
       ref={elementRef}
       className={styles.overlayContainer}
       style={{
-        left: currentPosition.x,
-        top: currentPosition.y,
+        left: currentPosition?.x || position.x,
+        top: currentPosition?.y || position.y,
         position: "absolute",
         userSelect: isDragging ? "none" : "auto",
       }}
     >
       <Box p="md" bg="secondary" elevation="2">
         <Flex direction="column" gap="md">
-          <Flex ref={dragHandleRef} justify="between" align="center">
+          <Flex ref={dragHandleRef} justify="between">
+            {messages.length > 0 && (
+              <Button
+                size="sm"
+                onClick={() => {
+                  cancelInference();
+                  setMessages([]);
+                }}
+                aria-label="Back"
+              >
+                <PiSkipBackBold />
+              </Button>
+            )}
+
             <Text as="h2" weight="bold" size="xl">
               Promptly
             </Text>
 
-            <Button size="sm" onClick={handleClose} aria-label="Close">
-              ✕
-            </Button>
+            <button
+              onClick={handleClose}
+              aria-label="Close"
+              className={styles.closeButton}
+            >
+              <PiXCircleBold />
+            </button>
           </Flex>
 
-          <Text
-            as="blockquote"
-            size="xs"
-            color="muted"
-            onClick={() => {
-              setMessages([]);
-            }}
-          >
+          <Text as="blockquote" size="xs" color="muted">
             &quot;{selectionData.text.substring(0, 100)}
             {selectionData.text.length > 100 ? "..." : ""}&quot;
           </Text>
@@ -191,10 +205,11 @@ export const PromptlyOverlay: FC<PromptlyOverlayProps> = ({
                     onClick={() => {
                       return handleActionSelect(action);
                     }}
-                    size="sm"
                   >
-                    {action.emoji}
-                    {action.name}
+                    <Flex align="center" gap="sm">
+                      <action.icon className={styles.actionIcon} />
+                      {action.name}
+                    </Flex>
                   </Button>
                 );
               })}
@@ -214,6 +229,7 @@ export const PromptlyOverlay: FC<PromptlyOverlayProps> = ({
             isLoading={isLoading}
             error={inferenceState.error}
             onSendFollowUp={handleSendFollowUp}
+            onStop={handleStop}
           />
         </Flex>
       </Box>

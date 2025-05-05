@@ -1,6 +1,4 @@
-import { SelectionType } from "../models/selection";
-
-// Removed detect_code_language import as it wasn't used
+import { SelectionContextType, SelectionDataType } from "../models/selection";
 
 const MAX_WORDS_FOR_WORD_TYPE = 3;
 const MAX_CHARS_FOR_SENTENCE_TYPE = 200;
@@ -19,18 +17,22 @@ export function detect_selection_types(
   selection: Selection,
   cleanedText: string,
   wordCount: number
-): SelectionType[] {
-  const detected: Set<SelectionType> = new Set();
+): {
+  dataTypes: SelectionDataType[];
+  contextTypes: SelectionContextType[];
+} {
+  const detectedContextTypes: Set<SelectionContextType> = new Set();
+  const detectedDataTypes: Set<SelectionDataType> = new Set();
 
   const range = selection.rangeCount > 0 ? selection.getRangeAt(0) : null;
   const container = range?.commonAncestorContainer;
 
   // Define the common parent element once, handling potential nulls
   const parentElement =
-    container && (container.nodeType === Node.ELEMENT_NODE
+    container &&
+    (container.nodeType === Node.ELEMENT_NODE
       ? (container as Element)
       : container.parentElement);
-
 
   // --- HTML Structure Checks ---
   if (range && parentElement) {
@@ -41,65 +43,63 @@ export function detect_selection_types(
     };
 
     // Check for specific HTML tags more reliably
-    if (isInside("table")) {
-      detected.add(SelectionType.TABLE);
-    }
-    if (isInside("ul, ol")) {
-      detected.add(SelectionType.LIST);
+    if (isInside("input, textarea")) {
+      detectedContextTypes.add(SelectionContextType.INPUT);
+    } else if (isInside("table")) {
+      detectedContextTypes.add(SelectionContextType.TABLE);
+    } else if (isInside("ul, ol")) {
+      detectedContextTypes.add(SelectionContextType.LIST);
     }
     if (isInside("pre, code")) {
-      detected.add(SelectionType.CODE);
+      detectedContextTypes.add(SelectionContextType.CODE_BLOCK);
     }
     if (isInside("math")) {
-      detected.add(SelectionType.MATH_FORMULA);
+      detectedContextTypes.add(SelectionContextType.MATH);
     }
     if (isInside("blockquote")) {
-      detected.add(SelectionType.QUOTE);
+      detectedContextTypes.add(SelectionContextType.QUOTE);
     }
     if (isInside("h1, h2, h3, h4, h5, h6")) {
-      detected.add(SelectionType.HEADER);
+      detectedContextTypes.add(SelectionContextType.HEADER);
     }
     if (isInside("dl, dt, dd")) {
-      detected.add(SelectionType.DEFINITION);
+      detectedContextTypes.add(SelectionContextType.DEFINITION_LIST);
     }
     if (isInside("a[href]")) {
-      // Check if the *entire* selection is the link text
       const linkElement = parentElement.closest("a[href]");
       if (
         linkElement &&
         linkElement.textContent?.trim() === cleanedText.trim()
       ) {
-        detected.add(SelectionType.URL);
+        detectedContextTypes.add(SelectionContextType.LINK);
       }
     }
+    if (isInside("p, div, span")) {
+      detectedContextTypes.add(SelectionContextType.GENERAL);
+    }
   }
-
-  // --- Text Content Checks ---
 
   // JSON Check (keep try-catch)
   if (cleanedText.startsWith("{") || cleanedText.startsWith("[")) {
     try {
       JSON.parse(cleanedText);
-      detected.add(SelectionType.JSON_DATA);
-      detected.add(SelectionType.CODE); // JSON is also code
+      detectedDataTypes.add(SelectionDataType.JSON);
+      detectedDataTypes.add(SelectionDataType.CODE_LIKE);
     } catch (e) {
       /* Ignore */
     }
   }
 
-  // Math Formula (LaTeX-like) Check
   if (cleanedText.includes("\\(") || cleanedText.includes("\\[")) {
-    detected.add(SelectionType.MATH_FORMULA);
-    detected.add(SelectionType.CODE); // LaTeX is code-like
+    detectedDataTypes.add(SelectionDataType.LATEX);
+    detectedDataTypes.add(SelectionDataType.CODE_LIKE);
   }
 
-  // Terminal Output Check
   if (/^\s*([$#%]| C:\\>)/m.test(cleanedText)) {
-    detected.add(SelectionType.TERMINAL_OUTPUT);
-    detected.add(SelectionType.CODE);
+    detectedDataTypes.add(SelectionDataType.TERMINAL_LIKE);
+    detectedDataTypes.add(SelectionDataType.CODE_LIKE);
   }
 
-  // Error Message Check
   const errorKeywords = [
     "error",
     "exception",
@@ -116,44 +116,37 @@ export function detect_selection_types(
       return cleanedText.toLowerCase().includes(keyword);
     })
   ) {
-    detected.add(SelectionType.ERROR_MESSAGE);
+    detectedDataTypes.add(SelectionDataType.ERROR_LIKE);
   }
 
-  // Email Check
-  // Basic regex, not perfect but covers common cases
   if (/^[\w\-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(cleanedText.trim())) {
-    detected.add(SelectionType.EMAIL);
+    detectedDataTypes.add(SelectionDataType.EMAIL);
   }
 
-  // URL Check (if not detected via tag)
-  if (!detected.has(SelectionType.URL)) {
-    // Basic regex for URLs
+  if (!detectedDataTypes.has(SelectionDataType.URL)) {
     if (/^https?:\/\/[^\s/$.?#].[^\s]*$/.test(cleanedText.trim())) {
-      detected.add(SelectionType.URL);
+      detectedDataTypes.add(SelectionDataType.URL);
     }
   }
 
-  // Markdown Check (basic markers)
   if (/[\*\_\`\#\[\]\(\)!]/.test(cleanedText) && cleanedText.includes("\n")) {
-    // Presence of markdown symbols and newlines is a weak indicator
-    detected.add(SelectionType.MARKDOWN);
+    detectedDataTypes.add(SelectionDataType.MARKDOWN);
   }
 
-  // Basic length/structure checks (Word, Sentence, Paragraph, Long Text)
   const sentenceTerminators = /[.!?]$/;
   const sentenceEndCount = (cleanedText.match(/[.!?](?:\s+|$)/g) || []).length;
 
   if (wordCount >= MIN_WORDS_FOR_LONG_TEXT) {
-    detected.add(SelectionType.LONG_TEXT);
+    detectedDataTypes.add(SelectionDataType.LONG_TEXT);
   }
 
-  // Avoid classifying code/json/etc. simply as word/sentence/paragraph if already detected
   const hasSpecificType =
-    detected.size > 0 && !detected.has(SelectionType.LONG_TEXT);
+    detectedDataTypes.size > 0 &&
+    !detectedDataTypes.has(SelectionDataType.LONG_TEXT);
 
   if (!hasSpecificType) {
     if (wordCount <= MAX_WORDS_FOR_WORD_TYPE && sentenceEndCount === 0) {
-      detected.add(SelectionType.WORD);
+      detectedDataTypes.add(SelectionDataType.WORD);
     } else if (
       sentenceEndCount <= 1 &&
       cleanedText.length < MAX_CHARS_FOR_SENTENCE_TYPE
@@ -162,19 +155,18 @@ export function detect_selection_types(
         sentenceEndCount === 1 &&
         sentenceTerminators.test(cleanedText.trim())
       ) {
-        detected.add(SelectionType.SENTENCE);
+        detectedDataTypes.add(SelectionDataType.SENTENCE);
       } else if (sentenceEndCount === 0) {
-        detected.add(SelectionType.SENTENCE); // Treat short phrases as sentences
       } else {
-        detected.add(SelectionType.PARAGRAPH); // Fragment
+        detectedDataTypes.add(SelectionDataType.PARAGRAPH); // Fragment
       }
     } else {
-      detected.add(SelectionType.PARAGRAPH);
+      detectedDataTypes.add(SelectionDataType.PARAGRAPH);
     }
   }
 
-  const detectedArray = Array.from(detected);
-
-  // Return detected types or default to PARAGRAPH if nothing specific found
-  return detectedArray.length > 0 ? detectedArray : [SelectionType.PARAGRAPH];
+  return {
+    dataTypes: Array.from(detectedDataTypes),
+    contextTypes: Array.from(detectedContextTypes),
+  };
 }

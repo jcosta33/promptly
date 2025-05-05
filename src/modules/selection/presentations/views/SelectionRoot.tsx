@@ -4,13 +4,16 @@ import { SelectionTrigger } from "../components/SelectionTrigger/SelectionTrigge
 import { PromptlyOverlay } from "./PromptOverlay/PromptOverlay";
 import { useSelection } from "../hooks/useSelection";
 import "$/normalize.css";
+import { logger } from "$/utils/logger";
 
 /**
  * Main component that serves as the entry point for the Promptly extension UI
  */
 const PromptlyRoot: FC = () => {
   const [showOverlay, setShowOverlay] = useState(false);
-  const { selection, mousePosition, clearSelection } = useSelection({ enabled: !showOverlay });
+  const { selection, mousePosition, clearSelection } = useSelection({
+    enabled: !showOverlay,
+  });
 
   const handleTriggerClick = () => {
     setShowOverlay(true);
@@ -50,6 +53,8 @@ export function mountPromptlyRoot(): () => void {
 
   const root = createRoot(container);
   root.render(<PromptlyRoot />);
+
+  logger.info("Mounted Promptly root");
 
   return () => {
     root.unmount();

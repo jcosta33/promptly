@@ -1,5 +1,8 @@
 import type { PageCategory } from "../../context/models/context";
-import type { SelectionType } from "../../selection/models/selection";
+import type {
+  SelectionContextType,
+  SelectionDataType,
+} from "../../selection/models/selection";
 import type { ActionDefinition } from "../models/action_models";
 import { get_all_actions } from "../repositories/actions_repository";
 
@@ -7,7 +10,8 @@ import { get_all_actions } from "../repositories/actions_repository";
  * Type for filter criteria to find applicable actions
  */
 export type ActionFilterCriteria = {
-  selectionTypes: SelectionType[];
+  contextTypes: SelectionContextType[];
+  dataTypes: SelectionDataType[];
   pageCategory: PageCategory;
 };
 
@@ -21,16 +25,27 @@ export function get_applicable_actions(
   criteria: ActionFilterCriteria
 ): ActionDefinition[] {
   return get_all_actions().filter((action) => {
-    // Check if the action supports this selection type
-    const matchesSelectionType = action.selectionTypes.some((type) => {
-      return criteria.selectionTypes.includes(type);
+    const matchesContextType = action.contextTypes.some((type) => {
+      return criteria.contextTypes.includes(type);
     });
 
-    // Check if the action supports this page category
+    const matchesDataType = action.dataTypes.some((type) => {
+      return criteria.dataTypes.includes(type);
+    });
+
     const matchesPageCategory = action.pageCategories.includes(
       criteria.pageCategory
     );
 
-    return matchesSelectionType && matchesPageCategory;
+    console.log(
+      "matchesContextType",
+      matchesContextType,
+      "matchesDataType",
+      matchesDataType,
+      "matchesPageCategory",
+      matchesPageCategory
+    );
+
+    return matchesContextType && matchesDataType && matchesPageCategory;
   });
 }

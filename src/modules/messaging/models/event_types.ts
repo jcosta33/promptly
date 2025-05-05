@@ -12,7 +12,7 @@ export const EventType = {
   INFERENCE_CHUNK: "inference_chunk",
   INFERENCE_COMPLETE: "inference_complete",
   INFERENCE_ERROR: "inference_error",
-  CANCEL_INFERENCE: "cancel_inference",
+  STOP_INFERENCE: "stop_inference",
 
   // Action events
   REQUEST_ACTION: "request_action",
@@ -30,7 +30,7 @@ export const EventType = {
   PAGE_CONTEXT_UPDATED: "page_context_updated",
 } as const;
 
-export type EventType = typeof EventType[keyof typeof EventType];
+export type EventType = (typeof EventType)[keyof typeof EventType];
 
 export type DefaultPayload = Record<string, any>;
 
@@ -70,7 +70,6 @@ export type ModelLoadRequestPayload = {
   useStream?: boolean;
 };
 
-
 export type RequestActionPayload = {
   messages?: Message[];
   parameters?: any;
@@ -79,8 +78,9 @@ export type RequestActionPayload = {
   modelId?: string;
 };
 
-export type CancelInferencePayload = {
+export type StopInferencePayload = {
   requestId: string;
+  onStop?: () => void;
 };
 
 // Mapping between event types and their payload types
@@ -91,11 +91,12 @@ export type EventPayloadMap = {
   [EventType.INFERENCE_COMPLETE]: InferenceCompletePayload;
   [EventType.MODEL_LOAD_REQUEST]: ModelLoadRequestPayload;
   [EventType.REQUEST_ACTION]: RequestActionPayload;
-  [EventType.CANCEL_INFERENCE]: CancelInferencePayload;
+  [EventType.STOP_INFERENCE]: StopInferencePayload;
   [key: string]: DefaultPayload; // Allow any EventType string with a default payload
 };
 
 // Utility type to get the payload type for a given event
-export type PayloadForEvent<TEventType extends EventType> = TEventType extends keyof EventPayloadMap
-  ? EventPayloadMap[TEventType]
-  : DefaultPayload; 
+export type PayloadForEvent<TEventType extends EventType> =
+  TEventType extends keyof EventPayloadMap
+    ? EventPayloadMap[TEventType]
+    : DefaultPayload;

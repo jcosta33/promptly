@@ -1,32 +1,47 @@
 /**
- * Constant object defining the types of text selections
+ * Represents the structural context of the selection based on surrounding HTML elements.
  */
-export const SelectionType = {
-  WORD: "word",
-  SENTENCE: "sentence",
-  PARAGRAPH: "paragraph",
-  CODE: "code",
-  LIST: "list",
-  LONG_TEXT: "long_text",
-  TABLE: "table",
-  MATH_FORMULA: "math_formula",
-  QUOTE: "quote",
-  HEADER: "header",
-  DEFINITION: "definition",
-  URL: "url",
-  JSON_DATA: "json_data",
-  EMAIL: "email",
-  MARKDOWN: "markdown",
-  NUMERIC_DATA: "numeric_data",
-  CITATION: "citation",
-  SOCIAL_MEDIA: "social_media",
-  POETRY: "poetry",
-  API_REQUEST: "api_request",
-  ERROR_MESSAGE: "error_message",
-  TERMINAL_OUTPUT: "terminal_output",
+export const SelectionContextType = {
+  TABLE: "table", // Selected within <table>
+  LIST: "list", // Selected within <ul> or <ol>
+  CODE_BLOCK: "code_block", // Selected within <pre> or a block-level <code>
+  MATH: "math", // Selected within <math>
+  QUOTE: "quote", // Selected within <blockquote>
+  HEADER: "header", // Selected within <h1>-<h6>
+  DEFINITION_LIST: "definition_list", // Selected within <dl>
+  LINK: "link", // The entire selection is the content of an <a> tag
+  GENERAL: "general", // Default for <p>, <div>, <span>, or mixed content
+  INPUT: "input", // Selected within an <input> or <textarea>
 } as const;
 
-export type SelectionType = typeof SelectionType[keyof typeof SelectionType];
+export type SelectionContextType =
+  (typeof SelectionContextType)[keyof typeof SelectionContextType];
+
+/**
+ * Represents the type of data the selected text content itself contains.
+ */
+export const SelectionDataType = {
+  WORD: "word", // Few words, no sentence structure
+  SENTENCE: "sentence", // A single complete sentence
+  PARAGRAPH: "paragraph", // Multi-sentence text block
+  LONG_TEXT: "long_text", // Exceeds a certain word/char count
+  CODE_LIKE: "code_like", // Contains syntax suggestive of code (brackets, operators etc)
+  JSON: "json", // Parsable JSON structure
+  LATEX: "latex", // Contains LaTeX math delimiters like \( or $$
+  URL: "url", // Matches a URL pattern
+  EMAIL: "email", // Matches an email pattern
+  MARKDOWN: "markdown", // Contains Markdown syntax elements
+  NUMERIC: "numeric", // Primarily consists of numbers or numeric symbols
+  ERROR_LIKE: "error_like", // Contains keywords like "error", "exception", "failed"
+  TERMINAL_LIKE: "terminal_like", // Contains command prompts like $, #, >
+  CITATION: "citation", // Likely a bibliographic citation
+  SOCIAL_MEDIA: "social_media", // Likely a handle or tag
+  POETRY: "poetry", // Formatted like verse
+  PLAIN_TEXT: "plain_text", // Default if no other specific type matches
+} as const;
+
+export type SelectionDataType =
+  (typeof SelectionDataType)[keyof typeof SelectionDataType];
 
 /**
  * Processed selection data with additional analysis
@@ -46,11 +61,6 @@ export type SelectionData = {
    * Original HTML fragment of the selection
    */
   originalHtml: string;
-
-  /**
-   * All detected types of selection (may include multiple types)
-   */
-  types: SelectionType[];
 
   /**
    * URL of the page where the selection was made
@@ -91,4 +101,15 @@ export type SelectionData = {
    * Text formatted specifically for optimal LLM processing
    */
   llmFormattedText: string;
+
+  /**
+   * The primary structural context of the selection (e.g., TABLE, LIST, CODE_BLOCK).
+   */
+  contextTypes: SelectionContextType[];
+
+  /**
+   * Detected types of the data content itself (e.g., WORD, JSON, CODE_LIKE).
+   * Can contain multiple types.
+   */
+  dataTypes: SelectionDataType[];
 };

@@ -3,7 +3,7 @@ import { logger } from "$/utils/logger";
 type AddSelectionListenerParams = {
   callback: (params: {
     selection: Selection | null;
-    mousePosition: { x: number; y: number } | null;
+    mouse_position: { x: number; y: number } | null;
   }) => void;
 };
 
@@ -16,61 +16,60 @@ type AddSelectionListenerParams = {
 export function add_selection_listener({
   callback,
 }: AddSelectionListenerParams): () => void {
-  let debounceTimeout: NodeJS.Timeout | null = null;
+  let debounce_timeout: NodeJS.Timeout | null = null;
 
-  const handleSelectionChange = (event: MouseEvent) => {
-    const promptlyRoot = document.querySelector("promptly-root");
+  const handle_selection_change = (event: MouseEvent) => {
+    const promptly_root = document.querySelector("promptly-root");
 
-    if (promptlyRoot?.contains(event.target as Node)) {
+    if (promptly_root?.contains(event.target as Node)) {
       return;
     }
 
-    // Clear existing timeout to debounce rapid selection changes
-    if (debounceTimeout !== null) {
-      window.clearTimeout(debounceTimeout);
+    if (debounce_timeout !== null) {
+      window.clearTimeout(debounce_timeout);
     }
 
-    const mousePosition = {
+    const mouse_position = {
       x: event.pageX,
       y: event.pageY,
     };
 
-    // Set a short timeout to avoid processing transient selections
-    debounceTimeout = setTimeout(() => {
+    debounce_timeout = setTimeout(() => {
       const selection = window.getSelection();
 
-      const selectionText = selection?.toString();
+      const selection_text = selection?.toString();
 
-      if (!selectionText || selectionText.length === 0) {
+      if (!selection_text || selection_text.length === 0) {
         return;
       }
 
-      callback({ selection, mousePosition });
+      callback({ selection, mouse_position });
 
-      debounceTimeout = null;
+      debounce_timeout = null;
     }, 150);
   };
 
-  const handleMouseDown = (event: MouseEvent) => {
-    // if the click is not inside our promptly-root element, clear the selection
-    const promptlyRoot = document.querySelector("promptly-root");
+  const handle_mouse_down = (event: MouseEvent) => {
+    const promptly_root = document.querySelector("promptly-root");
 
-    if (!promptlyRoot?.contains(event.target as Node)) {
-      callback({ selection: null, mousePosition: null });
+    logger.info("Selection: Mouse down", {
+      promptly_root,
+      event,
+    });
+
+    if (!promptly_root?.contains(event.target as Node)) {
+      callback({ selection: null, mouse_position: null });
     }
   };
 
-  // Add listeners for both mouseup (end of drag selection) and
-  // selectionchange events (keyboard navigation, programmatic selection)
-  document.addEventListener("mouseup", handleSelectionChange);
-  document.addEventListener("mousedown", handleMouseDown);
+  document.addEventListener("mouseup", handle_selection_change);
+  document.addEventListener("mousedown", handle_mouse_down);
 
-  // Return function to clean up listeners
   return () => {
-    if (debounceTimeout !== null) {
-      window.clearTimeout(debounceTimeout);
+    if (debounce_timeout !== null) {
+      window.clearTimeout(debounce_timeout);
     }
-    document.removeEventListener("mouseup", handleSelectionChange);
-    document.removeEventListener("mousedown", handleMouseDown);
+    document.removeEventListener("mouseup", handle_selection_change);
+    document.removeEventListener("mousedown", handle_mouse_down);
   };
 }

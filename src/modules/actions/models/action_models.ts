@@ -1,6 +1,10 @@
 import type { PageCategory } from "$/modules/context/models/context";
 import type { InferenceParameters } from "$/modules/inference/models/inference_model";
-import type { SelectionType } from "$/modules/selection/models/selection";
+import type {
+  SelectionContextType,
+  SelectionDataType,
+} from "$/modules/selection/models/selection";
+import type { IconType } from "react-icons";
 
 /**
  * Action definition type
@@ -15,16 +19,14 @@ export type ActionDefinition = {
    * Short description of what the action does
    */
   description: string;
-   /**
-   * Whether this action primarily targets text being authored by the user (in inputs/textareas).
-   * If true, it will generally only be shown when the selection is within such an element.
-   * If false or undefined, it will generally only be shown for selections on static page content.
-   */
-   authoringAction?: boolean;
   /**
    * Applicable selection types for this action
    */
-  selectionTypes: SelectionType[];
+  contextTypes: SelectionContextType[];
+  /**
+   * Applicable selection types for this action
+   */
+  dataTypes: SelectionDataType[];
   /**
    * Applicable page contexts for this action
    */
@@ -45,9 +47,9 @@ export type ActionDefinition = {
    */
   llmParams?: Partial<InferenceParameters>;
   /**
-   * Emoji to use as the icon for this action
+   * Icon component (e.g., from react-icons) to display for the action.
    */
-  emoji: string;
+  icon: IconType;
   /**
    * Whether the action should be highlighted
    */
@@ -62,11 +64,6 @@ export type PromptContext = {
    * Selected text
    */
   selection: string;
-
-  /**
-   * Type of selection
-   */
-  selectionType: SelectionType;
 
   /**
    * URL of the page

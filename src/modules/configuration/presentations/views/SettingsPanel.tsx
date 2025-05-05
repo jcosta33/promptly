@@ -18,7 +18,13 @@ import { ThemePreference } from "$/modules/configuration/models/user_settings";
  * Main settings panel component for the popup
  */
 export const SettingsPanel: FC = () => {
-  const { settings, loading: settingsLoading, toggleEnabled, setSelectedModel, setThemePreference } = useSettings();
+  const {
+    settings,
+    loading: settingsLoading,
+    toggleEnabled,
+    setSelectedModel,
+    setThemePreference,
+  } = useSettings();
   const modelGroups = get_available_models();
 
   const {
@@ -49,7 +55,9 @@ export const SettingsPanel: FC = () => {
       logger.warn("No model selected, cannot trigger load.");
       return;
     }
-    logger.info("Triggering model load from settings panel", { modelId: settings.selectedModelId });
+    logger.info("Triggering model load from settings panel", {
+      modelId: settings.selectedModelId,
+    });
     loadModel(settings.selectedModelId);
   };
 
@@ -69,12 +77,12 @@ export const SettingsPanel: FC = () => {
       isLoading: modelLoadHookIsLoading,
       progress,
       status,
-      loadingError
+      loadingError,
     });
   }, [settingsLoading, modelLoadHookIsLoading, progress, status, loadingError]);
 
   return (
-    <Box>
+    <Box style={{ width: "320px" }}>
       <Flex direction="column" gap="md">
         <Text as="h3">Model Selection</Text>
 
@@ -101,7 +109,9 @@ export const SettingsPanel: FC = () => {
             disabled={loading}
           />
         ) : (
-          <Text color="error">Error: Could not retrieve available models list.</Text>
+          <Text color="error">
+            Error: Could not retrieve available models list.
+          </Text>
         )}
 
         <Text as="h3">Appearance</Text>

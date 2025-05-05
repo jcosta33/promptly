@@ -5,7 +5,11 @@ import { detect_code_language } from "../helpers/detect_code_language";
 import { detect_selection_types } from "../helpers/detect_selection_types";
 import { extract_selection_html } from "../helpers/extract_selection_html";
 import { extract_text_from_html } from "../helpers/extract_text_from_html";
-import { type SelectionData, SelectionType } from "../models/selection";
+import {
+  SelectionContextType,
+  SelectionDataType,
+  type SelectionData,
+} from "../models/selection";
 
 import { format_code_block } from "./format_code_block";
 import { format_list_from_html } from "./format_list_from_html";
@@ -22,48 +26,40 @@ import { format_table_from_html } from "./format_table_from_html";
 export function transform_raw_selection_to_selection_data(
   selection: Selection
 ): SelectionData | null {
-  // Get the text content of the selection
   const originalText = selection.toString();
 
-  // If selection is empty, return null
   if (!originalText.trim()) {
     return null;
   }
 
-  // Get the HTML fragment of the selection
   const originalHtml = extract_selection_html(selection);
-
-  // Clean the text
   const cleanedText = clean_selection_text(originalText);
-
-  // Count stats
   const wordCount = count_words(cleanedText);
   const charCount = cleanedText.length;
 
-  // Detect all possible selection types using the helper
-  const detectedTypes = detect_selection_types(
+  const { dataTypes, contextTypes } = detect_selection_types(
     selection,
     cleanedText,
     wordCount
   );
 
-  // Generate LLM-optimized version of the text, now using HTML context
   const llmFormattedText = format_text_for_llm(
     cleanedText,
     originalHtml,
-    detectedTypes
+    dataTypes
   );
 
   return {
     text: cleanedText,
     originalText,
     originalHtml,
-    types: detectedTypes,
+    dataTypes,
+    contextTypes,
     pageUrl: window.location.href,
     pageTitle: document.title,
     wordCount,
     charCount,
-    isChunked: false, // Will be set to true if later chunked
+    isChunked: false,
     llmFormattedText,
   };
 }
@@ -72,7 +68,7 @@ export function transform_raw_selection_to_selection_data(
  * Registry of formatters for different selection types
  */
 type TypeFormatter = {
-  type: SelectionType;
+  type: SelectionDataType | SelectionContextType;
   format: (text: string, html: string) => string;
 };
 
@@ -82,7 +78,7 @@ type TypeFormatter = {
 const TYPE_FORMATTERS: TypeFormatter[] = [
   // Specific code-related formatters (highest priority)
   {
-    type: SelectionType.JSON_DATA,
+    type: SelectionDataType.JSON,
     format: (text, html) => {
       // Try to parse and pretty-print JSON
       try {
@@ -95,7 +91,7 @@ const TYPE_FORMATTERS: TypeFormatter[] = [
     },
   },
   {
-    type: SelectionType.CODE,
+    type: SelectionDataType.CODE_LIKE,
     format: (text, html) => {
       // Prefer HTML content if available, otherwise use text
       const content = html.includes("<") ? extract_text_from_html(html) : text;
@@ -105,26 +101,26 @@ const TYPE_FORMATTERS: TypeFormatter[] = [
   },
   // Terminal and error outputs
   {
-    type: SelectionType.ERROR_MESSAGE,
+    type: SelectionDataType.ERROR_LIKE,
     format: (text, html) => {
       return format_code_block(text);
     }, // Use text for errors
   },
   {
-    type: SelectionType.TERMINAL_OUTPUT,
+    type: SelectionDataType.TERMINAL_LIKE,
     format: (text, html) => {
       return format_code_block(text);
     }, // Use text for terminal
   },
   // Structured data formats
   {
-    type: SelectionType.TABLE,
+    type: SelectionContextType.TABLE,
     format: (text, html) => {
       return format_table_from_html(html);
     }, // Use HTML parser for tables
   },
   {
-    type: SelectionType.MATH_FORMULA,
+    type: SelectionDataType.LATEX,
     format: (text, html) => {
       // Preserve LaTeX or MathML
       if (
@@ -141,14 +137,14 @@ const TYPE_FORMATTERS: TypeFormatter[] = [
     },
   },
   {
-    type: SelectionType.LIST,
+    type: SelectionContextType.LIST,
     format: (text, html) => {
       return format_list_from_html(html);
     }, // Use HTML parser for lists
   },
   // Additional complex text types
   {
-    type: SelectionType.LONG_TEXT,
+    type: SelectionDataType.LONG_TEXT,
     format: (text, html) => {
       return format_long_text_for_llm(text);
     },
@@ -167,27 +163,20 @@ const TYPE_FORMATTERS: TypeFormatter[] = [
 function format_text_for_llm(
   text: string,
   html: string,
-  types: SelectionType[]
+  types: (SelectionDataType | SelectionContextType)[]
 ): string {
   if (types.length === 0) {
-    // Default to returning the text as is if no types detected
     return text;
   }
 
-  let formattedText = text; // Start with plain text
+  let formattedText = text;
 
-  // Apply the highest priority formatter found
   for (const formatter of TYPE_FORMATTERS) {
     if (types.includes(formatter.type)) {
       formattedText = formatter.format(text, html);
-      break; // Apply only the first matching (highest priority) formatter
+      break;
     }
   }
-
-  // Note: The specialized mixed-content formatters (like format_list_with_code)
-  // are removed as the HTML-based formatters should handle these cases better.
-  // If specific combinations need *further* refinement beyond the primary formatter,
-  // additional checks could be added here.
 
   return formattedText;
 }

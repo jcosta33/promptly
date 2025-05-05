@@ -1,7 +1,7 @@
 .box {
   position: relative;
   background-color: var(--bg-color);
-  border: var(--border-width) solid var(--border-color);
+  border: var(--border-width-thick) solid var(--border-color);
   border-radius: var(--border-radius);
   display: block;
   transition: all var(--transition-medium);
@@ -12,7 +12,6 @@
     outline-offset: 2px;
   }
 
-  /* Elevation variants */
   &[data-promptly-box-elevation="1"] {
     box-shadow: var(--brutalist-shadow);
   }
@@ -22,7 +21,6 @@
       var(--color-black);
   }
 
-  /* Background color variants */
   &[data-promptly-box-bg="primary"] {
     background-color: var(--primary-color);
     color: var(--inverted-text-color);
@@ -47,7 +45,6 @@
     color: var(--text-color);
   }
 
-  /* Border radius */
   &[data-promptly-box-radius="sm"] {
     border-radius: var(--border-radius-sm);
   }
@@ -64,7 +61,6 @@
     border-radius: 9999px;
   }
 
-  /* Inset and outset */
   &[data-promptly-box-inset="true"] {
     box-shadow: var(--inset-border);
   }
@@ -73,7 +69,6 @@
     box-shadow: var(--outset-border);
   }
 
-  /* Interactive state */
   &[data-promptly-box-interactive="true"] {
     cursor: pointer;
     transition:
@@ -90,7 +85,6 @@
     box-shadow: var(--inset-border);
   }
 
-  /* Padding classes */
   &[data-promptly-box-p="xxs"] {
     padding: var(--space-xxs);
   }
@@ -115,7 +109,6 @@
     padding: var(--space-xl);
   }
 
-  /* Margin classes */
   &[data-promptly-box-m="xxs"] {
     margin: var(--space-xxs);
   }
