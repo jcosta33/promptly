@@ -39,7 +39,7 @@ export const CSS_VARIABLES = {
   "--text-color": { light: "#000000", dark: "#ffffff" },
   "--inverted-text-color": { light: "#ffffff", dark: "#000000" },
   "--color-text-muted": { light: "#616161", dark: "#bdbdbd" },
-  "--border-color": { light: "#f9f9f9", dark: "#252525" },
+  "--border-color": { light: "#f1f1f1", dark: "#151515" },
   "--accent-color": { light: "#9c27b0", dark: "#ce93d8" },
   "--disabled-color": { light: "#9e9e9e", dark: "#616161" },
 

@@ -14,6 +14,52 @@ export default defineContentScript({
   main() {
     logger.debug("Promptly content script initializing...");
 
+    const styleEl = document.createElement("style");
+    document.head.appendChild(styleEl);
+    const styleSheet = styleEl.sheet;
+
+    const fontFaces = [
+      {
+        fontFamily: "JetBrains Mono",
+        fontStyle: "normal",
+        fontWeight: "100 800",
+        fontDisplay: "swap",
+        srcPath: "fonts/JetBrains_Mono/JetBrainsMono-VariableFont_wght.ttf",
+        format: "truetype-variations",
+      },
+      {
+        fontFamily: "JetBrains Mono",
+        fontStyle: "italic",
+        fontWeight: "100 800",
+        fontDisplay: "swap",
+        srcPath:
+          "fonts/JetBrains_Mono/JetBrainsMono-Italic-VariableFont_wght.ttf",
+        format: "truetype-variations",
+      },
+      {
+        fontFamily: "Press Start 2P",
+        fontStyle: "normal",
+        fontWeight: "400",
+        fontDisplay: "swap",
+        srcPath: "fonts/Press_Start_2P/PressStart2P-Regular.ttf",
+        format: "truetype",
+      },
+    ];
+
+    fontFaces.forEach((font) => {
+      const fontUrl = chrome.runtime.getURL(font.srcPath);
+      const rule = `
+        @font-face {
+          font-family: "${font.fontFamily}";
+          font-style: ${font.fontStyle};
+          font-weight: ${font.fontWeight};
+          font-display: ${font.fontDisplay};
+          src: url('${fontUrl}') format('${font.format}');
+        }
+      `;
+      styleSheet?.insertRule(rule, styleSheet.cssRules.length);
+    });
+
     initialize_messaging();
     init_theme();
 
