@@ -1,3 +1,34 @@
+/* @import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&family=Press+Start+2P&display=swap"); */
+
+/* JetBrains Mono Regular */
+@font-face {
+  font-family: "JetBrains Mono";
+  font-style: normal;
+  font-weight: 100 800; /* Weight range for variable font */
+  font-display: swap;
+  src: url("../fonts/JetBrains_Mono/JetBrainsMono-VariableFont_wght.ttf")
+    format("truetype-variations");
+}
+
+/* JetBrains Mono Italic */
+@font-face {
+  font-family: "JetBrains Mono";
+  font-style: italic;
+  font-weight: 100 800; /* Weight range for variable font */
+  font-display: swap;
+  src: url("../fonts/JetBrains_Mono/JetBrainsMono-Italic-VariableFont_wght.ttf")
+    format("truetype-variations");
+}
+
+/* Press Start 2P Regular */
+@font-face {
+  font-family: "Press Start 2P";
+  font-style: normal;
+  font-weight: 400; /* Typically 'normal' or 400 */
+  font-display: swap;
+  src: url("../fonts/Press_Start_2P/PressStart2P-Regular.ttf") format("truetype");
+}
+
 /**
  * Comprehensive CSS Reset for Promptly
  * Based on normalize.css v8.0.1 and expanded for aggressive reset within scope.
@@ -8,30 +39,26 @@
 promptly-root {
   display: block;
   box-sizing: border-box;
-  line-height: 1.15;
-  -webkit-text-size-adjust: 100%;
-  -webkit-tap-highlight-color: transparent;
-  font-family: "JetBrains Mono", monospace;
-  color: inherit;
-  background: none;
-
-  *,
-  *::before,
-  *::after {
-    box-sizing: border-box;
-    display: revert;
-  }
-
   margin: 0;
   padding: 0;
-  border: 0; /* Reset border */
-  font-size: 100%;
-  font: inherit;
-  font-family:
-    "JetBrains Mono", monospace; /* Ensure descendants inherit base font */
+  border: 0;
   vertical-align: baseline;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 100%;
+  line-height: 1.15;
   color: inherit;
   background: none;
+  -webkit-text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
+
+  & *,
+  & *::before,
+  & *::after {
+    box-sizing: inherit;
+    display: revert;
+    margin: 0;
+    padding: 0;
+  }
 
   &::-webkit-scrollbar {
     width: 16px;
@@ -61,58 +88,59 @@ promptly-root {
     background: var(--bg-color);
   }
 
-  article,
-  aside,
-  details,
-  figcaption,
-  figure,
-  footer,
-  header,
-  hgroup,
-  main,
-  menu,
-  nav,
-  section,
-  summary {
+  & article,
+  & aside,
+  & details,
+  & figcaption,
+  & figure,
+  & footer,
+  & header,
+  & hgroup,
+  & main,
+  & menu,
+  & nav,
+  & section,
+  & summary {
     display: block;
   }
 
   /* Typography Resets */
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6 {
+  & h1,
+  & h2,
+  & h3,
+  & h4,
+  & h5,
+  & h6 {
     font-family: "Press Start 2P", cursive;
     font-size: 1em;
     font-weight: inherit;
     line-height: inherit;
+    letter-spacing: 0.05em;
     margin: 0;
   }
 
-  p,
-  blockquote,
-  pre,
-  address,
-  dl,
-  dd,
-  ol,
-  ul,
-  fieldset,
-  form,
-  table {
+  & p,
+  & blockquote,
+  & pre,
+  & address,
+  & dl,
+  & dd,
+  & ol,
+  & ul,
+  & fieldset,
+  & form,
+  & table {
     margin: 0;
     padding: 0;
   }
 
-  ol,
-  ul {
+  & ol,
+  & ul {
     list-style: none;
   }
 
-  blockquote,
-  q {
+  & blockquote,
+  & q {
     quotes: none;
     &::before,
     &::after {
@@ -121,95 +149,94 @@ promptly-root {
     }
   }
 
-  abbr[title] {
+  & abbr[title] {
     text-decoration: none;
     border-bottom: none;
     cursor: help;
   }
 
-  b,
-  strong {
+  & b,
+  & strong {
     font-weight: bold; /* Normalize boldness */
   }
 
-  i,
-  em,
-  cite,
-  dfn {
+  & i,
+  & em,
+  & cite,
+  & dfn {
     font-style: italic; /* Normalize italics */
   }
 
-  small {
+  & small {
     font-size: 80%; /* Normalize small size */
   }
 
-  sub,
-  sup {
+  & sub,
+  & sup {
     font-size: 75%;
     line-height: 0;
     position: relative;
     vertical-align: baseline;
   }
 
-  sub {
+  & sub {
     bottom: -0.25em;
   }
 
-  sup {
+  & sup {
     top: -0.5em;
   }
 
   /* Links */
-  a {
+  & a {
     color: inherit;
     text-decoration: inherit; /* Inherit decoration */
     background-color: transparent;
   }
 
   /* Code */
-  pre,
-  code,
-  kbd,
-  samp {
+  & pre,
+  & code,
+  & kbd,
+  & samp {
     font-family: monospace, monospace;
     font-size: 1em;
     background: none;
     border: none;
   }
 
-  pre {
+  & pre {
     /* Reset whitespace handling */
     white-space: revert;
     word-wrap: revert;
   }
 
   /* Tables */
-  table {
+  & table {
     border-collapse: collapse;
     border-spacing: 0;
-    /* width: auto; - Let content or component define width */
     text-align: inherit; /* Inherit alignment */
   }
 
-  th,
-  td {
+  & th,
+  & td {
     padding: 0;
     vertical-align: baseline; /* Reset alignment */
     border: none;
     text-align: inherit; /* Inherit alignment */
   }
 
-  caption {
+  & caption {
     caption-side: revert; /* Revert caption position */
     text-align: inherit;
   }
 
   /* Forms */
-  button,
-  input,
-  optgroup,
-  select,
-  textarea {
+  & button,
+  & input,
+  & optgroup,
+  & select,
+  & textarea {
     font: inherit;
     line-height: inherit;
     color: inherit;
@@ -227,14 +254,13 @@ promptly-root {
     }
   }
 
-  button,
-  [type="button"],
-  [type="reset"],
-  [type="submit"] {
+  & button,
+  & [type="button"],
+  & [type="reset"],
+  & [type="submit"] {
     cursor: pointer;
     -webkit-appearance: button;
     appearance: button;
-    /* Reset any specific styling added previously */
     border: none;
     background: none;
     color: inherit;
@@ -247,127 +273,113 @@ promptly-root {
     }
 
     &:-moz-focusring {
-      /* Remove default dotted outline in Firefox */
       outline: none;
     }
 
     &:disabled {
       cursor: default;
-      /* Opacity might be styling, consider removing */
-      /* opacity: 0.7; */
     }
   }
 
-  input {
-    /* Override general appearance: none for specific types if needed */
-    &[type="search"] {
-      -webkit-appearance: textfield;
-      appearance: textfield;
-      outline-offset: -2px; /* Keep for consistency */
+  & input[type="search"] {
+    -webkit-appearance: textfield;
+    appearance: textfield;
+    outline-offset: -2px;
 
-      &::-webkit-search-decoration,
-      &::-webkit-search-cancel-button,
-      &::-webkit-search-results-button,
-      &::-webkit-search-results-decoration {
-        -webkit-appearance: none;
-        appearance: none;
-      }
-    }
-
-    &[type="number"] {
-      -moz-appearance: textfield; /* Firefox */
-      &::-webkit-inner-spin-button,
-      &::-webkit-outer-spin-button {
-        height: auto;
-        -webkit-appearance: none;
-        margin: 0;
-      }
-    }
-
-    &[type="radio"],
-    &[type="checkbox"] {
-      /* Revert appearance to allow default rendering or custom styling */
-      appearance: auto;
-      -webkit-appearance: auto;
-      -moz-appearance: auto;
+    &::-webkit-search-decoration,
+    &::-webkit-search-cancel-button,
+    &::-webkit-search-results-button,
+    &::-webkit-search-results-decoration {
+      -webkit-appearance: none;
+      appearance: none;
     }
   }
 
-  select {
-    /* Appearance is already 'none', needs custom styling */
-    /* Consider reverting if default select is sometimes acceptable */
-    /* appearance: revert; */
+  & input[type="number"] {
+    -moz-appearance: textfield; /* Firefox */
+    &::-webkit-inner-spin-button,
+    &::-webkit-outer-spin-button {
+      height: auto;
+      -webkit-appearance: none;
+      margin: 0;
+    }
   }
 
-  textarea {
+  & input[type="radio"],
+  & input[type="checkbox"] {
+    appearance: auto;
+    -webkit-appearance: auto;
+    -moz-appearance: auto;
+  }
+
+  & select {
+  }
+
+  & textarea {
     overflow: auto;
     vertical-align: top;
     resize: vertical;
-    /* Reset appearance */
     appearance: revert;
     -webkit-appearance: revert;
     -moz-appearance: revert;
   }
 
-  fieldset {
-    /* Reset fieldset */
+  & fieldset {
     border: none;
     padding: 0;
     margin: 0;
   }
 
-  legend {
+  & legend {
     padding: 0;
-    display: block; /* Normalize display */
+    display: block;
     color: inherit;
     white-space: normal;
     max-width: 100%;
   }
 
-  progress {
+  & progress {
     vertical-align: baseline;
-    /* Reset progress bar appearance */
     appearance: none;
     -webkit-appearance: none;
     -moz-appearance: none;
     border: none;
     background: none;
-    color: inherit; /* Inherit color for potential text fallback */
+    color: inherit;
   }
 
   /* Media */
-  img,
-  svg,
-  video,
-  canvas,
-  audio,
-  iframe,
-  embed,
-  object {
+  & img,
+  & svg,
+  & video,
+  & canvas,
+  & audio,
+  & iframe,
+  & embed,
+  & object {
     display: block;
     max-width: 100%;
     height: auto;
-    vertical-align: middle; /* Normalize alignment */
+    vertical-align: middle;
   }
 
-  img {
+  & img {
     border-style: none;
   }
 
-  svg:not([fill]) {
+  & svg:not([fill]) {
     fill: currentColor;
   }
 
   /* Hidden */
-  [hidden],
-  [aria-hidden="true"] {
+  & [hidden],
+  & [aria-hidden="true"] {
     display: none !important;
     visibility: hidden !important;
   }
 
   /* Screen reader only (Utility Class) */
-  /* Keep this utility class definition */
-  .sr-only {
+  & .sr-only {
     position: absolute;
     width: 1px;
     height: 1px;

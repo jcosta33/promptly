@@ -7,17 +7,13 @@ import { EventType } from "$/modules/messaging/models/event_types";
 import type { ExtensionSettings } from "$/modules/configuration/models/user_settings";
 import type { MessageEvent } from "$/modules/messaging/helpers/create_message_event";
 
+import "../public/css/normalize.css";
+
 export default defineContentScript({
   matches: ["*://*/*"],
 
   main() {
     logger.debug("Promptly content script initializing...");
-
-    const fontLink = document.createElement("link");
-    fontLink.rel = "stylesheet";
-    fontLink.href =
-      "https://fonts.googleapis.com/css2?family=JetBrains+Mono&family=Press+Start+2P&display=swap";
-    document.head.appendChild(fontLink);
 
     initialize_messaging();
     initTheme();

@@ -173,7 +173,7 @@ export const PromptlyOverlay: FC<PromptlyOverlayProps> = ({
       <Box p="md" bg="secondary" elevation="3">
         <Flex direction="column" gap="md">
           <Flex ref={dragHandleRef} justify="between">
-            <Text as="h2" weight="bold" size="xl">
+            <Text as="h2" weight="bold" size="xl" color="primary">
               Promptly
             </Text>
 

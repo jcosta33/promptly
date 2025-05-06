@@ -7,6 +7,7 @@ import { subscribe } from "$/modules/messaging/repositories/message_bus";
 import { EventType } from "$/modules/messaging/models/event_types";
 import type { ExtensionSettings } from "$/modules/configuration/models/user_settings";
 import type { MessageEvent } from "$/modules/messaging/helpers/create_message_event";
+import "../../public/css/normalize.css";
 
 const root = createRoot(document.getElementById("root")!);
 

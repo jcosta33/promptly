@@ -37,10 +37,10 @@ export default defineConfig({
     description:
       "Select text on any website and analyze it using WebLLM models that run directly in your browser.",
 
-    content_security_policy: {
-      extension_pages:
-        "style-src-elem 'self' https://cdnjs.cloudflare.com; font-src 'self' https://cdnjs.cloudflare.com https://fonts.googleapis.com; script-src 'self' 'wasm-unsafe-eval'; default-src 'self' data:; connect-src 'self' data: http://localhost:8000 https://huggingface.co https://cdn-lfs.huggingface.co https://cdn-lfs-us-1.huggingface.co https://raw.githubusercontent.com https://cdn-lfs-us-1.hf.co",
-    },
+    // content_security_policy: {
+    //   extension_pages:
+    //     "style-src-elem 'self' https://cdnjs.cloudflare.com; font-src 'self' https://cdnjs.cloudflare.com https://fonts.googleapis.com; script-src 'self' 'wasm-unsafe-eval'; default-src 'self' data:; connect-src 'self' data: http://localhost:8000 https://huggingface.co https://cdn-lfs.huggingface.co https://cdn-lfs-us-1.huggingface.co https://raw.githubusercontent.com https://cdn-lfs-us-1.hf.co",
+    // },
 
     permissions: ["storage", "tabs"],
     host_permissions: ["<all_urls>"],
