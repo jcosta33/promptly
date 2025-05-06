@@ -144,7 +144,7 @@ export const CSS_VARIABLES_UPDATED_FOCUS = {
   },
 };
 
-export function setTheme(darkMode: boolean): void {
+export function set_theme(darkMode: boolean): void {
   const root = document.documentElement;
   const mode = darkMode ? "dark" : "light";
 
@@ -162,29 +162,29 @@ export function setTheme(darkMode: boolean): void {
   });
 }
 
-export function detectPreferredColorScheme(): boolean {
+export function detect_preferred_color_scheme(): boolean {
   return (
     window.matchMedia &&
     window.matchMedia("(prefers-color-scheme: dark)").matches
   );
 }
 
-export function initTheme(userPrefersDark?: boolean | null): boolean {
+export function init_theme(userPrefersDark?: boolean | null): boolean {
   let darkMode: boolean;
 
   if (userPrefersDark === undefined || userPrefersDark === null) {
-    darkMode = detectPreferredColorScheme();
+    darkMode = detect_preferred_color_scheme();
   } else {
     darkMode = userPrefersDark;
   }
 
-  setTheme(darkMode);
+  set_theme(darkMode);
 
   if (userPrefersDark === undefined || userPrefersDark === null) {
     window
       .matchMedia("(prefers-color-scheme: dark)")
       .addEventListener("change", (e) => {
-        setTheme(e.matches);
+        set_theme(e.matches);
       });
   }
 

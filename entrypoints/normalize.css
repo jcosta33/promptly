@@ -1,12 +1,10 @@
-/* @import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&family=Press+Start+2P&display=swap"); */
-
 /* JetBrains Mono Regular */
 @font-face {
   font-family: "JetBrains Mono";
   font-style: normal;
   font-weight: 100 800; /* Weight range for variable font */
   font-display: swap;
-  src: url("../fonts/JetBrains_Mono/JetBrainsMono-VariableFont_wght.ttf")
+  src: url("/fonts/JetBrains_Mono/JetBrainsMono-VariableFont_wght.ttf")
     format("truetype-variations");
 }
 
@@ -16,7 +14,7 @@
   font-style: italic;
   font-weight: 100 800; /* Weight range for variable font */
   font-display: swap;
-  src: url("../fonts/JetBrains_Mono/JetBrainsMono-Italic-VariableFont_wght.ttf")
+  src: url("/fonts/JetBrains_Mono/JetBrainsMono-Italic-VariableFont_wght.ttf")
     format("truetype-variations");
 }
 
@@ -26,7 +24,7 @@
   font-style: normal;
   font-weight: 400; /* Typically 'normal' or 400 */
   font-display: swap;
-  src: url("../fonts/Press_Start_2P/PressStart2P-Regular.ttf") format("truetype");
+  src: url("/fonts/Press_Start_2P/PressStart2P-Regular.ttf") format("truetype");
 }
 
 /**

@@ -7,7 +7,6 @@ declare module "wxt/browser" {
     | "/"
     | "/background.js"
     | "/content-scripts/content.js"
-    | "/css/normalize.css"
     | "/fonts/JetBrains_Mono/JetBrainsMono-Italic-VariableFont_wght.ttf"
     | "/fonts/JetBrains_Mono/JetBrainsMono-VariableFont_wght.ttf"
     | "/fonts/JetBrains_Mono/OFL.txt"
@@ -35,6 +34,7 @@ declare module "wxt/browser" {
     | "/icon/32.png"
     | "/icon/48.png"
     | "/icon/96.png"
+    | "/normalize.js"
     | "/popup.html"
     | "/wxt.svg"
   type HtmlPublicPath = Extract<PublicPath, `${string}.html`>
