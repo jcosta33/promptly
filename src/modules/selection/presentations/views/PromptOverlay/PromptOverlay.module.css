@@ -1,6 +1,6 @@
 .overlayContainer {
   position: absolute;
-  width: 480px;
+  width: 400px;
   max-height: 80vh;
   z-index: 99999;
 }
@@ -19,5 +19,5 @@
 
 .actionIcon {
   font-size: var(--font-size-lg);
-  color: var(--color-blue-info);
+  color: var(--tertiary-color);
 }

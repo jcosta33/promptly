@@ -113,20 +113,6 @@ export const SettingsPanel: FC = () => {
             Error: Could not retrieve available models list.
           </Text>
         )}
-
-        <Text as="h3">Appearance</Text>
-        <Select
-          label="Theme"
-          options={[
-            { value: ThemePreference.LIGHT, label: "Light" },
-            { value: ThemePreference.DARK, label: "Dark" },
-            { value: ThemePreference.SYSTEM, label: "System Default" },
-          ]}
-          value={settings?.themePreference}
-          onChange={handleThemeChange}
-          disabled={loading}
-          fullWidth
-        />
       </Flex>
     </Box>
   );

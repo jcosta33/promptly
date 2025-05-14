@@ -1,10 +1,10 @@
 import type { Preview, Decorator } from "@storybook/react";
 import React from "react";
 
-import { initTheme, setTheme } from "../src/theme";
+import { init_theme, set_theme } from "../src/theme";
 import "../src/normalize.css";
 
-let currentDarkMode = initTheme();
+let currentDarkMode = init_theme();
 
 export const globalTypes = {
   theme: {
@@ -26,7 +26,7 @@ const withTheme: Decorator = (StoryFn, context) => {
   const { theme } = context.globals;
   const darkMode = theme === "dark";
 
-  setTheme(darkMode);
+  set_theme(darkMode);
 
   return StoryFn();
 };

@@ -170,28 +170,19 @@ export const PromptlyOverlay: FC<PromptlyOverlayProps> = ({
         userSelect: isDragging ? "none" : "auto",
       }}
     >
-      <Box p="md" bg="secondary" elevation="3">
+      <Box p="md" elevation="3">
         <Flex direction="column" gap="md">
-          <Flex ref={dragHandleRef} justify="between">
-            <Text as="h2" weight="bold" size="xl" color="primary">
-              Promptly
-            </Text>
-
-            <button
-              onClick={handleClose}
-              aria-label="Close"
-              className={styles.closeButton}
+          <Flex ref={dragHandleRef}>
+            <Text
+              as="blockquote"
+              size="xs"
+              color="muted"
+              style={{ width: "100%" }}
             >
-              <PiXCircleBold />
-            </button>
+              &quot;{selectionData.text.substring(0, 100)}
+              {selectionData.text.length > 100 ? "..." : ""}&quot;
+            </Text>
           </Flex>
-
-          <Divider />
-
-          <Text as="blockquote" size="xs" color="muted">
-            &quot;{selectionData.text.substring(0, 100)}
-            {selectionData.text.length > 100 ? "..." : ""}&quot;
-          </Text>
 
           <ResponseDisplay
             messages={messages}
@@ -211,6 +202,7 @@ export const PromptlyOverlay: FC<PromptlyOverlayProps> = ({
                     return handleActionSelect(action);
                   }}
                   active={activeAction?.id === action.id}
+                  style={{ width: "calc(50% - 4px)" }}
                 >
                   <Flex align="center" gap="sm">
                     <action.icon className={styles.actionIcon} />

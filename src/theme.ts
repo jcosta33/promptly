@@ -10,6 +10,20 @@ export const CSS_VARIABLES = {
   "--color-blue-500": { light: "#2196f3", dark: "#0a3880" },
   "--color-blue-700": { light: "#1976d2", dark: "#072a60" },
 
+  "--color-green-50": { light: "#e8f5e9", dark: "#a5d6a7" },
+  "--color-green-100": { light: "#c8e6c9", dark: "#81c784" },
+  "--color-green-300": { light: "#81c784", dark: "#4caf50" },
+  "--color-green-500": { light: "#4caf50", dark: "#388e3c" },
+  "--color-green-700": { light: "#388e3c", dark: "#2e7d32" },
+  "--color-green-900": { light: "#1b5e20", dark: "#1b5e20" },
+
+  "--color-purple-50": { light: "#f3e5f5", dark: "#d1c4e9" },
+  "--color-purple-100": { light: "#e1bee7", dark: "#b39ddb" },
+  "--color-purple-300": { light: "#ba68c8", dark: "#9575cd" },
+  "--color-purple-500": { light: "#9c27b0", dark: "#7e57c2" },
+  "--color-purple-700": { light: "#7b1fa2", dark: "#673ab7" },
+  "--color-purple-900": { light: "#4a148c", dark: "#512da8" },
+
   "--color-gray-50": { light: "#fafafa", dark: "#212121" },
   "--color-gray-100": { light: "#f5f5f5", dark: "#1a1a1a" },
   "--color-gray-200": { light: "#eeeeee", dark: "#303030" },
@@ -24,7 +38,10 @@ export const CSS_VARIABLES = {
 
   "--color-yellow-warning": { light: "#ffeb3b", dark: "#ffff8d" },
   "--color-red-error": { light: "#f44336", dark: "#ff5252" },
-  "--color-green-success": { light: "#4caf50", dark: "#69f0ae" },
+  "--color-green-success": {
+    light: "var(--color-green-500)",
+    dark: "var(--color-green-300)",
+  },
   "--color-blue-info": { light: "#2196f3", dark: "#80d8ff" },
 
   "--primary-color": { light: "#ff9800", dark: "#ff6b35" },
@@ -40,11 +57,14 @@ export const CSS_VARIABLES = {
   "--inverted-text-color": { light: "#ffffff", dark: "#000000" },
   "--color-text-muted": { light: "#616161", dark: "#bdbdbd" },
   "--border-color": { light: "#f1f1f1", dark: "#151515" },
-  "--accent-color": { light: "#9c27b0", dark: "#ce93d8" },
+  "--accent-color": {
+    light: "var(--color-purple-500)",
+    dark: "var(--color-purple-300)",
+  },
   "--disabled-color": { light: "#9e9e9e", dark: "#616161" },
 
   "--button-bg-color": { light: "#f5f5f5", dark: "#212121" },
-  "--button-text-color": { light: "#000000", dark: "#ffffff" },
+  "--button-text-color": "e0e0e0",
   "--button-hover-bg-color": { light: "#d9d9d9", dark: "#555555" },
   "--button-active-bg-color": { light: "#a0a0a0", dark: "#303030" },
   "--button-focus-outline-color": {
@@ -66,7 +86,10 @@ export const CSS_VARIABLES = {
   "--color-text-primary": { light: "#000000", dark: "#ffffff" },
   "--color-text-secondary": { light: "#616161", dark: "#bdbdbd" },
   "--color-text-disabled": { light: "#9e9e9e", dark: "#616161" },
-  "--color-text-accent": { light: "#9c27b0", dark: "#ce93d8" },
+  "--color-text-accent": {
+    light: "var(--color-purple-500)",
+    dark: "var(--color-purple-300)",
+  },
   "--color-text-error": { light: "#f44336", dark: "#ff5252" },
   "--color-accent-primary": { light: "#ff9800", dark: "#ff6b35" },
   "--color-background-tertiary": { light: "#e0e0e0", dark: "#303030" },
@@ -113,13 +136,12 @@ export const CSS_VARIABLES = {
     "inset 1px 1px 0px var(--inner-shadow), inset -1px -1px 0px var(--inner-highlight)",
   "--outset-border":
     "inset -1px -1px 0px var(--inner-shadow), inset 1px 1px 0px var(--inner-highlight)",
-  "--brutalist-shadow":
-    "var(--shadow-offset) var(--shadow-offset) 0 0 var(--color-black)",
+  "--brutalist-shadow": "2px 2px 0 0 var(--color-black)",
   "--double-border": "var(--border-width) solid var(--color-black)",
 
-  "--transition-fast": "0ms",
-  "--transition-medium": "0ms",
-  "--transition-slow": "0ms",
+  "--transition-fast": "100ms",
+  "--transition-medium": "200ms",
+  "--transition-slow": "300ms",
 
   "--z-index-dropdown": "1000",
   "--z-index-sticky": "1020",
@@ -129,7 +151,10 @@ export const CSS_VARIABLES = {
   "--z-index-popover": "1060",
   "--z-index-tooltip": "1070",
 
-  "--color-accent-vibrant": { light: "#00ffff", dark: "#00ff00" },
+  "--color-accent-vibrant": {
+    light: "var(--color-purple-300)",
+    dark: "var(--color-purple-500)",
+  },
 };
 
 export const CSS_VARIABLES_UPDATED_FOCUS = {
