@@ -1,4 +1,5 @@
 import { type ElementType, type HTMLAttributes, type FC } from "react";
+
 import styles from "./Box.module.css";
 
 type BoxPadding = "xxs" | "xs" | "sm" | "md" | "lg" | "xl";

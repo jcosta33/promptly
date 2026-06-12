@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+
 import styles from "./Accordion.module.css";
 
 export type AccordionItem = {
@@ -25,12 +26,16 @@ export const Accordion: React.FC<AccordionProps> = ({
   ...rest
 }) => {
   const [expandedIds, setExpandedIds] = useState<string[]>(
-    defaultExpandedId ? [defaultExpandedId] : []
+    defaultExpandedId ? [defaultExpandedId] : [],
   );
 
   const handleToggle = (id: string) => {
     if (expandedIds.includes(id)) {
-      setExpandedIds(expandedIds.filter((itemId) => itemId !== id));
+      setExpandedIds(
+        expandedIds.filter((itemId) => {
+          return itemId !== id;
+        }),
+      );
     } else {
       if (allowMultiple) {
         setExpandedIds([...expandedIds, id]);
@@ -61,7 +66,9 @@ export const Accordion: React.FC<AccordionProps> = ({
                 ${styles.accordionHeader}
                 ${iconPosition === "left" ? styles.iconLeft : styles.iconRight}
               `}
-              onClick={() => !item.disabled && handleToggle(item.id)}
+              onClick={() => {
+                return !item.disabled && handleToggle(item.id);
+              }}
               aria-expanded={isExpanded}
               aria-controls={`accordion-content-${item.id}`}
               disabled={item.disabled}

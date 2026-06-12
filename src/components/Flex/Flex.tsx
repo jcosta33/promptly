@@ -1,4 +1,5 @@
-import { type FC, type ReactNode, type HTMLAttributes, forwardRef } from "react";
+import { type ReactNode, type HTMLAttributes, forwardRef } from "react";
+
 import styles from "./Flex.module.css";
 
 export type FlexDirection = "row" | "column" | "row-reverse" | "column-reverse";
@@ -37,7 +38,7 @@ export const Flex = forwardRef<HTMLDivElement, FlexProps>(
       children,
       ...rest
     },
-    ref
+    ref,
   ) => {
     return (
       <div
@@ -58,7 +59,7 @@ export const Flex = forwardRef<HTMLDivElement, FlexProps>(
         {children}
       </div>
     );
-  }
+  },
 );
 
 Flex.displayName = "Flex";

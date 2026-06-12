@@ -2,7 +2,7 @@ import type { Preview, Decorator } from "@storybook/react";
 import React from "react";
 
 import { init_theme, set_theme } from "../src/theme";
-import "../src/normalize.css";
+import "../entrypoints/normalize.css";
 
 let currentDarkMode = init_theme();
 
@@ -28,11 +28,15 @@ const withTheme: Decorator = (StoryFn, context) => {
 
   set_theme(darkMode);
 
-  return StoryFn();
+  return React.createElement(StoryFn);
 };
 
 const withNormalizationWrapper: Decorator = (StoryFn) => {
-  return React.createElement("promptly-root", null, StoryFn());
+  return React.createElement(
+    "promptly-root",
+    null,
+    React.createElement(StoryFn),
+  );
 };
 
 const preview: Preview = {

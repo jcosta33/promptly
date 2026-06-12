@@ -23,11 +23,11 @@
 
 ## Commands
 
-| Slot | Command | Purpose |
-|---|---|---|
-| cmdTest | `pnpm exec vitest run` | run the test suite |
-| cmdLint | `pnpm lint` | static checks |
-| cmdBuild | `pnpm build` | production build |
-| cmdTypecheck | `pnpm compile` | type checks |
-| cmdFormat | `pnpm exec prettier --check .` | formatting check |
-| cmdValidate | `pnpm lint && pnpm compile` | aggregate static validation |
+| Slot         | Command                        | Purpose                     |
+| ------------ | ------------------------------ | --------------------------- |
+| cmdTest      | `pnpm exec vitest run`         | run the test suite          |
+| cmdLint      | `pnpm lint`                    | static checks               |
+| cmdBuild     | `pnpm build`                   | production build            |
+| cmdTypecheck | `pnpm compile`                 | type checks                 |
+| cmdFormat    | `pnpm exec prettier --check .` | formatting check            |
+| cmdValidate  | `pnpm lint && pnpm compile`    | aggregate static validation |

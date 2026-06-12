@@ -189,7 +189,6 @@ export type ModelLoadingProgress = {
   progress: number;
 };
 
-
 /**
  * Categorization of model families
  */
@@ -206,7 +205,7 @@ export const ModelFamily = {
   DEEPSEEK: "DeepSeek",
 } as const;
 
-export type ModelFamily = typeof ModelFamily[keyof typeof ModelFamily];
+export type ModelFamily = (typeof ModelFamily)[keyof typeof ModelFamily];
 
 /**
  * Configuration options for LLM inference parameters.
@@ -249,7 +248,7 @@ export type ModelRecord = {
    * @example Meta, Microsoft
    */
   provider: string;
-  /** 
+  /**
    * Model family classification
    */
   family: ModelFamily;

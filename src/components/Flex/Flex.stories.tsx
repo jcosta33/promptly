@@ -1,6 +1,8 @@
-import type { Meta, StoryObj } from "@storybook/react";
-import { Flex } from "./Flex";
 import { Box } from "../Box/Box";
+
+import { Flex } from "./Flex";
+
+import type { Meta, StoryObj } from "@storybook/react";
 
 const meta = {
   title: "Layout/Flex",
@@ -51,13 +53,13 @@ type Story = StoryObj<typeof meta>;
 
 // Helper Box style for demo purposes
 const boxStyle = {
-  padding: '12px',
-  textAlign: 'center' as const,
-  width: '80px',
-  height: '80px',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
+  padding: "12px",
+  textAlign: "center" as const,
+  width: "80px",
+  height: "80px",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
 };
 
 export const Row: Story = {
@@ -66,9 +68,15 @@ export const Row: Story = {
     gap: "md",
     children: (
       <>
-        <Box bg="primary" style={boxStyle}>1</Box>
-        <Box bg="secondary" style={boxStyle}>2</Box>
-        <Box bg="tertiary" style={boxStyle}>3</Box>
+        <Box bg="primary" style={boxStyle}>
+          1
+        </Box>
+        <Box bg="secondary" style={boxStyle}>
+          2
+        </Box>
+        <Box bg="tertiary" style={boxStyle}>
+          3
+        </Box>
       </>
     ),
   },
@@ -80,9 +88,15 @@ export const Column: Story = {
     gap: "md",
     children: (
       <>
-        <Box bg="primary" style={boxStyle}>1</Box>
-        <Box bg="secondary" style={boxStyle}>2</Box>
-        <Box bg="tertiary" style={boxStyle}>3</Box>
+        <Box bg="primary" style={boxStyle}>
+          1
+        </Box>
+        <Box bg="secondary" style={boxStyle}>
+          2
+        </Box>
+        <Box bg="tertiary" style={boxStyle}>
+          3
+        </Box>
       </>
     ),
   },
@@ -94,9 +108,15 @@ export const JustifyCenter: Story = {
     gap: "md",
     children: (
       <>
-        <Box bg="primary" style={boxStyle}>1</Box>
-        <Box bg="secondary" style={boxStyle}>2</Box>
-        <Box bg="tertiary" style={boxStyle}>3</Box>
+        <Box bg="primary" style={boxStyle}>
+          1
+        </Box>
+        <Box bg="secondary" style={boxStyle}>
+          2
+        </Box>
+        <Box bg="tertiary" style={boxStyle}>
+          3
+        </Box>
       </>
     ),
   },
@@ -108,9 +128,15 @@ export const AlignCenter: Story = {
     gap: "md",
     children: (
       <>
-        <Box bg="primary" style={{...boxStyle, height: '60px'}}>1</Box>
-        <Box bg="secondary" style={{...boxStyle, height: '80px'}}>2</Box>
-        <Box bg="tertiary" style={{...boxStyle, height: '100px'}}>3</Box>
+        <Box bg="primary" style={{ ...boxStyle, height: "60px" }}>
+          1
+        </Box>
+        <Box bg="secondary" style={{ ...boxStyle, height: "80px" }}>
+          2
+        </Box>
+        <Box bg="tertiary" style={{ ...boxStyle, height: "100px" }}>
+          3
+        </Box>
       </>
     ),
   },
@@ -119,12 +145,18 @@ export const AlignCenter: Story = {
 export const JustifySpaceBetween: Story = {
   args: {
     justify: "between",
-    style: { width: '400px' },
+    style: { width: "400px" },
     children: (
       <>
-        <Box bg="primary" style={boxStyle}>1</Box>
-        <Box bg="secondary" style={boxStyle}>2</Box>
-        <Box bg="tertiary" style={boxStyle}>3</Box>
+        <Box bg="primary" style={boxStyle}>
+          1
+        </Box>
+        <Box bg="secondary" style={boxStyle}>
+          2
+        </Box>
+        <Box bg="tertiary" style={boxStyle}>
+          3
+        </Box>
       </>
     ),
   },
@@ -134,15 +166,27 @@ export const Wrap: Story = {
   args: {
     wrap: "wrap",
     gap: "md",
-    style: { width: '200px' },
+    style: { width: "200px" },
     children: (
       <>
-        <Box bg="primary" style={boxStyle}>1</Box>
-        <Box bg="secondary" style={boxStyle}>2</Box>
-        <Box bg="tertiary" style={boxStyle}>3</Box>
-        <Box bg="primary" style={boxStyle}>4</Box>
-        <Box bg="secondary" style={boxStyle}>5</Box>
-        <Box bg="tertiary" style={boxStyle}>6</Box>
+        <Box bg="primary" style={boxStyle}>
+          1
+        </Box>
+        <Box bg="secondary" style={boxStyle}>
+          2
+        </Box>
+        <Box bg="tertiary" style={boxStyle}>
+          3
+        </Box>
+        <Box bg="primary" style={boxStyle}>
+          4
+        </Box>
+        <Box bg="secondary" style={boxStyle}>
+          5
+        </Box>
+        <Box bg="tertiary" style={boxStyle}>
+          6
+        </Box>
       </>
     ),
   },

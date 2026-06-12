@@ -138,6 +138,9 @@ export const CompleteProgress: Story = {
 };
 
 export const AllSizes: Story = {
+  args: {
+    value: 70,
+  },
   render: () => {
     return (
       <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
@@ -150,6 +153,9 @@ export const AllSizes: Story = {
 };
 
 export const AllVariants: Story = {
+  args: {
+    value: 70,
+  },
   render: () => {
     return (
       <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
@@ -161,32 +167,39 @@ export const AllVariants: Story = {
   },
 };
 
+const AnimatedProgressBarStory = () => {
+  const [progress, setProgress] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setProgress((prev) => {
+        if (prev >= 100) {
+          return 0;
+        }
+        return prev + 5;
+      });
+    }, 500);
+
+    return () => {
+      return clearInterval(interval);
+    };
+  }, []);
+
+  return (
+    <ProgressBar
+      value={progress}
+      showPercentage
+      label="Real-time progress"
+      helperText={`Current progress: ${progress}%`}
+    />
+  );
+};
+
 export const Animated: Story = {
+  args: {
+    value: 0,
+  },
   render: () => {
-    const [progress, setProgress] = useState(0);
-
-    useEffect(() => {
-      const interval = setInterval(() => {
-        setProgress((prev) => {
-          if (prev >= 100) {
-            return 0;
-          }
-          return prev + 5;
-        });
-      }, 500);
-
-      return () => {
-        return clearInterval(interval);
-      };
-    }, []);
-
-    return (
-      <ProgressBar
-        value={progress}
-        showPercentage
-        label="Real-time progress"
-        helperText={`Current progress: ${progress}%`}
-      />
-    );
+    return <AnimatedProgressBarStory />;
   },
 };

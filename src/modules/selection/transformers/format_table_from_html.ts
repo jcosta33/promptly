@@ -22,7 +22,7 @@ export function format_table_from_html(html: string): string {
 
   // Process header rows (thead or first tr with th)
   const headerRows = tableElement.querySelectorAll("thead tr, tr:has(th)");
-  headerRows.forEach((tr, rowIndex) => {
+  headerRows.forEach((tr) => {
     // Only process the first header row found
     if (headerProcessed) return;
     tr.querySelectorAll("th").forEach((th) => {

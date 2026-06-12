@@ -1,12 +1,16 @@
 import { useEffect, useState, type FC } from "react";
 import { createRoot } from "react-dom/client";
-import { SelectionTrigger } from "../components/SelectionTrigger/SelectionTrigger";
-import { PromptlyOverlay } from "./PromptOverlay/PromptOverlay";
-import { useSelection } from "../hooks/useSelection";
-import { logger } from "$/utils/logger";
+
 import { get_settings } from "$/modules/configuration/use_cases/get_settings";
-import { subscribe } from "$/modules/messaging/repositories/message_bus";
 import { EventType } from "$/modules/messaging/models/event_types";
+import { subscribe } from "$/modules/messaging/repositories/message_bus";
+import { logger } from "$/utils/logger";
+
+import { SelectionTrigger } from "../components/SelectionTrigger/SelectionTrigger";
+import { useSelection } from "../hooks/useSelection";
+
+import { PromptlyOverlay } from "./PromptOverlay/PromptOverlay";
+
 import type { ExtensionSettings } from "$/modules/configuration/models/user_settings";
 import type { MessageEvent } from "$/modules/messaging/helpers/create_message_event";
 

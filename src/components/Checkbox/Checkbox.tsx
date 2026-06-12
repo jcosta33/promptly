@@ -1,4 +1,5 @@
 import React from "react";
+
 import styles from "./Checkbox.module.css";
 
 export type CheckboxSize = "sm" | "md" | "lg";
@@ -25,7 +26,7 @@ export const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
       errorMessage,
       ...rest
     },
-    ref
+    ref,
   ) => {
     const uniqueId =
       id || `checkbox-${Math.random().toString(36).substring(2, 11)}`;
@@ -60,7 +61,7 @@ export const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
         )}
       </div>
     );
-  }
+  },
 );
 
 Checkbox.displayName = "Checkbox";

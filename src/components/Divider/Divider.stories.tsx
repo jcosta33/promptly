@@ -1,5 +1,6 @@
-import type { Meta, StoryObj } from "@storybook/react";
 import { Divider } from "./Divider";
+
+import type { Meta, StoryObj } from "@storybook/react";
 
 const meta = {
   title: "Components/Divider",
@@ -121,31 +122,35 @@ export const Vertical: Story = {
     thickness: "medium",
   },
   decorators: [
-    (Story) => (
-      <div style={{ height: '100px', display: 'flex', alignItems: 'center' }}>
-        <div>Left Content</div>
-        {Story()}
-        <div>Right Content</div>
-      </div>
-    ),
+    (Story) => {
+      return (
+        <div style={{ height: "100px", display: "flex", alignItems: "center" }}>
+          <div>Left Content</div>
+          {Story()}
+          <div>Right Content</div>
+        </div>
+      );
+    },
   ],
 };
 
 export const ThicknessVariations: Story = {
-  render: (args) => (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-      <div>
-        <p>Thin</p>
-        <Divider {...args} thickness="thin" />
+  render: (args) => {
+    return (
+      <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
+        <div>
+          <p>Thin</p>
+          <Divider {...args} thickness="thin" />
+        </div>
+        <div>
+          <p>Medium</p>
+          <Divider {...args} thickness="medium" />
+        </div>
+        <div>
+          <p>Thick</p>
+          <Divider {...args} thickness="thick" />
+        </div>
       </div>
-      <div>
-        <p>Medium</p>
-        <Divider {...args} thickness="medium" />
-      </div>
-      <div>
-        <p>Thick</p>
-        <Divider {...args} thickness="thick" />
-      </div>
-    </div>
-  ),
+    );
+  },
 };

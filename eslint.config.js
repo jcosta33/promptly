@@ -22,6 +22,7 @@ export default tseslint.config(
       },
     },
     plugins: {
+      "@typescript-eslint": tseslint.plugin,
       react: reactPlugin,
       "react-hooks": reactHooksPlugin,
       import: importPlugin,
@@ -104,7 +105,7 @@ export default tseslint.config(
     },
   },
   // Apply Prettier rules last to disable conflicting style rules
-  prettierConfig
+  prettierConfig,
 );
 
 // Note: If using eslint-plugin-import with TypeScript, you might need

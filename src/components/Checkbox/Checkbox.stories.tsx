@@ -1,5 +1,6 @@
-import type { Meta, StoryObj } from "@storybook/react";
 import { Checkbox } from "./Checkbox";
+
+import type { Meta, StoryObj } from "@storybook/react";
 
 const meta = {
   title: "Components/Checkbox",
@@ -98,12 +99,14 @@ export const WithoutLabel: Story = {
 };
 
 export const CheckboxGroup: Story = {
-  render: () => (
-    <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-      <Checkbox label="Option 1" name="group" value="1" />
-      <Checkbox label="Option 2" name="group" value="2" />
-      <Checkbox label="Option 3" name="group" value="3" />
-      <Checkbox label="Disabled option" name="group" value="4" disabled />
-    </div>
-  ),
+  render: () => {
+    return (
+      <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+        <Checkbox label="Option 1" name="group" value="1" />
+        <Checkbox label="Option 2" name="group" value="2" />
+        <Checkbox label="Option 3" name="group" value="3" />
+        <Checkbox label="Disabled option" name="group" value="4" disabled />
+      </div>
+    );
+  },
 };

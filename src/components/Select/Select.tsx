@@ -1,4 +1,5 @@
 import { type FC, type SelectHTMLAttributes, type ChangeEvent } from "react";
+
 import styles from "./Select.module.css";
 
 export type SelectOption = {
@@ -79,11 +80,17 @@ export const Select: FC<SelectProps> = ({
               {placeholder}
             </option>
           )}
-          {options.map((option, index) => (
-            <option key={index} value={option.value} disabled={option.disabled}>
-              {option.label}
-            </option>
-          ))}
+          {options.map((option, index) => {
+            return (
+              <option
+                key={index}
+                value={option.value}
+                disabled={option.disabled}
+              >
+                {option.label}
+              </option>
+            );
+          })}
         </select>
       </div>
 

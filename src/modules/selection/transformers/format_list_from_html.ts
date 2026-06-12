@@ -55,7 +55,7 @@ export function format_list_from_html(html: string): string {
   // Helper to get the correct start index for OL items
   function getOlStartIndex(
     olElement: HTMLElement | null,
-    currentLi: HTMLLIElement
+    currentLi: HTMLLIElement,
   ): number {
     if (!olElement) return 1;
     const start = parseInt(olElement.getAttribute("start") || "1", 10);

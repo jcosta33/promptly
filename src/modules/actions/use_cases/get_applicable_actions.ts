@@ -1,10 +1,11 @@
+import { get_all_actions } from "../repositories/actions_repository";
+
 import type { PageCategory } from "../../context/models/context";
 import type {
   SelectionContextType,
   SelectionDataType,
 } from "../../selection/models/selection";
 import type { ActionDefinition } from "../models/action_models";
-import { get_all_actions } from "../repositories/actions_repository";
 
 /**
  * Type for filter criteria to find applicable actions
@@ -22,7 +23,7 @@ export type ActionFilterCriteria = {
  * @returns Array of applicable action definitions
  */
 export function get_applicable_actions(
-  criteria: ActionFilterCriteria
+  criteria: ActionFilterCriteria,
 ): ActionDefinition[] {
   return get_all_actions().filter((action) => {
     const matchesContextType = action.contextTypes.some((type) => {

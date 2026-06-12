@@ -1,6 +1,8 @@
-import type { Meta, StoryObj } from "@storybook/react";
-import { Select } from "./Select";
 import { useState } from "react";
+
+import { Select } from "./Select";
+
+import type { Meta, StoryObj } from "@storybook/react";
 
 const meta = {
   title: "Components/Select",
@@ -12,7 +14,8 @@ const meta = {
   argTypes: {
     options: {
       control: "object",
-      description: "Array of options with value, label, and optional disabled state",
+      description:
+        "Array of options with value, label, and optional disabled state",
     },
     value: {
       control: "text",
@@ -45,7 +48,8 @@ const meta = {
     },
     fullWidth: {
       control: "boolean",
-      description: "Whether the select takes up the full width of its container",
+      description:
+        "Whether the select takes up the full width of its container",
     },
   },
 } satisfies Meta<typeof Select>;
@@ -138,26 +142,35 @@ export const FullWidth: Story = {
   },
 };
 
+const InteractiveSelectStory = () => {
+  // This is needed for Storybook to handle state properly
+  const [value, setValue] = useState<string>("");
+
+  return (
+    <div style={{ width: "250px" }}>
+      <Select
+        label="Interactive select"
+        options={options}
+        value={value}
+        onChange={(newValue) => {
+          return setValue(newValue);
+        }}
+      />
+      {value && (
+        <div style={{ marginTop: "16px" }}>
+          Selected value: <strong>{value}</strong>
+        </div>
+      )}
+    </div>
+  );
+};
+
 export const Interactive: Story = {
+  args: {
+    options,
+  },
   render: () => {
-    // This is needed for Storybook to handle state properly
-    const [value, setValue] = useState<string>("");
-    
-    return (
-      <div style={{ width: "250px" }}>
-        <Select
-          label="Interactive select"
-          options={options}
-          value={value}
-          onChange={(newValue) => setValue(newValue)}
-        />
-        {value && (
-          <div style={{ marginTop: "16px" }}>
-            Selected value: <strong>{value}</strong>
-          </div>
-        )}
-      </div>
-    );
+    return <InteractiveSelectStory />;
   },
 };
 

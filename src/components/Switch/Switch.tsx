@@ -1,4 +1,5 @@
 import React from "react";
+
 import styles from "./Switch.module.css";
 
 export type SwitchSize = "sm" | "md" | "lg";
@@ -30,7 +31,7 @@ export const Switch = React.forwardRef<HTMLInputElement, SwitchProps>(
       labelPosition = "right",
       ...rest
     },
-    ref
+    ref,
   ) => {
     const uniqueId =
       id || `switch-${Math.random().toString(36).substring(2, 11)}`;
@@ -94,7 +95,7 @@ export const Switch = React.forwardRef<HTMLInputElement, SwitchProps>(
         )}
       </div>
     );
-  }
+  },
 );
 
 Switch.displayName = "Switch";

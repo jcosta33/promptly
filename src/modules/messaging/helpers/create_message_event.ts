@@ -16,7 +16,7 @@ export type MessageEvent<T = unknown> = {
 export function create_message_event<T>(
   type: EventType,
   payload: T,
-  source: string = "unknown"
+  source: string = "unknown",
 ): MessageEvent<T> {
   return {
     type,

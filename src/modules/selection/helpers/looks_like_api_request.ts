@@ -18,5 +18,7 @@ export function looks_like_api_request(text: string): boolean {
     /\b(?:query|mutation)\s*(?:[\w\s]+\([^)]*\))?\s*\{/,
   ];
 
-  return apiPatterns.some((pattern) => pattern.test(text));
+  return apiPatterns.some((pattern) => {
+    return pattern.test(text);
+  });
 }

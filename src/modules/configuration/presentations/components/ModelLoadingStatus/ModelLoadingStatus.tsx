@@ -5,8 +5,10 @@ import { Button } from "$/components/Button/Button";
 import { Flex } from "$/components/Flex/Flex";
 import { ProgressBar } from "$/components/ProgressBar/ProgressBar";
 import { Text } from "$/components/Text/Text";
-import type { ModelRuntimeStatus } from "$/modules/messaging/models/event_types";
+
 import styles from "./ModelLoadingStatus.module.css";
+
+import type { ModelRuntimeStatus } from "$/modules/messaging/models/event_types";
 
 interface ModelLoadingStatusProps {
   isLoading: boolean;

@@ -2,17 +2,17 @@ import { type ChangeEvent, type FC, useEffect } from "react";
 
 import { Box } from "$/components/Box/Box";
 import { Flex } from "$/components/Flex/Flex";
+import { Select } from "$/components/Select/Select";
 import { Switch } from "$/components/Switch/Switch";
 import { Text } from "$/components/Text/Text";
-import { Select } from "$/components/Select/Select";
+import { ThemePreference } from "$/modules/configuration/models/user_settings";
+import { get_available_models } from "$/modules/inference/use_cases/get_available_models";
+import { logger } from "$/utils/logger";
 
 import { ModelLoadingStatus } from "../components/ModelLoadingStatus/ModelLoadingStatus";
 import { ModelSelector } from "../components/ModelSelector/ModelSelector";
 import { useModelLoading } from "../hooks/useModelLoading";
 import { useSettings } from "../hooks/useSettings";
-import { get_available_models } from "$/modules/inference/use_cases/get_available_models";
-import { logger } from "$/utils/logger";
-import { ThemePreference } from "$/modules/configuration/models/user_settings";
 
 const themeOptions = [
   { value: ThemePreference.SYSTEM, label: "System" },

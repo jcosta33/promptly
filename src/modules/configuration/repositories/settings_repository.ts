@@ -1,5 +1,9 @@
-import { DEFAULT_SETTINGS, type ExtensionSettings } from "../models/user_settings";
 import { logger } from "$/utils/logger";
+
+import {
+  DEFAULT_SETTINGS,
+  type ExtensionSettings,
+} from "../models/user_settings";
 
 // Storage key for extension settings
 const SETTINGS_STORAGE_KEY = "promptly-settings";
@@ -11,14 +15,14 @@ const SETTINGS_STORAGE_KEY = "promptly-settings";
  * @returns A promise that resolves when the settings are saved
  */
 export async function save_settings(
-  settings: ExtensionSettings
+  settings: ExtensionSettings,
 ): Promise<void> {
   try {
     await chrome.storage.local.set({ [SETTINGS_STORAGE_KEY]: settings });
   } catch (error) {
     logger.error("Error saving settings:", error);
     throw new Error(
-      `Failed to save settings: ${error instanceof Error ? error.message : "Unknown error"}`
+      `Failed to save settings: ${error instanceof Error ? error.message : "Unknown error"}`,
     );
   }
 }
@@ -51,7 +55,7 @@ export async function load_settings(): Promise<ExtensionSettings> {
  * @returns A promise that resolves with the complete updated settings
  */
 export async function update_partial_settings(
-  partialSettings: Partial<ExtensionSettings>
+  partialSettings: Partial<ExtensionSettings>,
 ): Promise<ExtensionSettings> {
   try {
     const currentSettings = await load_settings();
@@ -67,7 +71,7 @@ export async function update_partial_settings(
   } catch (error) {
     logger.error("Error updating settings:", error);
     throw new Error(
-      `Failed to update settings: ${error instanceof Error ? error.message : "Unknown error"}`
+      `Failed to update settings: ${error instanceof Error ? error.message : "Unknown error"}`,
     );
   }
 }

@@ -24,7 +24,7 @@ import { format_table_from_html } from "./format_table_from_html";
  * @returns Processed SelectionData object or null if selection is empty.
  */
 export function transform_raw_selection_to_selection_data(
-  selection: Selection
+  selection: Selection,
 ): SelectionData | null {
   const originalText = selection.toString();
 
@@ -40,13 +40,13 @@ export function transform_raw_selection_to_selection_data(
   const { dataTypes, contextTypes } = detect_selection_types(
     selection,
     cleanedText,
-    wordCount
+    wordCount,
   );
 
   const llmFormattedText = format_text_for_llm(
     cleanedText,
     originalHtml,
-    dataTypes
+    dataTypes,
   );
 
   return {
@@ -102,20 +102,20 @@ const TYPE_FORMATTERS: TypeFormatter[] = [
   // Terminal and error outputs
   {
     type: SelectionDataType.ERROR_LIKE,
-    format: (text, html) => {
+    format: (text, _html) => {
       return format_code_block(text);
     }, // Use text for errors
   },
   {
     type: SelectionDataType.TERMINAL_LIKE,
-    format: (text, html) => {
+    format: (text, _html) => {
       return format_code_block(text);
     }, // Use text for terminal
   },
   // Structured data formats
   {
     type: SelectionContextType.TABLE,
-    format: (text, html) => {
+    format: (_text, html) => {
       return format_table_from_html(html);
     }, // Use HTML parser for tables
   },
@@ -138,14 +138,14 @@ const TYPE_FORMATTERS: TypeFormatter[] = [
   },
   {
     type: SelectionContextType.LIST,
-    format: (text, html) => {
+    format: (_text, html) => {
       return format_list_from_html(html);
     }, // Use HTML parser for lists
   },
   // Additional complex text types
   {
     type: SelectionDataType.LONG_TEXT,
-    format: (text, html) => {
+    format: (text, _html) => {
       return format_long_text_for_llm(text);
     },
   },
@@ -163,7 +163,7 @@ const TYPE_FORMATTERS: TypeFormatter[] = [
 function format_text_for_llm(
   text: string,
   html: string,
-  types: (SelectionDataType | SelectionContextType)[]
+  types: (SelectionDataType | SelectionContextType)[],
 ): string {
   if (types.length === 0) {
     return text;

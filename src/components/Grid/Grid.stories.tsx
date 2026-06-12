@@ -1,6 +1,8 @@
-import type { Meta, StoryObj } from "@storybook/react";
-import { Grid } from "./Grid";
 import { Box } from "../Box/Box";
+
+import { Grid } from "./Grid";
+
+import type { Meta, StoryObj } from "@storybook/react";
 
 const meta = {
   title: "Layout/Grid",
@@ -61,12 +63,12 @@ type Story = StoryObj<typeof meta>;
 
 // Helper Box style for demo purposes
 const boxStyle = {
-  padding: '12px',
-  textAlign: 'center' as const,
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  height: '80px'
+  padding: "12px",
+  textAlign: "center" as const,
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  height: "80px",
 };
 
 export const Default: Story = {
@@ -75,10 +77,18 @@ export const Default: Story = {
     gap: "md",
     children: (
       <>
-        <Box bg="primary" style={boxStyle}>1</Box>
-        <Box bg="secondary" style={boxStyle}>2</Box>
-        <Box bg="tertiary" style={boxStyle}>3</Box>
-        <Box bg="primary" style={boxStyle}>4</Box>
+        <Box bg="primary" style={boxStyle}>
+          1
+        </Box>
+        <Box bg="secondary" style={boxStyle}>
+          2
+        </Box>
+        <Box bg="tertiary" style={boxStyle}>
+          3
+        </Box>
+        <Box bg="primary" style={boxStyle}>
+          4
+        </Box>
       </>
     ),
   },
@@ -90,12 +100,24 @@ export const ThreeColumns: Story = {
     gap: "md",
     children: (
       <>
-        <Box bg="primary" style={boxStyle}>1</Box>
-        <Box bg="secondary" style={boxStyle}>2</Box>
-        <Box bg="tertiary" style={boxStyle}>3</Box>
-        <Box bg="primary" style={boxStyle}>4</Box>
-        <Box bg="secondary" style={boxStyle}>5</Box>
-        <Box bg="tertiary" style={boxStyle}>6</Box>
+        <Box bg="primary" style={boxStyle}>
+          1
+        </Box>
+        <Box bg="secondary" style={boxStyle}>
+          2
+        </Box>
+        <Box bg="tertiary" style={boxStyle}>
+          3
+        </Box>
+        <Box bg="primary" style={boxStyle}>
+          4
+        </Box>
+        <Box bg="secondary" style={boxStyle}>
+          5
+        </Box>
+        <Box bg="tertiary" style={boxStyle}>
+          6
+        </Box>
       </>
     ),
   },
@@ -108,14 +130,30 @@ export const ResponsiveGrid: Story = {
     gap: "md",
     children: (
       <>
-        <Box bg="primary" style={boxStyle}>1</Box>
-        <Box bg="secondary" style={boxStyle}>2</Box>
-        <Box bg="tertiary" style={boxStyle}>3</Box>
-        <Box bg="primary" style={boxStyle}>4</Box>
-        <Box bg="secondary" style={boxStyle}>5</Box>
-        <Box bg="tertiary" style={boxStyle}>6</Box>
-        <Box bg="primary" style={boxStyle}>7</Box>
-        <Box bg="secondary" style={boxStyle}>8</Box>
+        <Box bg="primary" style={boxStyle}>
+          1
+        </Box>
+        <Box bg="secondary" style={boxStyle}>
+          2
+        </Box>
+        <Box bg="tertiary" style={boxStyle}>
+          3
+        </Box>
+        <Box bg="primary" style={boxStyle}>
+          4
+        </Box>
+        <Box bg="secondary" style={boxStyle}>
+          5
+        </Box>
+        <Box bg="tertiary" style={boxStyle}>
+          6
+        </Box>
+        <Box bg="primary" style={boxStyle}>
+          7
+        </Box>
+        <Box bg="secondary" style={boxStyle}>
+          8
+        </Box>
       </>
     ),
   },
@@ -128,12 +166,24 @@ export const WithExplicitRows: Story = {
     gap: "md",
     children: (
       <>
-        <Box bg="primary" style={boxStyle}>1</Box>
-        <Box bg="secondary" style={boxStyle}>2</Box>
-        <Box bg="tertiary" style={boxStyle}>3</Box>
-        <Box bg="primary" style={boxStyle}>4</Box>
-        <Box bg="secondary" style={boxStyle}>5</Box>
-        <Box bg="tertiary" style={boxStyle}>6</Box>
+        <Box bg="primary" style={boxStyle}>
+          1
+        </Box>
+        <Box bg="secondary" style={boxStyle}>
+          2
+        </Box>
+        <Box bg="tertiary" style={boxStyle}>
+          3
+        </Box>
+        <Box bg="primary" style={boxStyle}>
+          4
+        </Box>
+        <Box bg="secondary" style={boxStyle}>
+          5
+        </Box>
+        <Box bg="tertiary" style={boxStyle}>
+          6
+        </Box>
       </>
     ),
   },
@@ -146,12 +196,24 @@ export const DifferentGaps: Story = {
     columnGap: "sm",
     children: (
       <>
-        <Box bg="primary" style={boxStyle}>1</Box>
-        <Box bg="secondary" style={boxStyle}>2</Box>
-        <Box bg="tertiary" style={boxStyle}>3</Box>
-        <Box bg="primary" style={boxStyle}>4</Box>
-        <Box bg="secondary" style={boxStyle}>5</Box>
-        <Box bg="tertiary" style={boxStyle}>6</Box>
+        <Box bg="primary" style={boxStyle}>
+          1
+        </Box>
+        <Box bg="secondary" style={boxStyle}>
+          2
+        </Box>
+        <Box bg="tertiary" style={boxStyle}>
+          3
+        </Box>
+        <Box bg="primary" style={boxStyle}>
+          4
+        </Box>
+        <Box bg="secondary" style={boxStyle}>
+          5
+        </Box>
+        <Box bg="tertiary" style={boxStyle}>
+          6
+        </Box>
       </>
     ),
   },
@@ -165,12 +227,36 @@ export const CenteredItems: Story = {
     justify: "center",
     children: (
       <>
-        <Box bg="primary" style={{...boxStyle, width: '80%', height: '60px'}}>1</Box>
-        <Box bg="secondary" style={{...boxStyle, width: '60%', height: '80px'}}>2</Box>
-        <Box bg="tertiary" style={{...boxStyle, width: '70%', height: '100px'}}>3</Box>
-        <Box bg="primary" style={{...boxStyle, width: '50%', height: '70px'}}>4</Box>
-        <Box bg="secondary" style={{...boxStyle, width: '90%', height: '50px'}}>5</Box>
-        <Box bg="tertiary" style={{...boxStyle, width: '75%', height: '90px'}}>6</Box>
+        <Box bg="primary" style={{ ...boxStyle, width: "80%", height: "60px" }}>
+          1
+        </Box>
+        <Box
+          bg="secondary"
+          style={{ ...boxStyle, width: "60%", height: "80px" }}
+        >
+          2
+        </Box>
+        <Box
+          bg="tertiary"
+          style={{ ...boxStyle, width: "70%", height: "100px" }}
+        >
+          3
+        </Box>
+        <Box bg="primary" style={{ ...boxStyle, width: "50%", height: "70px" }}>
+          4
+        </Box>
+        <Box
+          bg="secondary"
+          style={{ ...boxStyle, width: "90%", height: "50px" }}
+        >
+          5
+        </Box>
+        <Box
+          bg="tertiary"
+          style={{ ...boxStyle, width: "75%", height: "90px" }}
+        >
+          6
+        </Box>
       </>
     ),
   },

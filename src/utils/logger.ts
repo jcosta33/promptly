@@ -18,7 +18,7 @@ function logInternal(level: LogLevel, ...args: any[]): void {
   } else {
     console.groupCollapsed(
       `${LOG_PREFIX} ${timestamp} [${levelIndicator}]`,
-      args[0]
+      args[0],
     );
     if (args.length > 1) {
       console.log(...args.slice(1));
@@ -28,9 +28,19 @@ function logInternal(level: LogLevel, ...args: any[]): void {
 }
 
 export const logger = {
-  log: (...args: any[]) => logInternal("log", ...args),
-  warn: (...args: any[]) => logInternal("warn", ...args),
-  error: (...args: any[]) => logInternal("error", ...args),
-  info: (...args: any[]) => logInternal("info", ...args),
-  debug: (...args: any[]) => logInternal("debug", ...args),
+  log: (...args: any[]) => {
+    return logInternal("log", ...args);
+  },
+  warn: (...args: any[]) => {
+    return logInternal("warn", ...args);
+  },
+  error: (...args: any[]) => {
+    return logInternal("error", ...args);
+  },
+  info: (...args: any[]) => {
+    return logInternal("info", ...args);
+  },
+  debug: (...args: any[]) => {
+    return logInternal("debug", ...args);
+  },
 };

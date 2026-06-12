@@ -52,7 +52,7 @@ export const PageCategory = {
   ENCYCLOPEDIAS: "encyclopedias",
 } as const;
 
-export type PageCategory = typeof PageCategory[keyof typeof PageCategory];
+export type PageCategory = (typeof PageCategory)[keyof typeof PageCategory];
 
 /**
  * A URL pattern for matching a domain to a page category

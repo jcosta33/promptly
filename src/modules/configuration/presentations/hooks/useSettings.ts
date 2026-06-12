@@ -1,13 +1,17 @@
-import { useEffect } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useEffect } from "react";
 
-import { type ExtensionSettings, ThemePreference } from "$/modules/configuration/models/user_settings";
+import {
+  type ExtensionSettings,
+  ThemePreference,
+} from "$/modules/configuration/models/user_settings";
 import { get_settings } from "$/modules/configuration/use_cases/get_settings";
 import { update_settings } from "$/modules/configuration/use_cases/update_settings";
-import type { MessageEvent } from "$/modules/messaging/helpers/create_message_event";
 import { EventType } from "$/modules/messaging/models/event_types";
 import { subscribe } from "$/modules/messaging/repositories/message_bus";
 import { logger } from "$/utils/logger";
+
+import type { MessageEvent } from "$/modules/messaging/helpers/create_message_event";
 
 const SETTINGS_QUERY_KEY = ["settings"];
 
@@ -20,7 +24,7 @@ export function useSettings() {
   const {
     data: settings,
     isLoading: loading, // Rename isLoading to loading for consistency
-    error: loadingError
+    error: loadingError,
   } = useQuery<ExtensionSettings, Error>({
     queryKey: SETTINGS_QUERY_KEY,
     queryFn: get_settings,
@@ -32,7 +36,7 @@ export function useSettings() {
 
   // Update settings function - now needs to invalidate the query
   const updateSettings = async (
-    partialSettings: Partial<ExtensionSettings>
+    partialSettings: Partial<ExtensionSettings>,
   ) => {
     if (!settings) {
       logger.warn("Cannot update settings, current settings not available.");
@@ -60,21 +64,30 @@ export function useSettings() {
   // Toggle enable/disable function
   const toggleEnabled = async () => {
     if (!settings) return;
-    logger.info("Toggling extension enabled state", { from: settings.isEnabled, to: !settings.isEnabled });
+    logger.info("Toggling extension enabled state", {
+      from: settings.isEnabled,
+      to: !settings.isEnabled,
+    });
     await updateSettings({ isEnabled: !settings.isEnabled });
   };
 
   // Update selected model function
   const setSelectedModel = async (modelId: string) => {
     if (!settings) return;
-    logger.info("Updating selected model", { from: settings.selectedModelId, to: modelId });
+    logger.info("Updating selected model", {
+      from: settings.selectedModelId,
+      to: modelId,
+    });
     await updateSettings({ selectedModelId: modelId });
   };
 
   // Update theme preference
   const setThemePreference = async (theme: ThemePreference) => {
     if (!settings) return;
-    logger.info("Updating theme preference", { from: settings.themePreference, to: theme });
+    logger.info("Updating theme preference", {
+      from: settings.themePreference,
+      to: theme,
+    });
     await updateSettings({ themePreference: theme });
   };
 
@@ -84,10 +97,13 @@ export function useSettings() {
     const unsubscribe = subscribe<ExtensionSettings>(
       EventType.SETTINGS_UPDATE,
       (event: MessageEvent<ExtensionSettings>) => {
-        logger.info("Received settings update via subscription, updating query cache.", event.payload);
+        logger.info(
+          "Received settings update via subscription, updating query cache.",
+          event.payload,
+        );
         // Update the query cache when an external update occurs
         queryClient.setQueryData(SETTINGS_QUERY_KEY, event.payload);
-      }
+      },
     );
 
     // Cleanup subscription on unmount

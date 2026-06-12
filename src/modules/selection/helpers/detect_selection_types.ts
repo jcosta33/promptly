@@ -1,14 +1,16 @@
+import { logger } from "$/utils/logger";
+
 import { SelectionContextType, SelectionDataType } from "../models/selection";
-import { looks_like_email } from "./looks_like_email";
-import { looks_like_markdown } from "./looks_like_markdown";
-import { looks_like_url } from "./looks_like_url";
-import { looks_like_poetry } from "./looks_like_poetry";
-import { looks_like_social_media } from "./looks_like_social_media";
+
+import { detect_code_language } from "./detect_code_language";
 import { looks_like_api_request } from "./looks_like_api_request";
 import { looks_like_citation } from "./looks_like_citation";
+import { looks_like_email } from "./looks_like_email";
+import { looks_like_markdown } from "./looks_like_markdown";
 import { looks_like_numeric_data } from "./looks_like_numeric_data";
-import { detect_code_language } from "./detect_code_language";
-import { logger } from "$/utils/logger";
+import { looks_like_poetry } from "./looks_like_poetry";
+import { looks_like_social_media } from "./looks_like_social_media";
+import { looks_like_url } from "./looks_like_url";
 
 const MAX_WORDS_FOR_WORD_TYPE = 3;
 const MAX_CHARS_FOR_SENTENCE_TYPE = 200;
@@ -26,7 +28,7 @@ const MIN_WORDS_FOR_LONG_TEXT = 50; // Threshold to consider text "long"
 export function detect_selection_types(
   selection: Selection,
   cleanedText: string,
-  wordCount: number
+  wordCount: number,
 ): {
   dataTypes: SelectionDataType[];
   contextTypes: SelectionContextType[];
@@ -43,7 +45,7 @@ export function detect_selection_types(
       (activeElement instanceof HTMLElement && activeElement.isContentEditable))
   ) {
     logger.log(
-      "Active element is an input, textarea, or contenteditable element"
+      "Active element is an input, textarea, or contenteditable element",
     );
     detectedContextTypes.add(SelectionContextType.INPUT);
   }

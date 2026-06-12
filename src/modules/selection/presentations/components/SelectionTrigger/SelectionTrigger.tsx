@@ -1,9 +1,9 @@
 import { FC } from "react";
+import { PiLightbulbFilamentDuotone } from "react-icons/pi";
 
 import { Button } from "$/components/Button/Button";
 
 import styles from "./SelectionTrigger.module.css";
-import { PiLightbulbFilamentDuotone } from "react-icons/pi";
 
 export type SelectionTriggerProps = {
   position: { x: number; y: number };

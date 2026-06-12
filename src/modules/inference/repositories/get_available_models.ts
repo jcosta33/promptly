@@ -1,4 +1,5 @@
 import { AVAILABLE_MODELS as AVAILABLE_MODELS_DATA } from "./available_models_data";
+
 import type { ModelGroups } from "../models/inference_model";
 /**
  * Retrieves the static list of available models.

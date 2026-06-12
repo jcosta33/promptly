@@ -58,23 +58,25 @@ export function useModelLoading() {
           connectionName: "promptly-inference",
         });
 
-        let timeoutId: number | undefined;
-        let unsubscribeProgress: (() => void) | undefined;
-        let unsubscribeStatus: (() => void) | undefined;
-        let unsubscribeError: (() => void) | undefined;
+        const cleanup: {
+          timeoutId?: number;
+          unsubscribeProgress?: () => void;
+          unsubscribeStatus?: () => void;
+          unsubscribeError?: () => void;
+        } = {};
 
         const finish = () => {
-          if (timeoutId) {
-            window.clearTimeout(timeoutId);
+          if (cleanup.timeoutId) {
+            window.clearTimeout(cleanup.timeoutId);
           }
-          unsubscribeProgress?.();
-          unsubscribeStatus?.();
-          unsubscribeError?.();
+          cleanup.unsubscribeProgress?.();
+          cleanup.unsubscribeStatus?.();
+          cleanup.unsubscribeError?.();
           connection.close();
         };
 
         // Set up listeners for progress and errors
-        unsubscribeProgress = connection.onMessage(
+        cleanup.unsubscribeProgress = connection.onMessage(
           EventType.MODEL_LOADING_PROGRESS,
           (payload) => {
             logger.debug("Received model loading progress:", payload);
@@ -85,7 +87,7 @@ export function useModelLoading() {
           },
         );
 
-        unsubscribeStatus = connection.onMessage(
+        cleanup.unsubscribeStatus = connection.onMessage(
           EventType.MODEL_STATUS_RESPONSE,
           (payload) => {
             applyRuntimeStatus(payload);
@@ -102,7 +104,7 @@ export function useModelLoading() {
           },
         );
 
-        unsubscribeError = connection.onMessage(
+        cleanup.unsubscribeError = connection.onMessage(
           EventType.INFERENCE_ERROR,
           (payload: InferenceErrorPayload) => {
             const errorMessage =
@@ -128,7 +130,7 @@ export function useModelLoading() {
         logger.info("Model load request sent via stream", { requestId });
 
         // Set up a timeout to close the connection if no response
-        timeoutId = window.setTimeout(() => {
+        cleanup.timeoutId = window.setTimeout(() => {
           setError("Model loading timed out");
           setRuntimeStatus({
             phase: "error",
@@ -155,20 +157,22 @@ export function useModelLoading() {
       connectionName: "promptly-inference",
     });
 
-    let timeoutId: number | undefined;
-    let unsubscribeStatus: (() => void) | undefined;
-    let unsubscribeError: (() => void) | undefined;
+    const cleanup: {
+      timeoutId?: number;
+      unsubscribeStatus?: () => void;
+      unsubscribeError?: () => void;
+    } = {};
 
     const finish = () => {
-      if (timeoutId) {
-        window.clearTimeout(timeoutId);
+      if (cleanup.timeoutId) {
+        window.clearTimeout(cleanup.timeoutId);
       }
-      unsubscribeStatus?.();
-      unsubscribeError?.();
+      cleanup.unsubscribeStatus?.();
+      cleanup.unsubscribeError?.();
       connection.close();
     };
 
-    unsubscribeStatus = connection.onMessage(
+    cleanup.unsubscribeStatus = connection.onMessage(
       EventType.MODEL_STATUS_RESPONSE,
       (payload) => {
         if (!payload.requestId || payload.requestId === requestId) {
@@ -178,7 +182,7 @@ export function useModelLoading() {
       },
     );
 
-    unsubscribeError = connection.onMessage(
+    cleanup.unsubscribeError = connection.onMessage(
       EventType.INFERENCE_ERROR,
       (payload: InferenceErrorPayload) => {
         if (!payload.requestId || payload.requestId === requestId) {
@@ -194,7 +198,7 @@ export function useModelLoading() {
       },
     );
 
-    timeoutId = window.setTimeout(() => {
+    cleanup.timeoutId = window.setTimeout(() => {
       setError("Model status request timed out");
       finish();
     }, 5000);
@@ -209,20 +213,22 @@ export function useModelLoading() {
         connectionName: "promptly-inference",
       });
 
-      let timeoutId: number | undefined;
-      let unsubscribeStatus: (() => void) | undefined;
-      let unsubscribeError: (() => void) | undefined;
+      const cleanup: {
+        timeoutId?: number;
+        unsubscribeStatus?: () => void;
+        unsubscribeError?: () => void;
+      } = {};
 
       const finish = () => {
-        if (timeoutId) {
-          window.clearTimeout(timeoutId);
+        if (cleanup.timeoutId) {
+          window.clearTimeout(cleanup.timeoutId);
         }
-        unsubscribeStatus?.();
-        unsubscribeError?.();
+        cleanup.unsubscribeStatus?.();
+        cleanup.unsubscribeError?.();
         connection.close();
       };
 
-      unsubscribeStatus = connection.onMessage(
+      cleanup.unsubscribeStatus = connection.onMessage(
         EventType.MODEL_STATUS_RESPONSE,
         (payload) => {
           if (!payload.requestId || payload.requestId === requestId) {
@@ -232,7 +238,7 @@ export function useModelLoading() {
         },
       );
 
-      unsubscribeError = connection.onMessage(
+      cleanup.unsubscribeError = connection.onMessage(
         EventType.INFERENCE_ERROR,
         (payload: InferenceErrorPayload) => {
           if (!payload.requestId || payload.requestId === requestId) {
@@ -249,7 +255,7 @@ export function useModelLoading() {
         },
       );
 
-      timeoutId = window.setTimeout(() => {
+      cleanup.timeoutId = window.setTimeout(() => {
         setError("Model unload timed out");
         finish();
       }, 10000);

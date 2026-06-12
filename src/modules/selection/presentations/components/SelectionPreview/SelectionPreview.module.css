@@ -10,7 +10,7 @@
 }
 
 .previewText {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: "JetBrains Mono", monospace;
   white-space: pre-wrap;
   word-break: break-word;
   padding-right: 80px; /* Make room for the type badge */
@@ -28,4 +28,4 @@
   border-radius: 12px;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-} 
+}

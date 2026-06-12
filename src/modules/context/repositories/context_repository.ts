@@ -1,5 +1,6 @@
 import { type DomainPattern, PageCategory } from "../models/context";
-import DOMAIN_MAPPINGS_DATA from './domain_mappings.json';
+
+import DOMAIN_MAPPINGS_DATA from "./domain_mappings.json";
 
 // Define the type for the imported JSON data explicitly
 type DomainMappingEntry = {
@@ -8,7 +9,8 @@ type DomainMappingEntry = {
 };
 
 // Assert the type of the imported data
-const DOMAIN_MAPPINGS: DomainMappingEntry[] = DOMAIN_MAPPINGS_DATA as DomainMappingEntry[];
+const DOMAIN_MAPPINGS: DomainMappingEntry[] =
+  DOMAIN_MAPPINGS_DATA as DomainMappingEntry[];
 
 /**
  * Domain mappings for categorizing URLs
@@ -37,9 +39,11 @@ export function get_url_category(url: string): PageCategory {
  */
 export function get_all_patterns(): DomainPattern[] {
   // Convert imported domain mappings to the DomainPattern format
-  return DOMAIN_MAPPINGS.map(({ domain, category }) => ({
-    pattern: domain, // Use domain as the pattern string
-    category,
-    description: `URLs containing ${domain}`,
-  }));
+  return DOMAIN_MAPPINGS.map(({ domain, category }) => {
+    return {
+      pattern: domain, // Use domain as the pattern string
+      category,
+      description: `URLs containing ${domain}`,
+    };
+  });
 }

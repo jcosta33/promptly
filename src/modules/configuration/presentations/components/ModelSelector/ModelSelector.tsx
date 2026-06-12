@@ -4,12 +4,14 @@ import { Box } from "$/components/Box/Box";
 import { Flex } from "$/components/Flex/Flex";
 import { Select } from "$/components/Select/Select";
 import { Text } from "$/components/Text/Text";
+
+import styles from "./ModelSelector.module.css";
+
 import type {
   ModelGroupName,
   ModelGroups,
-  ModelRecord
+  ModelRecord,
 } from "$/modules/inference/models/inference_model";
-import styles from "./ModelSelector.module.css";
 
 type ModelSelectorProps = {
   modelGroups: ModelGroups;
@@ -28,8 +30,12 @@ export const ModelSelector: FC<ModelSelectorProps> = ({
   disabled = false,
 }) => {
   const [modelFamilies, setModelFamilies] = useState<string[]>([]);
-  const [selectedFamily, setSelectedFamily] = useState<ModelGroupName | undefined>(undefined);
-  const [selectedModel, setSelectedModel] = useState<ModelRecord | undefined>(undefined);
+  const [selectedFamily, setSelectedFamily] = useState<
+    ModelGroupName | undefined
+  >(undefined);
+  const [selectedModel, setSelectedModel] = useState<ModelRecord | undefined>(
+    undefined,
+  );
 
   // Extract model families on component mount
   useEffect(() => {
@@ -57,9 +63,8 @@ export const ModelSelector: FC<ModelSelectorProps> = ({
   // Auto-select first model when family changes and no model is selected
   useEffect(() => {
     if (!selectedFamily || !modelGroups) {
-      return
-
-    };
+      return;
+    }
 
     const familyModels = modelGroups[selectedFamily] || [];
 
@@ -117,24 +122,26 @@ export const ModelSelector: FC<ModelSelectorProps> = ({
         fullWidth
       />
 
-      {selectedFamily ? <Select
-        options={(modelGroups[selectedFamily] || []).map((model) => {
-          return {
-            value: model.name,
-            label: model.display_name,
-          };
-        })}
-        value={selectedModelId}
-        onChange={handleModelChange}
-        label="Model"
-        placeholder="Select model"
-        disabled={
-          disabled ||
-          !selectedFamily ||
-          modelGroups[selectedFamily]?.length === 0
-        }
-        fullWidth
-      /> : null}
+      {selectedFamily ? (
+        <Select
+          options={(modelGroups[selectedFamily] || []).map((model) => {
+            return {
+              value: model.name,
+              label: model.display_name,
+            };
+          })}
+          value={selectedModelId}
+          onChange={handleModelChange}
+          label="Model"
+          placeholder="Select model"
+          disabled={
+            disabled ||
+            !selectedFamily ||
+            modelGroups[selectedFamily]?.length === 0
+          }
+          fullWidth
+        />
+      ) : null}
 
       {selectedModel && (
         <>

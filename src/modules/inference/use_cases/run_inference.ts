@@ -1,13 +1,13 @@
-import type { MLCEngine } from "@mlc-ai/web-llm";
-import {
-    DEFAULT_INFERENCE_PARAMETERS,
-} from "../models/inference_model";
-import type {
-    InferenceRequest,
-    InferenceResponse,
-} from "../models/inference_model";
-import { generate_text_stream } from "../repositories/generate_text_stream";
 import { logger } from "$/utils/logger";
+
+import { DEFAULT_INFERENCE_PARAMETERS } from "../models/inference_model";
+import { generate_text_stream } from "../repositories/generate_text_stream";
+
+import type {
+  InferenceRequest,
+  InferenceResponse,
+} from "../models/inference_model";
+import type { MLCEngine } from "@mlc-ai/web-llm";
 
 /**
  * Run inference using WebLLM.
@@ -24,7 +24,7 @@ import { logger } from "$/utils/logger";
 export async function run_inference(
   engine: MLCEngine,
   request: InferenceRequest,
-  requestId: string // Retained parameter, though unused internally
+  _requestId: string, // Retained parameter, though unused internally
 ): Promise<InferenceResponse> {
   if (!engine) {
     throw new Error("No LLM engine provided");
@@ -47,16 +47,25 @@ export async function run_inference(
       engine,
       messages,
       parameters,
-      onToken: (token: string) => {
+      onToken: (_token: string) => {
         // This callback is now handled by the caller (background script)
       },
-      onComplete: (text: string, usage?: { prompt_tokens?: number; completion_tokens?: number; total_tokens?: number; }) => {
+      onComplete: (
+        text: string,
+        usage?: {
+          prompt_tokens?: number;
+          completion_tokens?: number;
+          total_tokens?: number;
+        },
+      ) => {
         finalText = text;
-        usageInfo = usage ? {
-            prompt_tokens: usage.prompt_tokens,
-            completion_tokens: usage.completion_tokens,
-            total_tokens: usage.total_tokens
-          } : undefined;
+        usageInfo = usage
+          ? {
+              prompt_tokens: usage.prompt_tokens,
+              completion_tokens: usage.completion_tokens,
+              total_tokens: usage.total_tokens,
+            }
+          : undefined;
       },
     });
 
@@ -70,7 +79,6 @@ export async function run_inference(
     // this should be handled by the background script using the stream.
 
     return response; // Return the final response
-
   } catch (error) {
     // Log error locally, but don't try to send error message here.
     logger.error("Error during generate_text_stream in run_inference:", error);

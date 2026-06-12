@@ -1,4 +1,5 @@
 import { forwardRef, type ReactNode, type ButtonHTMLAttributes } from "react";
+
 import styles from "./Button.module.css";
 
 export type ButtonSize = "sm" | "md" | "lg";
@@ -43,7 +44,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       className = "",
       ...rest
     },
-    ref
+    ref,
   ) => {
     return (
       <button
@@ -70,7 +71,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         )}
       </button>
     );
-  }
+  },
 );
 
 Button.displayName = "Button";

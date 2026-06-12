@@ -1,9 +1,12 @@
 import { useState, useEffect, FC, useRef } from "react";
+import { PiXCircleBold } from "react-icons/pi";
 
 import {
   Message,
   type InferenceParameters,
 } from "$/modules/inference/models/inference_model";
+import { useDraggable } from "$/modules/selection/presentations/hooks/useDraggable";
+import { logger } from "$/utils/logger";
 import { Box } from "@/src/components/Box/Box";
 import { Button } from "@/src/components/Button/Button";
 import { Flex } from "@/src/components/Flex/Flex";
@@ -13,14 +16,11 @@ import { get_applicable_actions } from "@/src/modules/actions/use_cases/get_appl
 import { PageCategory } from "@/src/modules/context/models/context";
 import { get_page_context } from "@/src/modules/context/use_cases/get_page_context";
 import { SelectionData } from "@/src/modules/selection/models/selection";
-import { useDraggable } from "$/modules/selection/presentations/hooks/useDraggable";
 
 import { ResponseDisplay } from "../../components/ResponseDisplay/ResponseDisplay";
 import { useInference } from "../../hooks/useInference";
 
 import styles from "./PromptOverlay.module.css";
-import { logger } from "$/utils/logger";
-import { PiXCircleBold } from "react-icons/pi";
 
 export type PromptlyOverlayProps = {
   selectionData: SelectionData;

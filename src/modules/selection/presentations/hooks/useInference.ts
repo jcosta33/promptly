@@ -1,10 +1,10 @@
 import { useState, useRef, useCallback, useEffect } from "react";
 
-import type { InferenceRequest } from "$/modules/inference/models/inference_model";
 import { EventType } from "$/modules/messaging/models/event_types";
 import { create_stream_connection } from "$/modules/messaging/use_cases/create_stream_connection";
 import { logger } from "$/utils/logger";
 
+import type { InferenceRequest } from "$/modules/inference/models/inference_model";
 import type {
   InferenceChunkPayload,
   InferenceCompletePayload,

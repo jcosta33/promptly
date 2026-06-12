@@ -1,5 +1,6 @@
-import type { Meta, StoryObj } from "@storybook/react";
 import { Box } from "./Box";
+
+import type { Meta, StoryObj } from "@storybook/react";
 
 const meta = {
   title: "Components/Box",
@@ -146,64 +147,70 @@ export const InteractiveBox: Story = {
 };
 
 export const ElevationVariations: Story = {
-  render: (args) => (
-    <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-      <Box p="md" {...args}>
-        No Elevation (flat)
-      </Box>
-      <Box p="md" elevation="1" {...args}>
-        Elevation 1
-      </Box>
-      <Box p="md" elevation="2" {...args}>
-        Elevation 2
-      </Box>
-    </div>
-  ),
+  render: (args) => {
+    return (
+      <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+        <Box p="md" {...args}>
+          No Elevation (flat)
+        </Box>
+        <Box p="md" elevation="1" {...args}>
+          Elevation 1
+        </Box>
+        <Box p="md" elevation="2" {...args}>
+          Elevation 2
+        </Box>
+      </div>
+    );
+  },
 };
 
 export const PaddingVariations: Story = {
-  render: (args) => (
-    <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-      <Box p="xxs" {...args}>
-        Padding XXS
-      </Box>
-      <Box p="xs" {...args}>
-        Padding XS
-      </Box>
-      <Box p="sm" {...args}>
-        Padding SM
-      </Box>
-      <Box p="md" {...args}>
-        Padding MD
-      </Box>
-      <Box p="lg" {...args}>
-        Padding LG
-      </Box>
-      <Box p="xl" {...args}>
-        Padding XL
-      </Box>
-    </div>
-  ),
+  render: (args) => {
+    return (
+      <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+        <Box p="xxs" {...args}>
+          Padding XXS
+        </Box>
+        <Box p="xs" {...args}>
+          Padding XS
+        </Box>
+        <Box p="sm" {...args}>
+          Padding SM
+        </Box>
+        <Box p="md" {...args}>
+          Padding MD
+        </Box>
+        <Box p="lg" {...args}>
+          Padding LG
+        </Box>
+        <Box p="xl" {...args}>
+          Padding XL
+        </Box>
+      </div>
+    );
+  },
 };
 
 export const BorderRadius: Story = {
-  render: (args) => (
-    <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-      <Box p="md" {...args}>
-        No Border Radius
-      </Box>
-      <Box p="md" radius="sm" {...args}>
-        Border Radius SM
-      </Box>
-      <Box p="md" radius="md" {...args}>
-        Border Radius MD
-      </Box>
-      <Box p="md" radius="lg" {...args}>
-        Border Radius LG
-      </Box>
-      <Box p="md" radius="full" {...args}>
-        Border Radius Full
-      </Box>
-    </div>
-  ),
+  render: (args) => {
+    return (
+      <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+        <Box p="md" {...args}>
+          No Border Radius
+        </Box>
+        <Box p="md" radius="sm" {...args}>
+          Border Radius SM
+        </Box>
+        <Box p="md" radius="md" {...args}>
+          Border Radius MD
+        </Box>
+        <Box p="md" radius="lg" {...args}>
+          Border Radius LG
+        </Box>
+        <Box p="md" radius="full" {...args}>
+          Border Radius Full
+        </Box>
+      </div>
+    );
+  },
 };

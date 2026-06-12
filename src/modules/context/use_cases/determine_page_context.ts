@@ -13,7 +13,7 @@ function extract_domain(url: string): string {
 
     // Fallback: try to extract domain with regex
     const match = url.match(
-      /^(?:https?:\/\/)?(?:[^@\n]+@)?(?:www\.)?([^:/\n?]+)/i
+      /^(?:https?:\/\/)?(?:[^@\n]+@)?(?:www\.)?([^:/\n?]+)/i,
     );
     return match ? match[1] : url;
   }
@@ -28,7 +28,7 @@ function extract_domain(url: string): string {
  */
 export function determine_page_context(
   url: string,
-  pageTitle?: string
+  pageTitle?: string,
 ): PageContext {
   const category = get_url_category(url);
   const domain = extract_domain(url);

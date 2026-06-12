@@ -1,8 +1,4 @@
 import {
-  SelectionContextType,
-  SelectionDataType,
-} from "$/modules/selection/models/selection";
-import {
   PiArrowsCounterClockwise,
   PiPlant,
   PiLightbulb,
@@ -33,8 +29,15 @@ import {
   PiSuitcaseSimple,
   PiBookOpenText,
 } from "react-icons/pi";
+
+import {
+  SelectionContextType,
+  SelectionDataType,
+} from "$/modules/selection/models/selection";
+
 import { PageCategory } from "../../context/models/context";
 import { PARAMETER_PRESETS } from "../../inference/models/inference_model";
+
 import type { ActionDefinition } from "../models/action_models";
 
 const ALL_PAGE_CATEGORIES = Object.values(PageCategory);

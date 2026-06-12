@@ -1,6 +1,8 @@
-import type { Meta, StoryObj } from "@storybook/react";
-import { Switch } from "./Switch";
 import { useState } from "react";
+
+import { Switch } from "./Switch";
+
+import type { Meta, StoryObj } from "@storybook/react";
 
 const meta = {
   title: "Components/Switch",
@@ -110,27 +112,41 @@ export const WithError: Story = {
   },
 };
 
+const InteractiveSwitchStory = () => {
+  // This is needed for Storybook to handle state properly
+  const [checked, setChecked] = useState(false);
+
+  return (
+    <Switch
+      label={checked ? "Feature enabled" : "Feature disabled"}
+      checked={checked}
+      onChange={() => {
+        return setChecked(!checked);
+      }}
+    />
+  );
+};
+
 export const Interactive: Story = {
+  args: {
+    label: "Feature disabled",
+  },
   render: () => {
-    // This is needed for Storybook to handle state properly
-    const [checked, setChecked] = useState(false);
-    
-    return (
-      <Switch
-        label={checked ? "Feature enabled" : "Feature disabled"}
-        checked={checked}
-        onChange={() => setChecked(!checked)}
-      />
-    );
+    return <InteractiveSwitchStory />;
   },
 };
 
 export const SizeComparison: Story = {
-  render: () => (
-    <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-      <Switch label="Small switch" size="sm" />
-      <Switch label="Medium switch" size="md" />
-      <Switch label="Large switch" size="lg" />
-    </div>
-  ),
+  args: {
+    label: "Medium switch",
+  },
+  render: () => {
+    return (
+      <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+        <Switch label="Small switch" size="sm" />
+        <Switch label="Medium switch" size="md" />
+        <Switch label="Large switch" size="lg" />
+      </div>
+    );
+  },
 };

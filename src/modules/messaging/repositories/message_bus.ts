@@ -1,13 +1,10 @@
+import { logger } from "$/utils/logger";
+
 import {
   type MessageEvent,
   create_message_event,
 } from "../helpers/create_message_event";
 import { type EventType, type PayloadForEvent } from "../models/event_types";
-import type {
-  MessageHandler,
-  MessageStreamOptions,
-  TypedMessageHandler,
-} from "../models/message_types";
 
 import {
   create_connection,
@@ -18,7 +15,12 @@ import {
   send_connection_message,
 } from "./chrome_connection";
 import { send_message, listen_for_messages } from "./chrome_message";
-import { logger } from "$/utils/logger";
+
+import type {
+  MessageHandler,
+  MessageStreamOptions,
+  TypedMessageHandler,
+} from "../models/message_types";
 
 // Store event listeners by event type
 const eventListeners = new Map<EventType, Set<MessageHandler<any>>>();
@@ -39,7 +41,7 @@ function generate_connection_name(baseType: string): string {
  */
 export function subscribe<TPayload = unknown>(
   eventType: EventType,
-  handler: MessageHandler<MessageEvent<TPayload>>
+  handler: MessageHandler<MessageEvent<TPayload>>,
 ): () => void {
   if (!eventListeners.has(eventType)) {
     eventListeners.set(eventType, new Set());
@@ -64,7 +66,7 @@ export async function publish<TPayload = unknown>(
   eventType: EventType,
   payload: TPayload,
   tabId?: number,
-  frameId?: number
+  frameId?: number,
 ): Promise<any> {
   logger.log(`Publishing event: ${eventType}`, {
     payload,
@@ -115,7 +117,7 @@ export function initialize_message_bus(): () => void {
       }
 
       return { received: true, timestamp: Date.now() };
-    }
+    },
   );
 
   // Return cleanup function
@@ -129,7 +131,7 @@ export function initialize_message_bus(): () => void {
  */
 export function register_connection_handler(
   connectionType: string,
-  handler: (port: chrome.runtime.Port) => void
+  handler: (port: chrome.runtime.Port) => void,
 ): () => void {
   if (!connectionHandlers.has(connectionType)) {
     connectionHandlers.set(connectionType, new Set());
@@ -142,7 +144,10 @@ export function register_connection_handler(
           try {
             h(port);
           } catch (error) {
-            logger.error(`Error in connection handler for ${connectionType}:`, error);
+            logger.error(
+              `Error in connection handler for ${connectionType}:`,
+              error,
+            );
           }
         });
       }
@@ -167,12 +172,12 @@ export function register_connection_handler(
 export function create_stream(options: MessageStreamOptions): {
   send: <TEventType extends EventType>(
     eventType: TEventType,
-    payload: PayloadForEvent<TEventType>
+    payload: PayloadForEvent<TEventType>,
   ) => void;
   close: () => void;
   onMessage: <TEventType extends EventType>(
     eventType: TEventType,
-    handler: TypedMessageHandler<TEventType>
+    handler: TypedMessageHandler<TEventType>,
   ) => () => void;
 } {
   const connectionName =
@@ -207,16 +212,19 @@ export function create_stream(options: MessageStreamOptions): {
           }
         });
       }
-    }
+    },
   );
 
   // Methods for the stream interface
   const send = <TEventType extends EventType>(
     eventType: TEventType,
-    payload: PayloadForEvent<TEventType>
+    payload: PayloadForEvent<TEventType>,
   ): void => {
     const event = create_message_event(eventType, payload);
-    logger.debug("Sending event via stream", { eventType, payload: event.payload });
+    logger.debug("Sending event via stream", {
+      eventType,
+      payload: event.payload,
+    });
     send_connection_message(port, event);
   };
 
@@ -225,13 +233,16 @@ export function create_stream(options: MessageStreamOptions): {
     try {
       port.disconnect();
     } catch (error) {
-      logger.warn("Error disconnecting port (might be normal if already disconnected):", { portName: port.name, error });
+      logger.warn(
+        "Error disconnecting port (might be normal if already disconnected):",
+        { portName: port.name, error },
+      );
     }
   };
 
   const onMessage = <TEventType extends EventType>(
     eventType: TEventType,
-    handler: TypedMessageHandler<TEventType>
+    handler: TypedMessageHandler<TEventType>,
   ): (() => void) => {
     if (!handlers.has(eventType)) {
       handlers.set(eventType, new Set());
@@ -266,16 +277,16 @@ export function listen_for_streams(
     stream: {
       send: <TEventType extends EventType>(
         eventType: TEventType,
-        payload: PayloadForEvent<TEventType>
+        payload: PayloadForEvent<TEventType>,
       ) => void;
       close: () => void;
       onMessage: <TEventType extends EventType>(
         eventType: TEventType,
-        handler: TypedMessageHandler<TEventType>
+        handler: TypedMessageHandler<TEventType>,
       ) => () => void;
     },
-    identifier: number | string
-  ) => void
+    identifier: number | string,
+  ) => void,
 ): () => void {
   // Use the register_connection_handler to avoid duplicate listeners
   return register_connection_handler(connectionType, (port) => {
@@ -291,7 +302,7 @@ export function listen_for_streams(
     const stream = {
       send: <TEventType extends EventType>(
         eventType: TEventType,
-        payload: PayloadForEvent<TEventType>
+        payload: PayloadForEvent<TEventType>,
       ): void => {
         const event = create_message_event(eventType, payload);
 
@@ -312,7 +323,7 @@ export function listen_for_streams(
       },
       onMessage: <TEventType extends EventType>(
         eventType: TEventType,
-        handler: TypedMessageHandler<TEventType>
+        handler: TypedMessageHandler<TEventType>,
       ): (() => void) => {
         const messageHandler = (event: MessageEvent<any>) => {
           if (event.type === eventType) {
@@ -332,7 +343,10 @@ export function listen_for_streams(
     try {
       onConnection(stream, identifier);
     } catch (error) {
-      logger.error(`Error handling new stream connection (${connectionType}/${identifier}):`, error);
+      logger.error(
+        `Error handling new stream connection (${connectionType}/${identifier}):`,
+        error,
+      );
     }
   });
 }

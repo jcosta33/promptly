@@ -1,11 +1,4 @@
 import { useState, useRef, useEffect, KeyboardEvent, FC } from "react";
-
-import { Box } from "$/components/Box/Box";
-import { Button } from "$/components/Button/Button";
-import { Flex } from "$/components/Flex/Flex";
-import { Input } from "$/components/Input/Input";
-import { Markdown } from "$/components/Markdown/Markdown";
-import { Message } from "$/modules/inference/models/inference_model";
 import {
   PiCheckBold,
   PiArrowCounterClockwiseBold,
@@ -15,6 +8,13 @@ import {
   PiTrashBold,
   PiWarningBold,
 } from "react-icons/pi";
+
+import { Box } from "$/components/Box/Box";
+import { Button } from "$/components/Button/Button";
+import { Flex } from "$/components/Flex/Flex";
+import { Input } from "$/components/Input/Input";
+import { Markdown } from "$/components/Markdown/Markdown";
+import { Message } from "$/modules/inference/models/inference_model";
 
 import styles from "./ResponseDisplay.module.css";
 
@@ -169,10 +169,11 @@ export const ResponseDisplay: FC<ResponseDisplayProps> = ({
             bg="secondary"
           >
             {messages
-              .filter(
-                (msg, index) =>
-                  (!hideFirstMessage || index !== 1) && msg.role !== "system",
-              )
+              .filter((msg, index) => {
+                return (
+                  (!hideFirstMessage || index !== 1) && msg.role !== "system"
+                );
+              })
               .toReversed()
               .map((msg, index) => {
                 return msg.role !== "system" ? (

@@ -1,4 +1,5 @@
 import { type ElementType, type HTMLAttributes, type FC } from "react";
+
 import styles from "./Text.module.css";
 
 export type TextSize = "xs" | "sm" | "md" | "lg" | "xl" | "2xl";

@@ -9,7 +9,8 @@ export const ThemePreference = {
   SYSTEM: "system", // Follow system preference
 } as const;
 
-export type ThemePreference = typeof ThemePreference[keyof typeof ThemePreference];
+export type ThemePreference =
+  (typeof ThemePreference)[keyof typeof ThemePreference];
 
 /**
  * Code highlight theme constant object
@@ -23,7 +24,8 @@ export const CodeHighlightTheme = {
   GITHUB_DARK: "github-dark",
 } as const;
 
-export type CodeHighlightTheme = typeof CodeHighlightTheme[keyof typeof CodeHighlightTheme];
+export type CodeHighlightTheme =
+  (typeof CodeHighlightTheme)[keyof typeof CodeHighlightTheme];
 
 /**
  * Extension settings type

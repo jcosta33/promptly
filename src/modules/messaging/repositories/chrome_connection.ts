@@ -1,29 +1,38 @@
-import type { ConnectionOptions, MessageHandler } from "../models/message_types";
 import { logger } from "$/utils/logger";
 
+import type {
+  ConnectionOptions,
+  MessageHandler,
+} from "../models/message_types";
+
 // Store active connections
-const activeConnections = new Map<string, Map<number | string, chrome.runtime.Port>>();
+const activeConnections = new Map<
+  string,
+  Map<number | string, chrome.runtime.Port>
+>();
 
 /**
  * Create a connection to a tab or the extension
  */
-export function create_connection(options: ConnectionOptions): chrome.runtime.Port {
+export function create_connection(
+  options: ConnectionOptions,
+): chrome.runtime.Port {
   try {
     // Determine if this is a content script or popup connecting to background,
     // or a background script connecting to a tab
     let port: chrome.runtime.Port;
-    
+
     if (options.tabId !== undefined) {
       // Background connecting to a tab
       port = chrome.tabs.connect(options.tabId, {
         name: options.name,
-        frameId: options.frameId
+        frameId: options.frameId,
       });
     } else {
       // Content script or popup connecting to background
       port = chrome.runtime.connect({ name: options.name });
     }
-    
+
     return port;
   } catch (error) {
     logger.error("Error creating connection:", error);
@@ -36,22 +45,22 @@ export function create_connection(options: ConnectionOptions): chrome.runtime.Po
  */
 export function setup_connection_listener(
   connectionName: string,
-  onConnect: (port: chrome.runtime.Port) => void
+  onConnect: (port: chrome.runtime.Port) => void,
 ): () => void {
   const listener = (port: chrome.runtime.Port) => {
     if (!port.name.startsWith(connectionName)) {
       return;
     }
-    
+
     try {
       onConnect(port);
     } catch (error) {
       logger.error(`Error handling connection ${port.name}:`, error);
     }
   };
-  
+
   chrome.runtime.onConnect.addListener(listener);
-  
+
   return () => {
     chrome.runtime.onConnect.removeListener(listener);
   };
@@ -62,7 +71,7 @@ export function setup_connection_listener(
  */
 export function send_connection_message<T = unknown>(
   port: chrome.runtime.Port,
-  message: T
+  message: T,
 ): void {
   try {
     port.postMessage(message);
@@ -77,7 +86,7 @@ export function send_connection_message<T = unknown>(
  */
 export function listen_to_connection<T = unknown>(
   port: chrome.runtime.Port,
-  handler: MessageHandler<T>
+  handler: MessageHandler<T>,
 ): () => void {
   const messageListener = (message: T) => {
     try {
@@ -86,11 +95,11 @@ export function listen_to_connection<T = unknown>(
       logger.error("Error handling connection message:", error);
     }
   };
-  
+
   const disconnectListener = () => {
     port.onMessage.removeListener(messageListener);
     port.onDisconnect.removeListener(disconnectListener);
-    
+
     // Cleanup from active connections store if this is used in the background script
     try {
       for (const [name, connections] of activeConnections.entries()) {
@@ -109,10 +118,10 @@ export function listen_to_connection<T = unknown>(
       logger.error("Error cleaning up disconnected port:", error);
     }
   };
-  
+
   port.onMessage.addListener(messageListener);
   port.onDisconnect.addListener(disconnectListener);
-  
+
   // Return cleanup function
   return () => {
     port.onMessage.removeListener(messageListener);
@@ -126,12 +135,12 @@ export function listen_to_connection<T = unknown>(
 export function track_connection(
   connectionName: string,
   identifier: number | string,
-  port: chrome.runtime.Port
+  port: chrome.runtime.Port,
 ): void {
   if (!activeConnections.has(connectionName)) {
     activeConnections.set(connectionName, new Map());
   }
-  
+
   const connections = activeConnections.get(connectionName)!;
   connections.set(identifier, port);
 }
@@ -139,7 +148,9 @@ export function track_connection(
 /**
  * Get all active connections for a specific connection name
  */
-export function get_connections(connectionName: string): Map<number | string, chrome.runtime.Port> | undefined {
+export function get_connections(
+  connectionName: string,
+): Map<number | string, chrome.runtime.Port> | undefined {
   return activeConnections.get(connectionName);
 }
 
@@ -148,7 +159,7 @@ export function get_connections(connectionName: string): Map<number | string, ch
  */
 export function get_connection(
   connectionName: string,
-  identifier: number | string
+  identifier: number | string,
 ): chrome.runtime.Port | undefined {
   const connections = activeConnections.get(connectionName);
   if (!connections) return undefined;
@@ -160,22 +171,25 @@ export function get_connection(
  */
 export function remove_connection(
   connectionName: string,
-  identifier: number | string
+  identifier: number | string,
 ): void {
   const connections = activeConnections.get(connectionName);
   if (!connections) return;
-  
+
   const port = connections.get(identifier);
   if (port) {
     try {
       port.disconnect();
     } catch (error) {
-      logger.warn("Error disconnecting port (might already be disconnected):", error);
+      logger.warn(
+        "Error disconnecting port (might already be disconnected):",
+        error,
+      );
     }
   }
-  
+
   connections.delete(identifier);
   if (connections.size === 0) {
     activeConnections.delete(connectionName);
   }
-} 
+}

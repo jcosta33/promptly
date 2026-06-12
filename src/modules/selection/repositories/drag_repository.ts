@@ -1,5 +1,6 @@
-import { logger } from "$/utils/logger";
 import { type RefObject } from "react";
+
+import { logger } from "$/utils/logger";
 
 type Position = {
   x: number;
@@ -34,7 +35,7 @@ export const add_drag_listeners = ({
     // Ignore clicks on interactive elements within the draggable element
     if (
       target_element.closest(
-        'input, textarea, button, select, a[href], [role="button"]'
+        'input, textarea, button, select, a[href], [role="button"]',
       )
     ) {
       return;
