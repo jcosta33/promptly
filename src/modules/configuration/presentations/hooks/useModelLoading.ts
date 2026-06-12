@@ -81,18 +81,25 @@ export function useModelLoading() {
             setProgress(payload.progress * 100);
             setStatus(payload.status || payload.text || "Loading model...");
 
-            // If progress is 100%, mark as complete
-            if (payload.progress >= 1) {
-              setIsLoading(false);
-              setError(null);
-              finish();
-            }
+            // Runtime status, not raw progress, is the authoritative completion signal.
           },
         );
 
         unsubscribeStatus = connection.onMessage(
           EventType.MODEL_STATUS_RESPONSE,
-          applyRuntimeStatus,
+          (payload) => {
+            applyRuntimeStatus(payload);
+
+            if (payload.phase === "loaded") {
+              setProgress((payload.progress ?? 1) * 100);
+              setStatus(payload.message || "Model loaded successfully");
+              setIsLoading(false);
+              finish();
+            } else if (payload.phase === "error") {
+              setIsLoading(false);
+              finish();
+            }
+          },
         );
 
         unsubscribeError = connection.onMessage(
