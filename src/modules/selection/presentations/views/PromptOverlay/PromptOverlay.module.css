@@ -1,7 +1,7 @@
 .overlayContainer {
   position: absolute;
-  width: 400px;
-  max-height: 80vh;
+  width: min(400px, calc(100vw - 24px));
+  max-height: calc(100vh - 24px);
   z-index: 99999;
 }
 

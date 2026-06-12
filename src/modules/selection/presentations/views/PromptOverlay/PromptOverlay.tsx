@@ -1,6 +1,9 @@
 import { useState, useEffect, FC, useRef } from "react";
 
-import { Message } from "$/modules/inference/models/inference_model";
+import {
+  Message,
+  type InferenceParameters,
+} from "$/modules/inference/models/inference_model";
 import { Box } from "@/src/components/Box/Box";
 import { Button } from "@/src/components/Button/Button";
 import { Flex } from "@/src/components/Flex/Flex";
@@ -25,6 +28,49 @@ export type PromptlyOverlayProps = {
   onClose: () => void;
 };
 
+type Position = {
+  x: number;
+  y: number;
+};
+
+type LastInferenceRequest = {
+  messages: Message[];
+  parameters?: Partial<InferenceParameters>;
+};
+
+const OVERLAY_MARGIN = 12;
+const DEFAULT_OVERLAY_SIZE = {
+  width: 400,
+  height: 520,
+};
+
+const clampOverlayPosition = (
+  position: Position,
+  element: HTMLElement | null,
+): Position => {
+  if (typeof window === "undefined") {
+    return position;
+  }
+
+  const width = element?.offsetWidth || DEFAULT_OVERLAY_SIZE.width;
+  const height = element?.offsetHeight || DEFAULT_OVERLAY_SIZE.height;
+  const minX = window.scrollX + OVERLAY_MARGIN;
+  const minY = window.scrollY + OVERLAY_MARGIN;
+  const maxX = Math.max(
+    minX,
+    window.scrollX + window.innerWidth - width - OVERLAY_MARGIN,
+  );
+  const maxY = Math.max(
+    minY,
+    window.scrollY + window.innerHeight - height - OVERLAY_MARGIN,
+  );
+
+  return {
+    x: Math.min(Math.max(position.x, minX), maxX),
+    y: Math.min(Math.max(position.y, minY), maxY),
+  };
+};
+
 /**
  * Overlay component that displays actions and inference results
  */
@@ -39,6 +85,8 @@ export const PromptlyOverlay: FC<PromptlyOverlayProps> = ({
   const [activeAction, setActiveAction] = useState<ActionDefinition | null>(
     null,
   );
+  const [lastInferenceRequest, setLastInferenceRequest] =
+    useState<LastInferenceRequest | null>(null);
 
   const dragHandleRef = useRef<HTMLDivElement>(null);
 
@@ -108,10 +156,12 @@ export const PromptlyOverlay: FC<PromptlyOverlayProps> = ({
     setMessages(initialMessages);
 
     if (pageContext) {
-      runInference({
+      const request = {
         messages: initialMessages.slice(0, -1),
         parameters: action.llmParams,
-      });
+      };
+      setLastInferenceRequest(request);
+      runInference(request);
     }
   };
 
@@ -134,9 +184,11 @@ export const PromptlyOverlay: FC<PromptlyOverlayProps> = ({
 
     setMessages(newMessages);
 
-    runInference({
+    const request = {
       messages: newMessages.slice(0, -1),
-    });
+    };
+    setLastInferenceRequest(request);
+    runInference(request);
   };
 
   const handleStop = () => {
@@ -154,17 +206,58 @@ export const PromptlyOverlay: FC<PromptlyOverlayProps> = ({
     onClose();
   };
 
+  const handleRetryLatest = () => {
+    if (!lastInferenceRequest || isLoading) {
+      return;
+    }
+
+    setMessages([
+      ...lastInferenceRequest.messages,
+      { role: "assistant", content: "" },
+    ]);
+    runInference(lastInferenceRequest);
+  };
+
+  const handleClearConversation = () => {
+    if (isLoading) {
+      cancelInference();
+    }
+    setMessages([]);
+    setHideFirstMessage(false);
+    setActiveAction(null);
+    setLastInferenceRequest(null);
+  };
+
   const isLoading =
     inferenceState.status === "loading" ||
     inferenceState.status === "streaming";
+  const clampedPosition = clampOverlayPosition(
+    currentPosition ?? position,
+    elementRef.current,
+  );
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        handleClose();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [inferenceState.status]);
 
   return (
     <div
       ref={elementRef}
       className={styles.overlayContainer}
       style={{
-        left: currentPosition?.x || position.x,
-        top: currentPosition?.y || position.y,
+        left: clampedPosition.x,
+        top: clampedPosition.y,
         position: "absolute",
         userSelect: isDragging ? "none" : "auto",
       }}
@@ -205,6 +298,9 @@ export const PromptlyOverlay: FC<PromptlyOverlayProps> = ({
             error={inferenceState.error}
             onSendFollowUp={handleSendFollowUp}
             onStop={handleStop}
+            onRetryLatest={handleRetryLatest}
+            onClearConversation={handleClearConversation}
+            canRetry={Boolean(lastInferenceRequest)}
           />
 
           <Flex wrap="wrap" gap="sm">

@@ -1,4 +1,7 @@
-import { EventType } from "../src/modules/messaging/models/event_types";
+import {
+  EventType,
+  type ModelRuntimeStatus,
+} from "../src/modules/messaging/models/event_types";
 import { listen_for_streams } from "../src/modules/messaging/repositories/message_bus";
 import { DEFAULT_INFERENCE_PARAMETERS } from "../src/modules/inference/models/inference_model";
 import type { Message } from "../src/modules/inference/models/inference_model";
@@ -17,9 +20,73 @@ export default defineBackground(() => {
 
   let llmEngine: MLCEngine | null = null;
   let currentModel = "";
+  let modelRuntimeStatus: ModelRuntimeStatus = {
+    phase: "unloaded",
+    message: "No model loaded",
+  };
+
+  const hasWebGpu = () => {
+    return typeof navigator === "undefined" || "gpu" in navigator;
+  };
+
+  const getModelRuntimeStatus = (): ModelRuntimeStatus => {
+    if (!hasWebGpu() && modelRuntimeStatus.phase === "unloaded") {
+      return {
+        phase: "unavailable",
+        message: "WebGPU is not available in this browser context",
+      };
+    }
+
+    return modelRuntimeStatus;
+  };
+
+  const setModelRuntimeStatus = (status: ModelRuntimeStatus) => {
+    modelRuntimeStatus = status;
+  };
 
   listen_for_streams("promptly-inference", async (stream, identifier) => {
     logger.log("Inference connection established", { identifier });
+
+    const sendModelRuntimeStatus = (requestId?: string) => {
+      stream.send(EventType.MODEL_STATUS_RESPONSE, {
+        ...getModelRuntimeStatus(),
+        requestId,
+      });
+    };
+
+    stream.onMessage(EventType.MODEL_STATUS_REQUEST, (payload) => {
+      sendModelRuntimeStatus(payload.requestId);
+    });
+
+    stream.onMessage(EventType.UNLOAD_MODEL, async (payload) => {
+      try {
+        if (llmEngine) {
+          await llmEngine.interruptGenerate();
+          await llmEngine.unload();
+        }
+
+        llmEngine = null;
+        currentModel = "";
+        setModelRuntimeStatus({
+          phase: "unloaded",
+          message: "No model loaded",
+        });
+        sendModelRuntimeStatus(payload.requestId);
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error ? error.message : String(error);
+        setModelRuntimeStatus({
+          phase: "error",
+          modelId: currentModel || payload.modelId,
+          error: errorMessage,
+        });
+        sendModelRuntimeStatus(payload.requestId);
+        stream.send(EventType.INFERENCE_ERROR, {
+          requestId: payload.requestId || "",
+          error: "Failed to unload model: " + errorMessage,
+        });
+      }
+    });
 
     stream.onMessage(EventType.MODEL_LOAD_REQUEST, async (payload) => {
       const { modelId, requestId, useStream } = payload;
@@ -38,6 +105,11 @@ export default defineBackground(() => {
 
           if (!effectiveModelId) {
             logger.error("No model ID specified in request or settings");
+            setModelRuntimeStatus({
+              phase: "error",
+              error: "No model ID specified",
+            });
+            sendModelRuntimeStatus(requestId);
             stream.send(EventType.INFERENCE_ERROR, {
               requestId,
               error: "No model ID specified",
@@ -47,6 +119,13 @@ export default defineBackground(() => {
         }
 
         logger.log("Sending initial loading progress update");
+        setModelRuntimeStatus({
+          phase: "loading",
+          modelId: effectiveModelId,
+          progress: 0,
+          message: "Starting model load...",
+        });
+        sendModelRuntimeStatus(requestId);
         stream.send(EventType.MODEL_LOADING_PROGRESS, {
           requestId,
           model: effectiveModelId,
@@ -60,9 +139,19 @@ export default defineBackground(() => {
           logger.log("MLCEngine instance created successfully");
         } catch (engineError) {
           logger.error("Error creating MLCEngine instance:", engineError);
+          const errorMessage =
+            engineError instanceof Error
+              ? engineError.message
+              : String(engineError);
+          setModelRuntimeStatus({
+            phase: "error",
+            modelId: effectiveModelId,
+            error: errorMessage,
+          });
+          sendModelRuntimeStatus(requestId);
           stream.send(EventType.INFERENCE_ERROR, {
             requestId,
-            error: `Failed to create engine: ${engineError instanceof Error ? engineError.message : String(engineError)}`,
+            error: `Failed to create engine: ${errorMessage}`,
           });
           return;
         }
@@ -72,6 +161,13 @@ export default defineBackground(() => {
         llmEngine.setInitProgressCallback((report) => {
           logger.debug("Model loading progress report:", report);
           try {
+            setModelRuntimeStatus({
+              phase: "loading",
+              modelId: effectiveModelId,
+              progress: report.progress,
+              message: report.text,
+            });
+            sendModelRuntimeStatus(requestId);
             stream.send(EventType.MODEL_LOADING_PROGRESS, {
               requestId,
               model: effectiveModelId,
@@ -87,16 +183,31 @@ export default defineBackground(() => {
         try {
           await llmEngine.reload(effectiveModelId);
           currentModel = effectiveModelId;
+          setModelRuntimeStatus({
+            phase: "loaded",
+            modelId: effectiveModelId,
+            progress: 1,
+            message: "Model loaded successfully",
+          });
           logger.log(`Model ${effectiveModelId} loaded successfully`);
         } catch (loadError) {
+          const errorMessage =
+            loadError instanceof Error ? loadError.message : String(loadError);
+          setModelRuntimeStatus({
+            phase: "error",
+            modelId: effectiveModelId,
+            error: errorMessage,
+          });
+          sendModelRuntimeStatus(requestId);
           logger.error(`Error loading model ${effectiveModelId}:`, loadError);
           stream.send(EventType.INFERENCE_ERROR, {
             requestId,
-            error: `Error loading model: ${loadError instanceof Error ? loadError.message : String(loadError)}`,
+            error: `Error loading model: ${errorMessage}`,
           });
           return;
         }
 
+        sendModelRuntimeStatus(requestId);
         stream.send(EventType.MODEL_LOADING_PROGRESS, {
           requestId,
           model: effectiveModelId,
@@ -108,6 +219,12 @@ export default defineBackground(() => {
         logger.error("Top-level error in model loading:", error);
         const errorMessage =
           error instanceof Error ? error.message : String(error);
+        setModelRuntimeStatus({
+          phase: "error",
+          modelId: modelId || currentModel,
+          error: errorMessage,
+        });
+        sendModelRuntimeStatus(requestId);
         stream.send(EventType.INFERENCE_ERROR, {
           requestId,
           error: "Failed to load model: " + errorMessage,
@@ -165,9 +282,23 @@ export default defineBackground(() => {
           try {
             logger.log("Creating MLCEngine instance");
             llmEngine = new MLCEngine();
+            setModelRuntimeStatus({
+              phase: "loading",
+              modelId: selectedModelId,
+              progress: 0,
+              message: "Loading model...",
+            });
+            sendModelRuntimeStatus(requestId);
 
             llmEngine.setInitProgressCallback((report) => {
               logger.debug("Model loading progress:", report);
+              setModelRuntimeStatus({
+                phase: "loading",
+                modelId: selectedModelId,
+                progress: report.progress,
+                message: report.text,
+              });
+              sendModelRuntimeStatus(requestId);
               stream.send(EventType.MODEL_LOADING_PROGRESS, {
                 requestId,
                 model: selectedModelId,
@@ -180,9 +311,16 @@ export default defineBackground(() => {
 
             await llmEngine.reload(selectedModelId);
             currentModel = selectedModelId;
+            setModelRuntimeStatus({
+              phase: "loaded",
+              modelId: selectedModelId,
+              progress: 1,
+              message: "Model loaded successfully",
+            });
 
             logger.log(`Model ${selectedModelId} loaded successfully`);
 
+            sendModelRuntimeStatus(requestId);
             stream.send(EventType.MODEL_LOADING_PROGRESS, {
               requestId,
               model: selectedModelId,
@@ -192,6 +330,12 @@ export default defineBackground(() => {
           } catch (error) {
             const errorMessage =
               error instanceof Error ? error.message : String(error);
+            setModelRuntimeStatus({
+              phase: "error",
+              modelId: selectedModelId,
+              error: errorMessage,
+            });
+            sendModelRuntimeStatus(requestId);
             logger.error(
               "Failed to load model during inference request:",
               error,

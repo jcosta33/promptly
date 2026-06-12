@@ -39,6 +39,9 @@ export const SettingsPanel: FC = () => {
     status,
     isLoading: modelLoadHookIsLoading,
     error: loadingError,
+    runtimeStatus,
+    requestModelStatus,
+    unloadModel,
   } = useModelLoading();
 
   const handleToggle = async (event: ChangeEvent<HTMLInputElement>) => {
@@ -67,6 +70,10 @@ export const SettingsPanel: FC = () => {
     loadModel(settings.selectedModelId);
   };
 
+  const handleUnloadModel = () => {
+    unloadModel(settings?.selectedModelId);
+  };
+
   const handleThemeChange = async (value: string) => {
     if (Object.values(ThemePreference).includes(value as ThemePreference)) {
       try {
@@ -80,6 +87,10 @@ export const SettingsPanel: FC = () => {
   };
 
   const loading = settingsLoading || modelLoadHookIsLoading;
+
+  useEffect(() => {
+    requestModelStatus();
+  }, [requestModelStatus]);
 
   useEffect(() => {
     logger.debug("SettingsPanel state update", {
@@ -124,6 +135,11 @@ export const SettingsPanel: FC = () => {
           progress={progress}
           status={status}
           error={loadingError}
+          runtimeStatus={runtimeStatus}
+          selectedModelId={settings?.selectedModelId}
+          disabled={settingsLoading}
+          onLoadModel={handleLoadModel}
+          onUnloadModel={handleUnloadModel}
         />
 
         {modelGroups ? (

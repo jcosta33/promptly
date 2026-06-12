@@ -8,9 +8,11 @@ import { Markdown } from "$/components/Markdown/Markdown";
 import { Message } from "$/modules/inference/models/inference_model";
 import {
   PiCheckBold,
+  PiArrowCounterClockwiseBold,
   PiCopyBold,
   PiPlayBold,
   PiPlayPauseBold,
+  PiTrashBold,
   PiWarningBold,
 } from "react-icons/pi";
 
@@ -23,6 +25,9 @@ export type ResponseDisplayProps = {
   error?: string;
   onSendFollowUp: (message: string) => void;
   onStop: () => void;
+  onRetryLatest: () => void;
+  onClearConversation: () => void;
+  canRetry: boolean;
 };
 
 type CopyStatus = "idle" | "copied" | "error";
@@ -37,6 +42,9 @@ export const ResponseDisplay: FC<ResponseDisplayProps> = ({
   error,
   onSendFollowUp,
   onStop,
+  onRetryLatest,
+  onClearConversation,
+  canRetry,
 }) => {
   const [followUpText, setFollowUpText] = useState("");
   const [copyStatus, setCopyStatus] = useState<CopyStatus>("idle");
@@ -106,19 +114,38 @@ export const ResponseDisplay: FC<ResponseDisplayProps> = ({
     <>
       {messages.length > 0 ? (
         <>
-          {latestAssistantMessage ? (
-            <Flex
-              direction="row"
-              align="center"
-              justify="end"
-              gap="xs"
-              className={styles.responseActions}
+          <Flex
+            direction="row"
+            align="center"
+            justify="end"
+            gap="xs"
+            className={styles.responseActions}
+          >
+            {copyStatus !== "idle" && latestAssistantMessage ? (
+              <span className={styles.copyStatus} role="status">
+                {copyStatus === "copied" ? "Copied" : "Copy failed"}
+              </span>
+            ) : null}
+            <Button
+              color="tertiary"
+              size="sm"
+              onClick={onRetryLatest}
+              disabled={isLoading || !canRetry}
+              aria-label="Retry latest response"
+              title="Retry latest response"
             >
-              {copyStatus !== "idle" ? (
-                <span className={styles.copyStatus} role="status">
-                  {copyStatus === "copied" ? "Copied" : "Copy failed"}
-                </span>
-              ) : null}
+              <PiArrowCounterClockwiseBold />
+            </Button>
+            <Button
+              color="tertiary"
+              size="sm"
+              onClick={onClearConversation}
+              aria-label="Clear conversation"
+              title="Clear conversation"
+            >
+              <PiTrashBold />
+            </Button>
+            {latestAssistantMessage ? (
               <Button
                 color={copyStatus === "error" ? "danger" : "tertiary"}
                 size="sm"
@@ -133,8 +160,8 @@ export const ResponseDisplay: FC<ResponseDisplayProps> = ({
                   <PiCopyBold />
                 )}
               </Button>
-            </Flex>
-          ) : null}
+            ) : null}
+          </Flex>
 
           <Box
             className={styles.responseContainer}
@@ -172,6 +199,15 @@ export const ResponseDisplay: FC<ResponseDisplayProps> = ({
               <Box className={styles.errorContainer}>
                 <div className={styles.errorIcon}>!</div>
                 <div className={styles.errorMessage}>{error}</div>
+                <Button
+                  color="tertiary"
+                  size="sm"
+                  onClick={onRetryLatest}
+                  disabled={isLoading || !canRetry}
+                  aria-label="Retry after error"
+                >
+                  <PiArrowCounterClockwiseBold />
+                </Button>
               </Box>
             )}
 

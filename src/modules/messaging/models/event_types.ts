@@ -9,6 +9,8 @@ export const EventType = {
 
   // Inference events
   MODEL_LOADING_PROGRESS: "model_loading_progress",
+  MODEL_STATUS_REQUEST: "model_status_request",
+  MODEL_STATUS_RESPONSE: "model_status_response",
   INFERENCE_CHUNK: "inference_chunk",
   INFERENCE_COMPLETE: "inference_complete",
   INFERENCE_ERROR: "inference_error",
@@ -40,6 +42,27 @@ export type ModelLoadingProgressPayload = {
   status: string;
   text?: string;
   requestId: string;
+};
+
+export type ModelRuntimeStatus = {
+  phase: "unavailable" | "unloaded" | "loading" | "loaded" | "error";
+  modelId?: string;
+  progress?: number;
+  message?: string;
+  error?: string;
+};
+
+export type ModelStatusRequestPayload = {
+  requestId?: string;
+};
+
+export type ModelStatusResponsePayload = ModelRuntimeStatus & {
+  requestId?: string;
+};
+
+export type ModelControlRequestPayload = {
+  requestId?: string;
+  modelId?: string;
 };
 
 export type InferenceErrorPayload = {
@@ -85,10 +108,13 @@ export type StopInferencePayload = {
 // Mapping between event types and their payload types
 export type EventPayloadMap = {
   [EventType.MODEL_LOADING_PROGRESS]: ModelLoadingProgressPayload;
+  [EventType.MODEL_STATUS_REQUEST]: ModelStatusRequestPayload;
+  [EventType.MODEL_STATUS_RESPONSE]: ModelStatusResponsePayload;
   [EventType.INFERENCE_ERROR]: InferenceErrorPayload;
   [EventType.INFERENCE_CHUNK]: InferenceChunkPayload;
   [EventType.INFERENCE_COMPLETE]: InferenceCompletePayload;
   [EventType.MODEL_LOAD_REQUEST]: ModelLoadRequestPayload;
+  [EventType.UNLOAD_MODEL]: ModelControlRequestPayload;
   [EventType.REQUEST_ACTION]: RequestActionPayload;
   [EventType.STOP_INFERENCE]: StopInferencePayload;
   [key: string]: DefaultPayload; // Allow any EventType string with a default payload
