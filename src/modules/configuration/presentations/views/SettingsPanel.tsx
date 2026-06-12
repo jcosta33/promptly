@@ -14,6 +14,12 @@ import { get_available_models } from "$/modules/inference/use_cases/get_availabl
 import { logger } from "$/utils/logger";
 import { ThemePreference } from "$/modules/configuration/models/user_settings";
 
+const themeOptions = [
+  { value: ThemePreference.SYSTEM, label: "System" },
+  { value: ThemePreference.LIGHT, label: "Light" },
+  { value: ThemePreference.DARK, label: "Dark" },
+];
+
 /**
  * Main settings panel component for the popup
  */
@@ -61,9 +67,13 @@ export const SettingsPanel: FC = () => {
     loadModel(settings.selectedModelId);
   };
 
-  const handleThemeChange = (value: string) => {
+  const handleThemeChange = async (value: string) => {
     if (Object.values(ThemePreference).includes(value as ThemePreference)) {
-      setThemePreference(value as ThemePreference);
+      try {
+        await setThemePreference(value as ThemePreference);
+      } catch (error) {
+        logger.error("Failed to update theme preference:", error);
+      }
     } else {
       logger.warn("Invalid theme value selected:", value);
     }
@@ -84,6 +94,29 @@ export const SettingsPanel: FC = () => {
   return (
     <Box style={{ width: "320px" }}>
       <Flex direction="column" gap="md">
+        <Text as="h3">Extension</Text>
+
+        <Switch
+          checked={settings?.isEnabled ?? false}
+          onChange={handleToggle}
+          disabled={loading}
+          label="Promptly enabled"
+          labelPosition="right"
+          size="lg"
+        />
+
+        <Text as="h3">Appearance</Text>
+
+        <Select
+          id="promptly-theme-preference"
+          label="Theme"
+          options={themeOptions}
+          value={settings?.themePreference ?? ThemePreference.SYSTEM}
+          onChange={handleThemeChange}
+          disabled={settingsLoading}
+          fullWidth
+        />
+
         <Text as="h3">Model Selection</Text>
 
         <ModelLoadingStatus
@@ -91,14 +124,6 @@ export const SettingsPanel: FC = () => {
           progress={progress}
           status={status}
           error={loadingError}
-        />
-
-        <Switch
-          checked={settings?.isEnabled}
-          onChange={handleToggle}
-          disabled={loading}
-          labelPosition="right"
-          size="lg"
         />
 
         {modelGroups ? (

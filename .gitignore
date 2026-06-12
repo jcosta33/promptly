@@ -14,3 +14,10 @@ yarn-error.log*
 .npm/
 .output/
 *storybook.log
+
+# Swarm - code-repo scratch
+.agents/tmp/
+tmp/
+
+# Local state of the future Swarm CLI
+.swarm/

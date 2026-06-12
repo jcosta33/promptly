@@ -18,7 +18,6 @@ import { useInference } from "../../hooks/useInference";
 import styles from "./PromptOverlay.module.css";
 import { logger } from "$/utils/logger";
 import { PiXCircleBold } from "react-icons/pi";
-import { Divider } from "$/components/Divider/Divider";
 
 export type PromptlyOverlayProps = {
   selectionData: SelectionData;
@@ -38,7 +37,7 @@ export const PromptlyOverlay: FC<PromptlyOverlayProps> = ({
   const [pageContext, setPageContext] = useState<{ category: PageCategory }>();
   const [hideFirstMessage, setHideFirstMessage] = useState(false);
   const [activeAction, setActiveAction] = useState<ActionDefinition | null>(
-    null
+    null,
   );
 
   const dragHandleRef = useRef<HTMLDivElement>(null);
@@ -127,7 +126,7 @@ export const PromptlyOverlay: FC<PromptlyOverlayProps> = ({
           role: "user",
           content: `${selectionData.llmFormattedText}\n\n${message}`,
         },
-        { role: "assistant", content: "" }
+        { role: "assistant", content: "" },
       );
     } else {
       newMessages.push(userMessage, { role: "assistant", content: "" });
@@ -172,16 +171,31 @@ export const PromptlyOverlay: FC<PromptlyOverlayProps> = ({
     >
       <Box p="md" elevation="3">
         <Flex direction="column" gap="md">
-          <Flex ref={dragHandleRef}>
+          <Flex
+            ref={dragHandleRef}
+            align="start"
+            justify="between"
+            gap="sm"
+            className={styles.overlayHeader}
+          >
             <Text
               as="blockquote"
               size="xs"
               color="muted"
-              style={{ width: "100%" }}
+              className={styles.selectionPreview}
             >
               &quot;{selectionData.text.substring(0, 100)}
               {selectionData.text.length > 100 ? "..." : ""}&quot;
             </Text>
+            <Button
+              className={styles.closeButton}
+              color="tertiary"
+              size="sm"
+              onClick={handleClose}
+              aria-label="Close Promptly overlay"
+            >
+              <PiXCircleBold />
+            </Button>
           </Flex>
 
           <ResponseDisplay

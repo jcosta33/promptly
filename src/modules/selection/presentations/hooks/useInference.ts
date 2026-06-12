@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 
 import type { InferenceRequest } from "$/modules/inference/models/inference_model";
 import { EventType } from "$/modules/messaging/models/event_types";
@@ -34,25 +34,70 @@ const INITIAL_STATE: InferenceState = { status: "idle" };
 
 export const useInference = (options?: UseInferenceOptions) => {
   const [state, setState] = useState<InferenceState>(INITIAL_STATE);
+  const stateRef = useRef<InferenceState>(INITIAL_STATE);
 
   const streamRef = useRef<ReturnType<typeof create_stream_connection> | null>(
-    null
+    null,
   );
   const timeoutIdRef = useRef<number | null>(null);
 
-  const cleanupStream = () => {
+  const setInferenceState = useCallback(
+    (
+      nextState:
+        | InferenceState
+        | ((currentState: InferenceState) => InferenceState),
+    ) => {
+      if (typeof nextState !== "function") {
+        stateRef.current = nextState;
+        setState(nextState);
+        return;
+      }
+
+      setState((currentState) => {
+        const resolvedState = nextState(currentState);
+
+        stateRef.current = resolvedState;
+        return resolvedState;
+      });
+    },
+    [],
+  );
+
+  const cleanupStream = useCallback(() => {
     if (timeoutIdRef.current !== null) {
       clearTimeout(timeoutIdRef.current);
       timeoutIdRef.current = null;
     }
     if (streamRef.current) {
       logger.info("Closing inference stream connection", {
-        requestId: state.requestId,
+        requestId: stateRef.current.requestId,
       });
       streamRef.current.close();
       streamRef.current = null;
     }
-  };
+  }, []);
+
+  const sendStopInference = useCallback(() => {
+    const currentState = stateRef.current;
+
+    if (
+      currentState.requestId &&
+      currentState.status !== "idle" &&
+      currentState.status !== "complete" &&
+      streamRef.current
+    ) {
+      streamRef.current.send(EventType.STOP_INFERENCE, {
+        requestId: currentState.requestId,
+      });
+    }
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      sendStopInference();
+      cleanupStream();
+    };
+  }, [cleanupStream, sendStopInference]);
 
   const runInference = (request: InferenceRequest) => {
     cleanupStream();
@@ -64,7 +109,7 @@ export const useInference = (options?: UseInferenceOptions) => {
 
     streamRef.current = stream;
 
-    setState({ status: "loading", requestId, error: undefined });
+    setInferenceState({ status: "loading", requestId, error: undefined });
 
     stream.onMessage(
       EventType.INFERENCE_CHUNK,
@@ -73,12 +118,12 @@ export const useInference = (options?: UseInferenceOptions) => {
           return;
         }
 
-        setState((state) => {
+        setInferenceState((state) => {
           return { ...state, status: "streaming" };
         });
 
         options?.onUpdate?.(payload.token);
-      }
+      },
     );
 
     stream.onMessage(
@@ -88,12 +133,12 @@ export const useInference = (options?: UseInferenceOptions) => {
           return;
         }
 
-        setState((state) => {
+        setInferenceState((state) => {
           return { ...state, status: "complete" };
         });
         options?.onComplete?.();
         setTimeout(cleanupStream, 1000);
-      }
+      },
     );
 
     stream.onMessage(
@@ -106,13 +151,13 @@ export const useInference = (options?: UseInferenceOptions) => {
         const errorMessage =
           payload.error || payload.message || "Unknown error";
 
-        setState((state) => {
+        setInferenceState((state) => {
           return { ...state, status: "error", error: errorMessage };
         });
 
         options?.onError?.(errorMessage);
         setTimeout(cleanupStream, 500);
-      }
+      },
     );
 
     stream.send(EventType.REQUEST_ACTION, {
@@ -123,7 +168,7 @@ export const useInference = (options?: UseInferenceOptions) => {
     timeoutIdRef.current = window.setTimeout(() => {
       if (streamRef.current === stream) {
         const errorMsg = "Inference request timed out";
-        setState((state) => {
+        setInferenceState((state) => {
           return state.requestId === requestId
             ? { ...state, status: "error", error: errorMsg }
             : state;
@@ -136,25 +181,14 @@ export const useInference = (options?: UseInferenceOptions) => {
     return requestId;
   };
 
-  const stopInference = (onStop?: () => void) => {
-    if (
-      state.requestId &&
-      state.status !== "idle" &&
-      state.status !== "complete" &&
-      streamRef.current
-    ) {
-      streamRef.current.send(EventType.STOP_INFERENCE, {
-        requestId: state.requestId,
-        onStop,
-      });
-    }
+  const stopInference = () => {
+    sendStopInference();
   };
 
   const cancelInference = () => {
-    stopInference(() => {
-      cleanupStream();
-      setState(INITIAL_STATE);
-    });
+    sendStopInference();
+    cleanupStream();
+    setInferenceState(INITIAL_STATE);
   };
 
   return {

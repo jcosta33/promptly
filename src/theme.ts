@@ -169,6 +169,15 @@ export const CSS_VARIABLES_UPDATED_FOCUS = {
   },
 };
 
+export type ThemePreferenceValue = "light" | "dark" | "system";
+
+let preferredColorSchemeCleanup: (() => void) | null = null;
+
+function clear_preferred_color_scheme_listener(): void {
+  preferredColorSchemeCleanup?.();
+  preferredColorSchemeCleanup = null;
+}
+
 export function set_theme(darkMode: boolean): void {
   const root = document.documentElement;
   const mode = darkMode ? "dark" : "light";
@@ -188,30 +197,47 @@ export function set_theme(darkMode: boolean): void {
 }
 
 export function detect_preferred_color_scheme(): boolean {
-  return (
-    window.matchMedia &&
-    window.matchMedia("(prefers-color-scheme: dark)").matches
-  );
+  return Boolean(window.matchMedia?.("(prefers-color-scheme: dark)").matches);
+}
+
+export function apply_theme_preference(
+  themePreference: ThemePreferenceValue,
+): boolean {
+  clear_preferred_color_scheme_listener();
+
+  if (themePreference === "system") {
+    const darkMode = detect_preferred_color_scheme();
+    set_theme(darkMode);
+
+    if (window.matchMedia) {
+      const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+      const handleChange = (event: MediaQueryListEvent) => {
+        set_theme(event.matches);
+      };
+
+      mediaQuery.addEventListener("change", handleChange);
+      preferredColorSchemeCleanup = () => {
+        mediaQuery.removeEventListener("change", handleChange);
+      };
+    }
+
+    return darkMode;
+  }
+
+  const darkMode = themePreference === "dark";
+  set_theme(darkMode);
+
+  return darkMode;
 }
 
 export function init_theme(userPrefersDark?: boolean | null): boolean {
-  let darkMode: boolean;
-
   if (userPrefersDark === undefined || userPrefersDark === null) {
-    darkMode = detect_preferred_color_scheme();
-  } else {
-    darkMode = userPrefersDark;
+    return apply_theme_preference("system");
   }
 
+  clear_preferred_color_scheme_listener();
+  const darkMode = userPrefersDark;
   set_theme(darkMode);
-
-  if (userPrefersDark === undefined || userPrefersDark === null) {
-    window
-      .matchMedia("(prefers-color-scheme: dark)")
-      .addEventListener("change", (e) => {
-        set_theme(e.matches);
-      });
-  }
 
   return darkMode;
 }

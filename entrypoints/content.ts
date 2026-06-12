@@ -1,4 +1,4 @@
-import { init_theme, set_theme } from "$/theme";
+import { apply_theme_preference, init_theme } from "$/theme";
 import { logger } from "$/utils/logger";
 import { mountPromptlyRoot } from "$/modules/selection/presentations/views/SelectionRoot";
 import { initialize_messaging } from "$/modules/messaging/use_cases/initialize_messaging";
@@ -6,6 +6,7 @@ import { subscribe } from "$/modules/messaging/repositories/message_bus";
 import { EventType } from "$/modules/messaging/models/event_types";
 import type { ExtensionSettings } from "$/modules/configuration/models/user_settings";
 import type { MessageEvent } from "$/modules/messaging/helpers/create_message_event";
+import { get_settings } from "$/modules/configuration/use_cases/get_settings";
 import "./normalize.css";
 
 export default defineContentScript({
@@ -62,24 +63,20 @@ export default defineContentScript({
 
     initialize_messaging();
     init_theme();
+    get_settings()
+      .then((settings) => {
+        apply_theme_preference(settings.themePreference);
+      })
+      .catch((error) => {
+        logger.warn("Unable to load saved content theme preference", error);
+      });
 
     subscribe<ExtensionSettings>(
       EventType.SETTINGS_UPDATE,
       (event: MessageEvent<ExtensionSettings>) => {
         logger.debug("Content script received theme update", event.payload);
-
-        const new_theme_preference = event.payload.themePreference;
-
-        let dark_mode = false;
-
-        if (new_theme_preference === "dark") {
-          dark_mode = true;
-        } else if (new_theme_preference === "system") {
-          dark_mode = window.matchMedia("(prefers-color-scheme: dark)").matches;
-        }
-
-        set_theme(dark_mode);
-      }
+        apply_theme_preference(event.payload.themePreference);
+      },
     );
 
     return mountPromptlyRoot();

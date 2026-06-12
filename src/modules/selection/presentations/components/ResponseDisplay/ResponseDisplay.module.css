@@ -65,6 +65,17 @@
   width: 100%;
 }
 
+.responseActions {
+  width: 100%;
+  min-height: var(--control-height-sm);
+}
+
+.copyStatus {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+}
+
 .thinking {
   display: block;
   color: var(--color-text-muted);

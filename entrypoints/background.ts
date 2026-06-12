@@ -153,7 +153,7 @@ export default defineBackground(() => {
         ) {
           logger.info(
             "LLM engine not loaded or model changed, initiating load...",
-            { selectedModelId, currentModel }
+            { selectedModelId, currentModel },
           );
           stream.send(EventType.MODEL_LOADING_PROGRESS, {
             requestId,
@@ -194,7 +194,7 @@ export default defineBackground(() => {
               error instanceof Error ? error.message : String(error);
             logger.error(
               "Failed to load model during inference request:",
-              error
+              error,
             );
             stream.send(EventType.INFERENCE_ERROR, {
               requestId,
@@ -213,9 +213,8 @@ export default defineBackground(() => {
               });
               await llmEngine?.interruptGenerate();
               logger.log("Inference interrupted", { requestId });
-              cancelPayload.onStop?.();
             }
-          }
+          },
         );
 
         try {
@@ -257,13 +256,13 @@ export default defineBackground(() => {
             });
             const inputLength = messages.reduce(
               (acc, msg: Message) => acc + (msg.content?.length || 0),
-              0
+              0,
             );
             usage = {
               prompt_tokens: Math.floor(inputLength / 4),
               completion_tokens: Math.floor(fullResponseText.length / 4),
               total_tokens: Math.floor(
-                (inputLength + fullResponseText.length) / 4
+                (inputLength + fullResponseText.length) / 4,
               ),
             };
           }
@@ -316,6 +315,6 @@ export default defineBackground(() => {
     () => {
       logger.log("Keep alive");
     },
-    1000 * 60 * 5
+    1000 * 60 * 5,
   );
 });

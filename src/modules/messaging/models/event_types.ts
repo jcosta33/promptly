@@ -80,7 +80,6 @@ export type RequestActionPayload = {
 
 export type StopInferencePayload = {
   requestId: string;
-  onStop?: () => void;
 };
 
 // Mapping between event types and their payload types

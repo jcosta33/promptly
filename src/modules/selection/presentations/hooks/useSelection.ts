@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 
 import { SelectionData } from "$/modules/selection/models/selection";
 import { add_selection_listener } from "$/modules/selection/repositories/selection_repository";
@@ -20,10 +20,10 @@ export function useSelection({ enabled }: UseSelectionOptions) {
     y: number;
   } | null>(null);
 
-  const clearSelection = () => {
+  const clearSelection = useCallback(() => {
     setSelection(null);
     setMousePosition(null);
-  };
+  }, []);
 
   useEffect(() => {
     if (!enabled) {
@@ -47,7 +47,7 @@ export function useSelection({ enabled }: UseSelectionOptions) {
     return () => {
       removeListener();
     };
-  }, [enabled]);
+  }, [enabled, clearSelection]);
 
   return { selection, mousePosition, clearSelection };
 }
