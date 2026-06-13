@@ -13,6 +13,7 @@ yarn-error.log*
 /.changelog
 .npm/
 .output/
+.wxt/
 *storybook.log
 
 # Swarm - code-repo scratch

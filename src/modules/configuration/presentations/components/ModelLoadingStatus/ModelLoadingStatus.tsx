@@ -8,7 +8,10 @@ import { Text } from "$/components/Text/Text";
 
 import styles from "./ModelLoadingStatus.module.css";
 
-import type { ModelRuntimeStatus } from "$/modules/messaging/models/event_types";
+import type {
+  ModelRuntimeStatus,
+  RuntimeCapabilityStatus,
+} from "$/modules/messaging/models/event_types";
 
 interface ModelLoadingStatusProps {
   isLoading: boolean;
@@ -16,6 +19,7 @@ interface ModelLoadingStatusProps {
   status: string;
   error: string | null;
   runtimeStatus: ModelRuntimeStatus;
+  runtimeCapabilities: RuntimeCapabilityStatus;
   selectedModelId?: string;
   disabled?: boolean;
   onLoadModel: () => void;
@@ -31,11 +35,15 @@ export const ModelLoadingStatus: FC<ModelLoadingStatusProps> = ({
   status,
   error,
   runtimeStatus,
+  runtimeCapabilities,
   selectedModelId,
   disabled = false,
   onLoadModel,
   onUnloadModel,
 }) => {
+  const effectiveSelectedModelId =
+    selectedModelId || runtimeCapabilities.selectedModelId;
+
   const statusText =
     runtimeStatus.phase === "loaded"
       ? `Loaded: ${runtimeStatus.modelId || selectedModelId || "selected model"}`
@@ -52,10 +60,81 @@ export const ModelLoadingStatus: FC<ModelLoadingStatusProps> = ({
     !isLoading &&
     runtimeStatus.phase !== "unavailable";
   const canUnload = runtimeStatus.phase === "loaded" && !isLoading;
+  const readinessItems = [
+    {
+      label: "Extension",
+      value:
+        runtimeCapabilities.extension === "connected"
+          ? "Connected"
+          : "Unavailable",
+      status: runtimeCapabilities.extension,
+    },
+    {
+      label: "WebGPU",
+      value:
+        runtimeCapabilities.webGpu === "available"
+          ? "Available"
+          : runtimeCapabilities.webGpu === "unavailable"
+            ? "Unavailable"
+            : "Unknown",
+      status: runtimeCapabilities.webGpu,
+    },
+    {
+      label: "Model",
+      value: effectiveSelectedModelId || "Not selected",
+      status: effectiveSelectedModelId ? "available" : "unknown",
+    },
+    {
+      label: "Runtime",
+      value:
+        runtimeStatus.phase === "loaded"
+          ? "Loaded"
+          : runtimeStatus.phase === "loading"
+            ? "Loading"
+            : runtimeStatus.phase === "error"
+              ? "Error"
+              : runtimeStatus.phase === "unavailable"
+                ? "Unavailable"
+                : "Unloaded",
+      status: runtimeStatus.phase,
+    },
+  ];
 
   return (
     <Box bg="secondary" p="sm">
       <Flex direction="column" gap="sm">
+        <div className={styles.readinessGrid} aria-label="Runtime readiness">
+          {readinessItems.map((item) => {
+            return (
+              <div
+                key={item.label}
+                className={styles.readinessItem}
+                data-readiness-status={item.status}
+              >
+                <Text size="xs" color="muted" weight="medium">
+                  {item.label}
+                </Text>
+                <Text size="xs" weight="bold" truncate title={item.value}>
+                  {item.value}
+                </Text>
+              </div>
+            );
+          })}
+        </div>
+
+        {runtimeCapabilities.message && (
+          <Text
+            size="xs"
+            color={
+              runtimeCapabilities.extension === "unavailable"
+                ? "error"
+                : "muted"
+            }
+          >
+            {runtimeCapabilities.message}
+          </Text>
+        )}
+
         <Flex direction="column" gap="xs">
           <Text as="h4" size="sm" weight="bold">
             Model runtime

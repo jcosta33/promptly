@@ -1,6 +1,7 @@
 import {
   EventType,
   type ModelRuntimeStatus,
+  type RuntimeCapabilityStatus,
 } from "../src/modules/messaging/models/event_types";
 import { listen_for_streams } from "../src/modules/messaging/repositories/message_bus";
 import { DEFAULT_INFERENCE_PARAMETERS } from "../src/modules/inference/models/inference_model";
@@ -25,8 +26,16 @@ export default defineBackground(() => {
     message: "No model loaded",
   };
 
+  const getWebGpuAvailability = (): RuntimeCapabilityStatus["webGpu"] => {
+    if (typeof navigator === "undefined") {
+      return "unknown";
+    }
+
+    return "gpu" in navigator ? "available" : "unavailable";
+  };
+
   const hasWebGpu = () => {
-    return typeof navigator === "undefined" || "gpu" in navigator;
+    return getWebGpuAvailability() !== "unavailable";
   };
 
   const getModelRuntimeStatus = (): ModelRuntimeStatus => {
@@ -44,6 +53,30 @@ export default defineBackground(() => {
     modelRuntimeStatus = status;
   };
 
+  const getRuntimeCapabilityStatus =
+    async (): Promise<RuntimeCapabilityStatus> => {
+      try {
+        const settings = await get_settings();
+
+        return {
+          extension: "connected",
+          webGpu: getWebGpuAvailability(),
+          selectedModelId: settings.selectedModelId,
+          model: getModelRuntimeStatus(),
+        };
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error ? error.message : String(error);
+
+        return {
+          extension: "connected",
+          webGpu: getWebGpuAvailability(),
+          model: getModelRuntimeStatus(),
+          message: `Unable to read saved settings: ${errorMessage}`,
+        };
+      }
+    };
+
   listen_for_streams("promptly-inference", async (stream, identifier) => {
     logger.log("Inference connection established", { identifier });
 
@@ -56,6 +89,17 @@ export default defineBackground(() => {
 
     stream.onMessage(EventType.MODEL_STATUS_REQUEST, (payload) => {
       sendModelRuntimeStatus(payload.requestId);
+    });
+
+    const sendRuntimeCapabilityStatus = async (requestId?: string) => {
+      stream.send(EventType.RUNTIME_CAPABILITIES_RESPONSE, {
+        ...(await getRuntimeCapabilityStatus()),
+        requestId,
+      });
+    };
+
+    stream.onMessage(EventType.RUNTIME_CAPABILITIES_REQUEST, (payload) => {
+      void sendRuntimeCapabilityStatus(payload.requestId);
     });
 
     stream.onMessage(EventType.UNLOAD_MODEL, async (payload) => {

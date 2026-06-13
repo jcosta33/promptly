@@ -11,6 +11,8 @@ export const EventType = {
   MODEL_LOADING_PROGRESS: "model_loading_progress",
   MODEL_STATUS_REQUEST: "model_status_request",
   MODEL_STATUS_RESPONSE: "model_status_response",
+  RUNTIME_CAPABILITIES_REQUEST: "runtime_capabilities_request",
+  RUNTIME_CAPABILITIES_RESPONSE: "runtime_capabilities_response",
   INFERENCE_CHUNK: "inference_chunk",
   INFERENCE_COMPLETE: "inference_complete",
   INFERENCE_ERROR: "inference_error",
@@ -57,6 +59,22 @@ export type ModelStatusRequestPayload = {
 };
 
 export type ModelStatusResponsePayload = ModelRuntimeStatus & {
+  requestId?: string;
+};
+
+export type RuntimeCapabilityStatus = {
+  extension: "connected" | "unavailable";
+  webGpu: "available" | "unavailable" | "unknown";
+  selectedModelId?: string;
+  model: ModelRuntimeStatus;
+  message?: string;
+};
+
+export type RuntimeCapabilitiesRequestPayload = {
+  requestId?: string;
+};
+
+export type RuntimeCapabilitiesResponsePayload = RuntimeCapabilityStatus & {
   requestId?: string;
 };
 
@@ -110,6 +128,8 @@ export type EventPayloadMap = {
   [EventType.MODEL_LOADING_PROGRESS]: ModelLoadingProgressPayload;
   [EventType.MODEL_STATUS_REQUEST]: ModelStatusRequestPayload;
   [EventType.MODEL_STATUS_RESPONSE]: ModelStatusResponsePayload;
+  [EventType.RUNTIME_CAPABILITIES_REQUEST]: RuntimeCapabilitiesRequestPayload;
+  [EventType.RUNTIME_CAPABILITIES_RESPONSE]: RuntimeCapabilitiesResponsePayload;
   [EventType.INFERENCE_ERROR]: InferenceErrorPayload;
   [EventType.INFERENCE_CHUNK]: InferenceChunkPayload;
   [EventType.INFERENCE_COMPLETE]: InferenceCompletePayload;

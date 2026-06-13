@@ -76,6 +76,36 @@
   font-weight: var(--font-weight-bold);
 }
 
+.stalledContainer {
+  width: 100%;
+  border: 1px solid var(--warning-color, #f0b429);
+  background-color: var(--warning-bg-color, #fff8e6);
+}
+
+.stalledMessage {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-xs);
+  color: var(--color-text-primary);
+  font-size: var(--font-size-xs);
+  line-height: 1.4;
+}
+
+.stalledIcon {
+  flex: 0 0 auto;
+  color: var(--warning-color, #b7791f);
+  font-size: var(--font-size-md);
+  margin-top: 1px;
+}
+
+.stalledActions {
+  margin-top: var(--space-xs);
+}
+
+.stalledActionButton {
+  gap: var(--space-xxs);
+}
+
 .thinking {
   display: block;
   color: var(--color-text-muted);

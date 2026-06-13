@@ -195,6 +195,23 @@ export const PromptlyOverlay: FC<PromptlyOverlayProps> = ({
     stopInference();
   };
 
+  const handleCancelInference = () => {
+    cancelInference();
+
+    setMessages((prevMessages) => {
+      const lastMessage = prevMessages[prevMessages.length - 1];
+
+      if (
+        lastMessage?.role === "assistant" &&
+        lastMessage.content.trim().length === 0
+      ) {
+        return prevMessages.slice(0, -1);
+      }
+
+      return prevMessages;
+    });
+  };
+
   const handleClose = () => {
     if (
       inferenceState.status === "streaming" ||
@@ -207,8 +224,12 @@ export const PromptlyOverlay: FC<PromptlyOverlayProps> = ({
   };
 
   const handleRetryLatest = () => {
-    if (!lastInferenceRequest || isLoading) {
+    if (!lastInferenceRequest) {
       return;
+    }
+
+    if (isLoading) {
+      cancelInference();
     }
 
     setMessages([
@@ -295,9 +316,11 @@ export const PromptlyOverlay: FC<PromptlyOverlayProps> = ({
             messages={messages}
             hideFirstMessage={hideFirstMessage}
             isLoading={isLoading}
+            isStalled={inferenceState.isStalled}
             error={inferenceState.error}
             onSendFollowUp={handleSendFollowUp}
             onStop={handleStop}
+            onCancel={handleCancelInference}
             onRetryLatest={handleRetryLatest}
             onClearConversation={handleClearConversation}
             canRetry={Boolean(lastInferenceRequest)}

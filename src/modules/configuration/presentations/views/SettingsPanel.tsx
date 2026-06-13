@@ -40,7 +40,8 @@ export const SettingsPanel: FC = () => {
     isLoading: modelLoadHookIsLoading,
     error: loadingError,
     runtimeStatus,
-    requestModelStatus,
+    runtimeCapabilities,
+    requestRuntimeCapabilities,
     unloadModel,
   } = useModelLoading();
 
@@ -89,8 +90,8 @@ export const SettingsPanel: FC = () => {
   const loading = settingsLoading || modelLoadHookIsLoading;
 
   useEffect(() => {
-    requestModelStatus();
-  }, [requestModelStatus]);
+    requestRuntimeCapabilities();
+  }, [requestRuntimeCapabilities]);
 
   useEffect(() => {
     logger.debug("SettingsPanel state update", {
@@ -136,6 +137,7 @@ export const SettingsPanel: FC = () => {
           status={status}
           error={loadingError}
           runtimeStatus={runtimeStatus}
+          runtimeCapabilities={runtimeCapabilities}
           selectedModelId={settings?.selectedModelId}
           disabled={settingsLoading}
           onLoadModel={handleLoadModel}

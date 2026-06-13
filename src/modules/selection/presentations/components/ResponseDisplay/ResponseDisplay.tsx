@@ -7,6 +7,7 @@ import {
   PiPlayPauseBold,
   PiTrashBold,
   PiWarningBold,
+  PiXCircleBold,
 } from "react-icons/pi";
 
 import { Box } from "$/components/Box/Box";
@@ -22,9 +23,11 @@ export type ResponseDisplayProps = {
   messages: Message[];
   hideFirstMessage: boolean;
   isLoading: boolean;
+  isStalled: boolean;
   error?: string;
   onSendFollowUp: (message: string) => void;
   onStop: () => void;
+  onCancel: () => void;
   onRetryLatest: () => void;
   onClearConversation: () => void;
   canRetry: boolean;
@@ -39,9 +42,11 @@ export const ResponseDisplay: FC<ResponseDisplayProps> = ({
   messages,
   hideFirstMessage,
   isLoading,
+  isStalled,
   error,
   onSendFollowUp,
   onStop,
+  onCancel,
   onRetryLatest,
   onClearConversation,
   canRetry,
@@ -52,6 +57,7 @@ export const ResponseDisplay: FC<ResponseDisplayProps> = ({
   const latestAssistantMessage = messages.toReversed().find((message) => {
     return message.role === "assistant" && message.content.trim().length > 0;
   });
+  const canCopyLatestResponse = Boolean(latestAssistantMessage);
 
   useEffect(() => {
     setCopyStatus("idle");
@@ -80,6 +86,10 @@ export const ResponseDisplay: FC<ResponseDisplayProps> = ({
 
   const handleStop = () => {
     onStop();
+  };
+
+  const handleCancel = () => {
+    onCancel();
   };
 
   const handleCopyLatestResponse = async () => {
@@ -130,7 +140,7 @@ export const ResponseDisplay: FC<ResponseDisplayProps> = ({
               color="tertiary"
               size="sm"
               onClick={onRetryLatest}
-              disabled={isLoading || !canRetry}
+              disabled={(isLoading && !isStalled) || !canRetry}
               aria-label="Retry latest response"
               title="Retry latest response"
             >
@@ -145,7 +155,7 @@ export const ResponseDisplay: FC<ResponseDisplayProps> = ({
             >
               <PiTrashBold />
             </Button>
-            {latestAssistantMessage ? (
+            {canCopyLatestResponse ? (
               <Button
                 color={copyStatus === "error" ? "danger" : "tertiary"}
                 size="sm"
@@ -162,6 +172,75 @@ export const ResponseDisplay: FC<ResponseDisplayProps> = ({
               </Button>
             ) : null}
           </Flex>
+
+          {isStalled ? (
+            <Box className={styles.stalledContainer} elevation="0">
+              <div
+                className={styles.stalledMessage}
+                role="status"
+                aria-live="polite"
+              >
+                <PiWarningBold className={styles.stalledIcon} />
+                <span>
+                  Response activity has paused. You can keep waiting, retry, or
+                  cancel.
+                </span>
+              </div>
+              <Flex
+                direction="row"
+                align="center"
+                gap="xs"
+                wrap="wrap"
+                className={styles.stalledActions}
+              >
+                <Button
+                  className={styles.stalledActionButton}
+                  color="tertiary"
+                  size="sm"
+                  onClick={onRetryLatest}
+                  disabled={!canRetry}
+                  aria-label="Retry stalled response"
+                >
+                  <PiArrowCounterClockwiseBold />
+                  <span>Retry</span>
+                </Button>
+                <Button
+                  className={styles.stalledActionButton}
+                  color="danger"
+                  size="sm"
+                  onClick={handleCancel}
+                  aria-label="Cancel stalled response"
+                >
+                  <PiXCircleBold />
+                  <span>Cancel</span>
+                </Button>
+                {canCopyLatestResponse ? (
+                  <Button
+                    className={styles.stalledActionButton}
+                    color={copyStatus === "error" ? "danger" : "tertiary"}
+                    size="sm"
+                    onClick={handleCopyLatestResponse}
+                    aria-label="Copy partial response"
+                  >
+                    {copyStatus === "copied" ? (
+                      <PiCheckBold />
+                    ) : copyStatus === "error" ? (
+                      <PiWarningBold />
+                    ) : (
+                      <PiCopyBold />
+                    )}
+                    <span>
+                      {copyStatus === "copied"
+                        ? "Copied"
+                        : copyStatus === "error"
+                          ? "Failed"
+                          : "Copy"}
+                    </span>
+                  </Button>
+                ) : null}
+              </Flex>
+            </Box>
+          ) : null}
 
           <Box
             className={styles.responseContainer}

@@ -22,6 +22,9 @@ export type InferenceState = {
   status: InferenceStatus;
   error?: string;
   requestId?: string;
+  startedAt?: number;
+  lastActivityAt?: number;
+  isStalled: boolean;
 };
 
 export type UseInferenceOptions = {
@@ -30,7 +33,25 @@ export type UseInferenceOptions = {
   onUpdate?: (chunk: string) => void;
 };
 
-const INITIAL_STATE: InferenceState = { status: "idle" };
+const STALL_THRESHOLD_MS = 30000;
+const STALL_CHECK_INTERVAL_MS = 1000;
+
+const INITIAL_STATE: InferenceState = { status: "idle", isStalled: false };
+
+const isActiveInferenceStatus = (status: InferenceStatus) => {
+  return status === "loading" || status === "streaming";
+};
+
+const getIsStalled = (
+  state: InferenceState,
+  currentTime: number = Date.now(),
+) => {
+  return (
+    isActiveInferenceStatus(state.status) &&
+    state.lastActivityAt !== undefined &&
+    currentTime - state.lastActivityAt >= STALL_THRESHOLD_MS
+  );
+};
 
 export const useInference = (options?: UseInferenceOptions) => {
   const [state, setState] = useState<InferenceState>(INITIAL_STATE);
@@ -39,7 +60,7 @@ export const useInference = (options?: UseInferenceOptions) => {
   const streamRef = useRef<ReturnType<typeof create_stream_connection> | null>(
     null,
   );
-  const timeoutIdRef = useRef<number | null>(null);
+  const stallIntervalIdRef = useRef<number | null>(null);
 
   const setInferenceState = useCallback(
     (
@@ -63,11 +84,16 @@ export const useInference = (options?: UseInferenceOptions) => {
     [],
   );
 
-  const cleanupStream = useCallback(() => {
-    if (timeoutIdRef.current !== null) {
-      clearTimeout(timeoutIdRef.current);
-      timeoutIdRef.current = null;
+  const stopStallMonitoring = useCallback(() => {
+    if (stallIntervalIdRef.current !== null) {
+      window.clearInterval(stallIntervalIdRef.current);
+      stallIntervalIdRef.current = null;
     }
+  }, []);
+
+  const cleanupStream = useCallback(() => {
+    stopStallMonitoring();
+
     if (streamRef.current) {
       logger.info("Closing inference stream connection", {
         requestId: stateRef.current.requestId,
@@ -75,7 +101,28 @@ export const useInference = (options?: UseInferenceOptions) => {
       streamRef.current.close();
       streamRef.current = null;
     }
-  }, []);
+  }, [stopStallMonitoring]);
+
+  const startStallMonitoring = useCallback(
+    (requestId: string) => {
+      stopStallMonitoring();
+
+      stallIntervalIdRef.current = window.setInterval(() => {
+        setInferenceState((state) => {
+          if (state.requestId !== requestId) {
+            return state;
+          }
+
+          const isStalled = getIsStalled(state);
+
+          return state.isStalled === isStalled
+            ? state
+            : { ...state, isStalled };
+        });
+      }, STALL_CHECK_INTERVAL_MS);
+    },
+    [setInferenceState, stopStallMonitoring],
+  );
 
   const sendStopInference = useCallback(() => {
     const currentState = stateRef.current;
@@ -109,7 +156,17 @@ export const useInference = (options?: UseInferenceOptions) => {
 
     streamRef.current = stream;
 
-    setInferenceState({ status: "loading", requestId, error: undefined });
+    const startedAt = Date.now();
+
+    setInferenceState({
+      status: "loading",
+      requestId,
+      error: undefined,
+      startedAt,
+      lastActivityAt: startedAt,
+      isStalled: false,
+    });
+    startStallMonitoring(requestId);
 
     stream.onMessage(
       EventType.INFERENCE_CHUNK,
@@ -118,8 +175,17 @@ export const useInference = (options?: UseInferenceOptions) => {
           return;
         }
 
+        const lastActivityAt = Date.now();
+
         setInferenceState((state) => {
-          return { ...state, status: "streaming" };
+          return state.requestId === requestId
+            ? {
+                ...state,
+                status: "streaming",
+                lastActivityAt,
+                isStalled: false,
+              }
+            : state;
         });
 
         options?.onUpdate?.(payload.token);
@@ -133,8 +199,18 @@ export const useInference = (options?: UseInferenceOptions) => {
           return;
         }
 
+        stopStallMonitoring();
+        const lastActivityAt = Date.now();
+
         setInferenceState((state) => {
-          return { ...state, status: "complete" };
+          return state.requestId === requestId
+            ? {
+                ...state,
+                status: "complete",
+                lastActivityAt,
+                isStalled: false,
+              }
+            : state;
         });
         options?.onComplete?.();
         setTimeout(cleanupStream, 1000);
@@ -151,8 +227,19 @@ export const useInference = (options?: UseInferenceOptions) => {
         const errorMessage =
           payload.error || payload.message || "Unknown error";
 
+        stopStallMonitoring();
+        const lastActivityAt = Date.now();
+
         setInferenceState((state) => {
-          return { ...state, status: "error", error: errorMessage };
+          return state.requestId === requestId
+            ? {
+                ...state,
+                status: "error",
+                error: errorMessage,
+                lastActivityAt,
+                isStalled: false,
+              }
+            : state;
         });
 
         options?.onError?.(errorMessage);
@@ -164,19 +251,6 @@ export const useInference = (options?: UseInferenceOptions) => {
       ...request,
       requestId,
     });
-
-    timeoutIdRef.current = window.setTimeout(() => {
-      if (streamRef.current === stream) {
-        const errorMsg = "Inference request timed out";
-        setInferenceState((state) => {
-          return state.requestId === requestId
-            ? { ...state, status: "error", error: errorMsg }
-            : state;
-        });
-        options?.onError?.(errorMsg);
-        cleanupStream();
-      }
-    }, 600000);
 
     return requestId;
   };
