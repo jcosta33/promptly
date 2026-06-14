@@ -9,6 +9,14 @@ export interface VectorRecord {
   timestamp: number;
 }
 
+export interface KnowledgeRecord {
+  chunkId: string;
+  filename: string;
+  text: string;
+  embedding: number[];
+  timestamp: number;
+}
+
 interface PromptlyVectorSchema extends DBSchema {
   embeddings: {
     key: string;
@@ -17,21 +25,36 @@ interface PromptlyVectorSchema extends DBSchema {
       'by-conversation': string;
     };
   };
+  knowledge: {
+    key: string;
+    value: KnowledgeRecord;
+    indexes: {
+      'by-filename': string;
+    };
+  };
 }
 
 const DB_NAME = 'promptly-vector-db';
-const DB_VERSION = 1;
+const DB_VERSION = 2;
 
 let dbPromise: Promise<IDBPDatabase<PromptlyVectorSchema>> | null = null;
 
 export const getVectorDB = () => {
   if (!dbPromise) {
     dbPromise = openDB<PromptlyVectorSchema>(DB_NAME, DB_VERSION, {
-      upgrade(db) {
-        const store = db.createObjectStore('embeddings', {
-          keyPath: 'id',
-        });
-        store.createIndex('by-conversation', 'conversationId');
+      upgrade(db, oldVersion) {
+        if (oldVersion < 1) {
+          const store = db.createObjectStore('embeddings', {
+            keyPath: 'id',
+          });
+          store.createIndex('by-conversation', 'conversationId');
+        }
+        if (oldVersion < 2) {
+          const kStore = db.createObjectStore('knowledge', {
+            keyPath: 'chunkId',
+          });
+          kStore.createIndex('by-filename', 'filename');
+        }
       },
     });
   }
@@ -87,6 +110,45 @@ export const semanticSearch = async (queryEmbedding: number[], limit = 5): Promi
     return scoredRecords.slice(0, limit);
   } catch (error) {
     logger.error('Failed to perform semantic search', error);
+    return [];
+  }
+};
+
+export const storeKnowledgeEmbedding = async (
+  filename: string,
+  text: string,
+  embedding: number[]
+) => {
+  try {
+    const db = await getVectorDB();
+    const chunkId = `${filename}_${Date.now()}_${Math.random().toString(36).substr(2, 5)}`;
+    await db.put('knowledge', {
+      chunkId,
+      filename,
+      text,
+      embedding,
+      timestamp: Date.now(),
+    });
+    logger.log(`Stored knowledge embedding for ${filename}`);
+  } catch (error) {
+    logger.error('Failed to store knowledge embedding', error);
+  }
+};
+
+export const semanticKnowledgeSearch = async (queryEmbedding: number[], limit = 3): Promise<KnowledgeRecord[]> => {
+  try {
+    const db = await getVectorDB();
+    const allRecords = await db.getAll('knowledge');
+    
+    const scoredRecords = allRecords.map(record => ({
+      ...record,
+      score: cosineSimilarity(queryEmbedding, record.embedding)
+    }));
+    
+    scoredRecords.sort((a, b) => b.score - a.score);
+    return scoredRecords.slice(0, limit);
+  } catch (error) {
+    logger.error('Failed to perform semantic knowledge search', error);
     return [];
   }
 };

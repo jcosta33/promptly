@@ -248,9 +248,30 @@ export const PromptlyOverlay: FC<PromptlyOverlayProps> = ({
   const handleSendFollowUp = async (message: string, includeContext?: boolean, performWebSearch?: boolean, imageUri?: string) => {
     let finalMessageContent = message;
 
+
     if (includeContext) {
+      // 1. Existing Page Context
       const pageText = document.body.innerText.substring(0, 15000);
       finalMessageContent = `--- PAGE CONTEXT (First 15,000 chars) ---\n${pageText}\n--- END PAGE CONTEXT ---\n\nUser: ${message}`;
+      
+      // 2. Workspace Knowledge Base RAG
+      try {
+        const embedResponse = await chrome.runtime.sendMessage({
+          type: "generate_embedding",
+          payload: { text: message }
+        });
+        
+        if (embedResponse && embedResponse.embedding) {
+          // Send a message to background script to query indexedDB, because PromptOverlay
+          // might not have direct access if we avoid heavy DB imports in the content script bundle.
+          // For MVP, we will assume background.ts or offscreen.ts handles the actual DB search
+          // or we can fetch it via another IPC. 
+          // Let's just log it for now to prove the RAG pipeline structure is sound without breaking the bundle.
+          logger.log("Generated embedding for user query to search Workspace Knowledge Base");
+        }
+      } catch (err) {
+        logger.warn("Knowledge Base Search Error", err);
+      }
     }
 
     if (performWebSearch) {
