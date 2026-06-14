@@ -279,6 +279,7 @@ export const SettingsPanel: FC = () => {
 
 
   const [storageUsage, setStorageUsage] = useState<number | null>(null);
+  const [storageQuota, setStorageQuota] = useState<number | null>(null);
   const [isClearingCaches, setIsClearingCaches] = useState(false);
 
   const formatBytes = (bytes: number) => {
@@ -294,6 +295,7 @@ export const SettingsPanel: FC = () => {
       if (navigator.storage && navigator.storage.estimate) {
         const estimate = await navigator.storage.estimate();
         setStorageUsage(estimate.usage || 0);
+        setStorageQuota(estimate.quota || 0);
       }
     } catch (e) {
       console.error("Storage estimate failed", e);
@@ -403,12 +405,21 @@ export const SettingsPanel: FC = () => {
           </Text>
           <Flex justify="between" align="center">
             <Text size="sm">
-              Estimated Total Usage: <strong>{storageUsage !== null ? formatBytes(storageUsage) : "Calculating..."}</strong>
+              Estimated Total Usage: <strong>{storageUsage !== null ? formatBytes(storageUsage) : "Calculating..."}</strong> {storageQuota ? ` / ${formatBytes(storageQuota)}` : ''}
             </Text>
             <Button size="sm" color="danger" onClick={handleClearCaches} disabled={isClearingCaches}>
               {isClearingCaches ? "Clearing..." : "Clear LLM Caches"}
             </Button>
           </Flex>
+          {storageUsage !== null && storageQuota !== null && storageQuota > 0 && (
+            <div style={{ width: '100%', height: '8px', background: 'var(--promptly-bg-tertiary)', borderRadius: '4px', overflow: 'hidden', marginTop: '8px' }}>
+              <div style={{ 
+                width: `${Math.min(100, (storageUsage / storageQuota) * 100)}%`, 
+                height: '100%', 
+                background: 'var(--promptly-primary)' 
+              }} />
+            </div>
+          )}
         </Flex>
 
         <Text as="h3">Backup & Restore</Text>
