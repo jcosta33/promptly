@@ -164,3 +164,17 @@ chrome.runtime.onMessage.addListener((message) => {
     });
   }
 });
+
+chrome.runtime.onMessage.addListener((message, _sender, _sendResponse) => {
+  if (message.type === EventType.DOWNLOAD_FILE) {
+    const { filename, content, mimeType } = message.payload;
+    if (filename && content) {
+      const dataUrl = `data:${mimeType || 'text/plain'};charset=utf-8,${encodeURIComponent(content)}`;
+      chrome.downloads.download({
+        url: dataUrl,
+        filename: filename,
+        saveAs: true
+      }).catch(err => logger.error("Download failed", err));
+    }
+  }
+});

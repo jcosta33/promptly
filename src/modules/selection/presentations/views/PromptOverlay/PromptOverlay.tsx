@@ -350,6 +350,25 @@ export const PromptlyOverlay: FC<PromptlyOverlayProps> = ({
     });
   };
 
+
+  const handleExport = () => {
+    let mdContent = `# Promptly Chat Export\n\n`;
+    messages.forEach(msg => {
+      const role = msg.role === 'user' ? 'User' : 'Assistant';
+      mdContent += `### ${role}\n${msg.content}\n\n---\n\n`;
+    });
+
+    const filename = `promptly-export-${new Date().toISOString().slice(0, 10)}.md`;
+    chrome.runtime.sendMessage({
+      type: "download_file",
+      payload: {
+        filename,
+        content: mdContent,
+        mimeType: "text/markdown"
+      }
+    });
+  };
+
   const handleClose = () => {
     if (
       inferenceState.status === "streaming" ||
@@ -451,6 +470,15 @@ export const PromptlyOverlay: FC<PromptlyOverlayProps> = ({
               &quot;{selectionData.text.substring(0, 100)}
               {selectionData.text.length > 100 ? "..." : ""}&quot;
             </Text>
+            <Button
+              className={styles.closeButton}
+              color="tertiary"
+              size="sm"
+              onClick={handleExport}
+              aria-label="Export Chat"
+            >
+              Export
+            </Button>
             <Button
               className={styles.closeButton}
               color="tertiary"
