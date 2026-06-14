@@ -122,6 +122,27 @@ export default defineBackground(() => {
   });
 
   chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
+    
+    if (message.type === "PERFORM_WEB_SEARCH") {
+      const query = encodeURIComponent(message.payload.query);
+      fetch(`https://html.duckduckgo.com/html/?q=${query}`)
+        .then(res => res.text())
+        .then(html => {
+          // Extremely basic regex to extract snippet text
+          const snippets = [];
+          const matches = html.matchAll(/<a class="result__snippet[^>]*>(.*?)<\/a>/g);
+          for (const match of matches) {
+            let text = match[1].replace(/<[^>]+>/g, '').trim();
+            if (text) snippets.push(text);
+          }
+          sendResponse({ results: snippets.slice(0, 5).join('\n\n') });
+        })
+        .catch(err => {
+          logger.warn("Web search failed", err);
+          sendResponse({ results: "Web search failed or no results found." });
+        });
+      return true; // async response
+    }
     if (message.type === "WAKE_UP_OFFSCREEN") {
       setupOffscreenDocument().then(() => sendResponse({ status: "READY" }));
       return true; 

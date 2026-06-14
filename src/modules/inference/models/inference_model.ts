@@ -120,6 +120,10 @@ export const PARAMETER_PRESETS = {
   },
 };
 
+export type MessageContentPart = 
+  | { type: "text"; text: string }
+  | { type: "image_url"; image_url: { url: string } };
+
 /**
  * Message in a conversation
  */
@@ -132,7 +136,7 @@ export type Message = {
   /**
    * Content of the message
    */
-  content: string;
+  content: string | MessageContentPart[];
 };
 
 /**

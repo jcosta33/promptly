@@ -245,7 +245,7 @@ export const PromptlyOverlay: FC<PromptlyOverlayProps> = ({
     }
   };
 
-  const handleSendFollowUp = (message: string, includeContext?: boolean) => {
+  const handleSendFollowUp = async (message: string, includeContext?: boolean, performWebSearch?: boolean, imageUri?: string) => {
     let finalMessageContent = message;
 
     if (includeContext) {
@@ -253,15 +253,44 @@ export const PromptlyOverlay: FC<PromptlyOverlayProps> = ({
       finalMessageContent = `--- PAGE CONTEXT (First 15,000 chars) ---\n${pageText}\n--- END PAGE CONTEXT ---\n\nUser: ${message}`;
     }
 
-    const userMessage: Message = { role: "user", content: finalMessageContent };
+    if (performWebSearch) {
+      try {
+        const response = await chrome.runtime.sendMessage({
+          type: "PERFORM_WEB_SEARCH",
+          payload: { query: message }
+        });
+        if (response && response.results) {
+          finalMessageContent = `--- REAL-TIME WEB SEARCH RESULTS ---\n${response.results}\n--- END WEB SEARCH RESULTS ---\n\n${finalMessageContent}`;
+        }
+      } catch (e) {
+        logger.warn("Web search error in PromptOverlay", e);
+      }
+    }
+
+    const contentArray: any[] = [];
+    if (imageUri) {
+      contentArray.push({ type: "image_url", image_url: { url: imageUri } });
+    }
+    contentArray.push({ type: "text", text: finalMessageContent });
+
+    const userMessage: Message = { 
+      role: "user", 
+      content: imageUri ? contentArray : finalMessageContent 
+    };
 
     const newMessages: Message[] = [...messages];
 
     if (messages.length === 0) {
+      const firstContentArray: any[] = [];
+      if (imageUri) {
+        firstContentArray.push({ type: "image_url", image_url: { url: imageUri } });
+      }
+      firstContentArray.push({ type: "text", text: `${selectionData.llmFormattedText}\n\n${finalMessageContent}` });
+
       newMessages.push(
         {
           role: "user",
-          content: `${selectionData.llmFormattedText}\n\n${finalMessageContent}`,
+          content: imageUri ? firstContentArray : `${selectionData.llmFormattedText}\n\n${finalMessageContent}`,
         },
         { role: "assistant", content: "" },
       );
@@ -290,7 +319,7 @@ export const PromptlyOverlay: FC<PromptlyOverlayProps> = ({
 
       if (
         lastMessage?.role === "assistant" &&
-        lastMessage.content.trim().length === 0
+        (typeof lastMessage.content === "string" ? lastMessage.content : "").trim().length === 0
       ) {
         return prevMessages.slice(0, -1);
       }

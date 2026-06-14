@@ -13,6 +13,7 @@ import {
   PiSpeakerSlashBold,
   PiMicrophoneBold,
   PiMicrophoneSlashBold,
+  PiCameraBold,
 } from "react-icons/pi";
 
 import { Box } from "$/components/Box/Box";
@@ -31,7 +32,7 @@ export type ResponseDisplayProps = {
   isLoading: boolean;
   isStalled: boolean;
   error?: string;
-  onSendFollowUp: (message: string, includeContext: boolean) => void;
+  onSendFollowUp: (message: string, includeContext: boolean, performWebSearch: boolean, imageUri?: string) => void;
   onStop: () => void;
   onCancel: () => void;
   onRetryLatest: () => void;
@@ -68,10 +69,54 @@ export const ResponseDisplay: FC<ResponseDisplayProps> = ({
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [isListening, setIsListening] = useState(false);
   const [includeContext, setIncludeContext] = useState(false);
+  const [performWebSearch, setPerformWebSearch] = useState(false);
+  const [imageUri, setImageUri] = useState<string>();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const getMessageString = (content: any): string => {
+    if (typeof content === "string") return content;
+    if (Array.isArray(content)) {
+      return content.filter((p: any) => p.type === 'text').map((p: any) => p.text).join('\n');
+    }
+    return "";
+  };
+
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement("canvas");
+        let width = img.width;
+        let height = img.height;
+        const MAX_DIM = 512;
+        if (width > height) {
+          if (width > MAX_DIM) {
+            height *= MAX_DIM / width;
+            width = MAX_DIM;
+          }
+        } else {
+          if (height > MAX_DIM) {
+            width *= MAX_DIM / height;
+            height = MAX_DIM;
+          }
+        }
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext("2d");
+        ctx?.drawImage(img, 0, 0, width, height);
+        setImageUri(canvas.toDataURL("image/jpeg", 0.8));
+      };
+      img.src = event.target?.result as string;
+    };
+    reader.readAsDataURL(file);
+  };
   const recognitionRef = useRef<any>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const latestAssistantMessage = messages.toReversed().find((message) => {
-    return message.role === "assistant" && message.content.trim().length > 0;
+    return message.role === "assistant" && getMessageString(message.content).trim().length > 0;
   });
   const canCopyLatestResponse = Boolean(latestAssistantMessage);
 
@@ -95,8 +140,9 @@ export const ResponseDisplay: FC<ResponseDisplayProps> = ({
 
   const handleSubmit = () => {
     if (followUpText.trim() && !isLoading) {
-      onSendFollowUp(followUpText, includeContext);
+      onSendFollowUp(followUpText, includeContext, performWebSearch, imageUri);
       setFollowUpText("");
+      setImageUri(undefined);
     }
   };
 
@@ -132,7 +178,7 @@ export const ResponseDisplay: FC<ResponseDisplayProps> = ({
     }
 
     try {
-      await navigator.clipboard.writeText(latestAssistantMessage.content);
+      await navigator.clipboard.writeText(getMessageString(latestAssistantMessage.content));
       setCopyStatus("copied");
     } catch {
       setCopyStatus("error");
@@ -156,7 +202,7 @@ export const ResponseDisplay: FC<ResponseDisplayProps> = ({
       setIsSpeaking(false);
     } else {
       // Basic markdown removal for speech
-      const textToSpeak = latestAssistantMessage.content.replace(/[*_#`]/g, '');
+      const textToSpeak = getMessageString(latestAssistantMessage.content).replace(/[*_#`]/g, '');
       const utterance = new SpeechSynthesisUtterance(textToSpeak);
       utterance.onend = () => {return setIsSpeaking(false)};
       utterance.onerror = () => {return setIsSpeaking(false)};
@@ -409,11 +455,11 @@ export const ResponseDisplay: FC<ResponseDisplayProps> = ({
                       elevation="0"
                       data-role={msg.role}
                     >
-                      {msg.content}
+                      {getMessageString(msg.content)}
                     </Box>
                   ) : msg.content ? (
                     <Markdown className={styles.message}>
-                      {stabilizeMarkdown(msg.content, index === 0)}
+                      {stabilizeMarkdown(getMessageString(msg.content), index === 0)}
                     </Markdown>
                   ) : (
                     <span className={styles.thinking}>Thinking...</span>
@@ -449,7 +495,26 @@ export const ResponseDisplay: FC<ResponseDisplayProps> = ({
         </>
       ) : null}
 
+      
+      {imageUri && (
+        <Flex direction="row" gap="xs" align="center" style={{ marginBottom: '8px', padding: '4px', background: 'var(--promptly-bg-secondary)', borderRadius: '4px', width: 'fit-content' }}>
+          <img src={imageUri} alt="Preview" style={{ width: '40px', height: '40px', objectFit: 'cover', borderRadius: '4px' }} />
+          <Button size="sm" color="tertiary" onClick={() => setImageUri(undefined)}><PiXCircleBold /></Button>
+        </Flex>
+      )}
       <Flex direction="row" gap="xs" className={styles.followUpContainer}>
+        <input 
+          type="checkbox" 
+          id="perform-web-search" 
+          checked={performWebSearch} 
+          onChange={(e) => setPerformWebSearch(e.target.checked)} 
+        />
+        <label htmlFor="perform-web-search" style={{ cursor: "pointer", userSelect: "none", marginRight: '8px' }}>
+          <Text size="xs" color="muted">Search Web</Text>
+        </label>
+        <input type="file" accept="image/*" ref={fileInputRef} style={{ display: 'none' }} onChange={handleImageUpload} />
+        <Button color="secondary" onClick={() => fileInputRef.current?.click()} aria-label="Upload Image" disabled={isLoading} title="Upload Image"><PiCameraBold /></Button>
+
 
         <Button
           color={isListening ? "danger" : "secondary"}

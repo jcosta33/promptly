@@ -35,6 +35,7 @@ export const EventType = {
   PAGE_CONTEXT_UPDATED: "page_context_updated",
   TRIGGER_CONTEXT_ACTION: "trigger_context_action",
   OMNIBOX_INPUT: "omnibox_input",
+  PERFORM_WEB_SEARCH: "perform_web_search",
 } as const;
 
 export type EventType = (typeof EventType)[keyof typeof EventType];

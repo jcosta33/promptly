@@ -67,7 +67,7 @@ export async function generate_text_stream(
 
     // Create completion with the specified parameters
     const response = await engine.chat.completions.create({
-      messages: chatMessages,
+      messages: chatMessages as any,
       temperature: parameters.temperature,
       top_p: parameters.top_p,
       presence_penalty: parameters.presence_penalty,
