@@ -13,6 +13,79 @@ import { semanticKnowledgeSearch, KnowledgeRecord } from "../modules/history/rep
 import { logger } from "../utils/logger";
 
 
+
+async function handleCustomApiInference(payload: any, settings: any, stream: any, requestId: string) {
+  try {
+    const url = settings.customApiEndpoint;
+    
+    // Create an abort controller so we can listen for STOP_INFERENCE
+    const controller = new AbortController();
+    const cancelUnsubscribe = stream.onMessage(EventType.STOP_INFERENCE, (cancelPayload: any) => {
+      if (cancelPayload.requestId === requestId) {
+        controller.abort();
+      }
+    });
+
+    const response = await fetch(url, {
+      method: "POST",
+      headers: { 
+        "Content-Type": "application/json",
+        ...(settings.customApiKey ? { "Authorization": `Bearer ${settings.customApiKey}` } : {})
+      },
+      body: JSON.stringify({
+        model: settings.customApiModelId,
+        messages: payload.messages,
+        stream: true
+      }),
+      signal: controller.signal
+    });
+
+    if (!response.body) throw new Error("No response body from Custom API");
+
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+    let fullText = "";
+
+    try {
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        const chunk = decoder.decode(value, { stream: true });
+        const lines = chunk.split('\n');
+        for (const line of lines) {
+          if (line.startsWith('data: ') && line.trim() !== 'data: [DONE]') {
+            try {
+              const data = JSON.parse(line.slice(6));
+              const content = data.choices?.[0]?.delta?.content || "";
+              if (content) {
+                fullText += content;
+                stream.send(EventType.INFERENCE_CHUNK, { requestId, token: content });
+              }
+            } catch (e) {
+              // ignore parse errors for partial chunks
+            }
+          }
+        }
+      }
+
+      stream.send(EventType.INFERENCE_COMPLETE, { 
+        requestId, 
+        fullResponse: fullText, 
+        usage: { total_tokens: 0 } 
+      });
+    } finally {
+      cancelUnsubscribe();
+    }
+  } catch (error: any) {
+    if (error.name === 'AbortError') {
+      stream.send(EventType.INFERENCE_ERROR, { requestId, error: "Inference interrupted" });
+    } else {
+      stream.send(EventType.INFERENCE_ERROR, { requestId, error: "Custom API Error: " + String(error) });
+    }
+  }
+}
+
 async function handleOllamaInference(payload: any, settings: any, stream: any, requestId: string) {
   try {
     const url = `${settings.ollamaEndpoint}/v1/chat/completions`;
@@ -287,6 +360,11 @@ listen_for_streams("promptly-inference", async (stream, identifier) => {
       }
 
       const settings = await get_settings();
+      
+      if (settings.useCustomApi) {
+        await handleCustomApiInference(payload, settings, stream, requestId);
+        return;
+      }
       if (settings.useOllama) {
         await handleOllamaInference(payload, settings, stream, requestId);
         return;

@@ -106,6 +106,10 @@ export type ExtensionSettings = {
   useOllama: boolean;
   ollamaEndpoint: string;
   ollamaModelId: string;
+  useCustomApi: boolean;
+  customApiEndpoint: string;
+  customApiKey: string;
+  customApiModelId: string;
 };
 
 /**
@@ -125,4 +129,8 @@ export const DEFAULT_SETTINGS: ExtensionSettings = {
   useOllama: false,
   ollamaEndpoint: "http://localhost:11434",
   ollamaModelId: "llama3.2",
+  useCustomApi: false,
+  customApiEndpoint: "https://api.openai.com/v1",
+  customApiKey: "",
+  customApiModelId: "gpt-3.5-turbo",
 };

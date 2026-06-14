@@ -655,7 +655,46 @@ export const SettingsPanel: FC = () => {
         />
 
 
+        
+        <Text as="h3">Custom API Provider</Text>
+        <Flex direction="column" gap="sm">
+          <Switch
+            checked={settings?.useCustomApi ?? false}
+            onChange={async (e) => await updateSettings({ useCustomApi: e.target.checked })}
+            disabled={settingsLoading}
+            label="Use Custom API"
+            labelPosition="right"
+          />
+          {settings?.useCustomApi && (
+            <>
+              <Input
+                label="API Endpoint"
+                value={settings?.customApiEndpoint ?? ""}
+                onChange={async (e) => await updateSettings({ customApiEndpoint: e.target.value })}
+                placeholder="https://api.openai.com/v1"
+                disabled={settingsLoading}
+              />
+              <Input
+                label="API Key"
+                type="password"
+                value={settings?.customApiKey ?? ""}
+                onChange={async (e) => await updateSettings({ customApiKey: e.target.value })}
+                placeholder="sk-..."
+                disabled={settingsLoading}
+              />
+              <Input
+                label="Model ID"
+                value={settings?.customApiModelId ?? ""}
+                onChange={async (e) => await updateSettings({ customApiModelId: e.target.value })}
+                placeholder="gpt-3.5-turbo"
+                disabled={settingsLoading}
+              />
+            </>
+          )}
+        </Flex>
+
         <Text as="h3">Model Selection</Text>
+
 
         <ModelLoadingStatus
           isLoading={modelLoadHookIsLoading}
