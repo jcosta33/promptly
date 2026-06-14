@@ -256,14 +256,10 @@ export const PromptlyOverlay: FC<PromptlyOverlayProps> = ({
       
       // 2. Workspace Knowledge Base RAG
       try {
-        // Multi-turn context: we prepend the last assistant message (if any) to the search query
-        // so the vector search has more semantic context.
-        const recentContext = messages.length > 0 
-          ? (typeof messages[messages.length - 1].content === "string" 
-             ? messages[messages.length - 1].content 
-             : "") 
-          : "";
-        const searchQuery = `${recentContext.slice(-500)} ${message}`.trim();
+        // Multi-turn context: we use the user's message as the primary semantic driver.
+        // We append the last user message if the current is too short to provide context,
+        // but avoid appending the assistant's response to prevent bias.
+        const searchQuery = message.length > 20 ? message : `${messages.filter(m => m.role === 'user').pop()?.content || ''} ${message}`.trim();
 
         const searchResponse = await chrome.runtime.sendMessage({
           type: "perform_knowledge_search",

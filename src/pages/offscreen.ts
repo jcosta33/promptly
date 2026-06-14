@@ -393,53 +393,61 @@ const getExtractor = async () => {
   return extractor;
 };
 
-// Listen for embedding requests
-chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
-  
-  if (message.type === EventType.PERFORM_KNOWLEDGE_SEARCH) {
-    const text = message.payload?.text;
-    if (!text) {
-      sendResponse({ error: "No text provided for search" });
-      return true;
-    }
+// Embedding Queue to prevent WebGPU OOM
+interface QueueItem {
+  type: EventType;
+  text: string;
+  sendResponse: (response: any) => void;
+}
 
-    getExtractor()
-      .then(async (extract: any) => {
-        const output = await extract(text, { pooling: 'mean', normalize: true });
-        const embeddingArray = Array.from(output.data) as number[];
-        
-        // Search the knowledge base
+const embeddingQueue: QueueItem[] = [];
+let isProcessingQueue = false;
+
+const processQueue = async () => {
+  if (isProcessingQueue || embeddingQueue.length === 0) return;
+  isProcessingQueue = true;
+
+  while (embeddingQueue.length > 0) {
+    const item = embeddingQueue.shift();
+    if (!item) continue;
+
+    try {
+      const extract = await getExtractor();
+      const output = await extract(item.text, { pooling: 'mean', normalize: true });
+      const embeddingArray = Array.from(output.data) as number[];
+
+      if (item.type === EventType.PERFORM_KNOWLEDGE_SEARCH) {
         const results = await semanticKnowledgeSearch(embeddingArray, 3);
         const chunks = results.map((r: KnowledgeRecord) => r.text);
-        
-        sendResponse({ chunks });
-      })
-      .catch((err: any) => {
-        logger.error("Failed to perform knowledge search", err);
-        sendResponse({ error: err.message });
-      });
-
-    return true;
+        item.sendResponse({ chunks });
+      } else if (item.type === EventType.GENERATE_EMBEDDING) {
+        item.sendResponse({ embedding: embeddingArray });
+      }
+    } catch (err: any) {
+      logger.error("Failed to process embedding queue item", err);
+      item.sendResponse({ error: err.message });
+    }
   }
-  if (message.type === EventType.GENERATE_EMBEDDING) {
+
+  isProcessingQueue = false;
+};
+
+// Listen for embedding requests
+chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
+  if (message.type === EventType.PERFORM_KNOWLEDGE_SEARCH || message.type === EventType.GENERATE_EMBEDDING) {
     const text = message.payload?.text;
     if (!text) {
-      sendResponse({ error: "No text provided for embedding" });
+      sendResponse({ error: "No text provided" });
       return true;
     }
 
-    getExtractor()
-      .then(async (extract) => {
-        const output = await extract(text, { pooling: 'mean', normalize: true });
-        // The output is a tensor, we need to convert it to a regular number array
-        const embeddingArray = Array.from(output.data);
-        sendResponse({ embedding: embeddingArray });
-      })
-      .catch((err) => {
-        logger.error("Failed to generate embedding", err);
-        sendResponse({ error: err.message });
-      });
-
+    embeddingQueue.push({
+      type: message.type,
+      text,
+      sendResponse
+    });
+    
+    processQueue();
     return true; // Keep the message channel open for async response
   }
 });

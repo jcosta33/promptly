@@ -152,3 +152,56 @@ export const semanticKnowledgeSearch = async (queryEmbedding: number[], limit = 
     return [];
   }
 };
+
+export interface KnowledgeMetadata {
+  filename: string;
+  chunkCount: number;
+  timestamp: number;
+}
+
+export const getAllKnowledgeMetadata = async (): Promise<KnowledgeMetadata[]> => {
+  try {
+    const db = await getVectorDB();
+    const allRecords = await db.getAll('knowledge');
+    const metadataMap = new Map<string, KnowledgeMetadata>();
+    
+    for (const record of allRecords) {
+      const existing = metadataMap.get(record.filename);
+      if (existing) {
+        existing.chunkCount += 1;
+        existing.timestamp = Math.max(existing.timestamp, record.timestamp);
+      } else {
+        metadataMap.set(record.filename, {
+          filename: record.filename,
+          chunkCount: 1,
+          timestamp: record.timestamp
+        });
+      }
+    }
+    
+    return Array.from(metadataMap.values());
+  } catch (error) {
+    logger.error('Failed to get knowledge metadata', error);
+    return [];
+  }
+};
+
+export const deleteKnowledgeByFilename = async (filename: string) => {
+  try {
+    const db = await getVectorDB();
+    const tx = db.transaction('knowledge', 'readwrite');
+    const index = tx.store.index('by-filename');
+    let cursor = await index.openCursor(IDBKeyRange.only(filename));
+    
+    let deletedCount = 0;
+    while (cursor) {
+      await cursor.delete();
+      deletedCount++;
+      cursor = await cursor.continue();
+    }
+    await tx.done;
+    logger.log(`Deleted ${deletedCount} chunks for file ${filename}`);
+  } catch (error) {
+    logger.error(`Failed to delete knowledge for ${filename}`, error);
+  }
+};
