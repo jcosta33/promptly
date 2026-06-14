@@ -92,6 +92,13 @@ export type ExtensionSettings = {
    * Atomic facts the LLM should always remember
    */
   persistentMemories: PersistentMemory[];
+
+  /**
+   * Whether to bypass WebLLM and use an external Ollama instance
+   */
+  useOllama: boolean;
+  ollamaEndpoint: string;
+  ollamaModelId: string;
 };
 
 /**
@@ -107,4 +114,7 @@ export const DEFAULT_SETTINGS: ExtensionSettings = {
   customInstructions: "",
   customActions: [],
   persistentMemories: [],
+  useOllama: false,
+  ollamaEndpoint: "http://localhost:11434",
+  ollamaModelId: "llama3.2",
 };
