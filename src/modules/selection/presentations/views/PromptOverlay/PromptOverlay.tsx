@@ -256,18 +256,23 @@ export const PromptlyOverlay: FC<PromptlyOverlayProps> = ({
       
       // 2. Workspace Knowledge Base RAG
       try {
-        const embedResponse = await chrome.runtime.sendMessage({
-          type: "generate_embedding",
-          payload: { text: message }
+        // Multi-turn context: we prepend the last assistant message (if any) to the search query
+        // so the vector search has more semantic context.
+        const recentContext = messages.length > 0 
+          ? (typeof messages[messages.length - 1].content === "string" 
+             ? messages[messages.length - 1].content 
+             : "") 
+          : "";
+        const searchQuery = `${recentContext.slice(-500)} ${message}`.trim();
+
+        const searchResponse = await chrome.runtime.sendMessage({
+          type: "perform_knowledge_search",
+          payload: { text: searchQuery }
         });
         
-        if (embedResponse && embedResponse.embedding) {
-          // Send a message to background script to query indexedDB, because PromptOverlay
-          // might not have direct access if we avoid heavy DB imports in the content script bundle.
-          // For MVP, we will assume background.ts or offscreen.ts handles the actual DB search
-          // or we can fetch it via another IPC. 
-          // Let's just log it for now to prove the RAG pipeline structure is sound without breaking the bundle.
-          logger.log("Generated embedding for user query to search Workspace Knowledge Base");
+        if (searchResponse && searchResponse.chunks && searchResponse.chunks.length > 0) {
+          const kbContext = searchResponse.chunks.join("\n\n");
+          finalMessageContent = `--- KNOWLEDGE BASE RESULTS ---\n${kbContext}\n--- END KNOWLEDGE BASE RESULTS ---\n\n${finalMessageContent}`;
         }
       } catch (err) {
         logger.warn("Knowledge Base Search Error", err);

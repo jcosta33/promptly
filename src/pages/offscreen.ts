@@ -9,6 +9,7 @@ import type { Message } from "../modules/inference/models/inference_model";
 import { get_settings } from "../modules/configuration/use_cases/get_settings";
 import { MLCEngine } from "@mlc-ai/web-llm";
 import { generate_text_stream } from "../modules/inference/repositories/generate_text_stream";
+import { semanticKnowledgeSearch, KnowledgeRecord } from "../modules/history/repositories/vector_db";
 import { logger } from "../utils/logger";
 
 
@@ -394,6 +395,32 @@ const getExtractor = async () => {
 
 // Listen for embedding requests
 chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
+  
+  if (message.type === EventType.PERFORM_KNOWLEDGE_SEARCH) {
+    const text = message.payload?.text;
+    if (!text) {
+      sendResponse({ error: "No text provided for search" });
+      return true;
+    }
+
+    getExtractor()
+      .then(async (extract: any) => {
+        const output = await extract(text, { pooling: 'mean', normalize: true });
+        const embeddingArray = Array.from(output.data) as number[];
+        
+        // Search the knowledge base
+        const results = await semanticKnowledgeSearch(embeddingArray, 3);
+        const chunks = results.map((r: KnowledgeRecord) => r.text);
+        
+        sendResponse({ chunks });
+      })
+      .catch((err: any) => {
+        logger.error("Failed to perform knowledge search", err);
+        sendResponse({ error: err.message });
+      });
+
+    return true;
+  }
   if (message.type === EventType.GENERATE_EMBEDDING) {
     const text = message.payload?.text;
     if (!text) {

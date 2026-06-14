@@ -37,6 +37,7 @@ export const EventType = {
   OMNIBOX_INPUT: "omnibox_input",
   PERFORM_WEB_SEARCH: "perform_web_search",
   GENERATE_EMBEDDING: "generate_embedding",
+  PERFORM_KNOWLEDGE_SEARCH: "perform_knowledge_search",
 } as const;
 
 export type EventType = (typeof EventType)[keyof typeof EventType];
