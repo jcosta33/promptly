@@ -27,6 +27,12 @@ export const CodeHighlightTheme = {
 export type CodeHighlightTheme =
   (typeof CodeHighlightTheme)[keyof typeof CodeHighlightTheme];
 
+
+export type DomainPersona = {
+  domain: string;
+  prompt: string;
+};
+
 export type PersistentMemory = {
   id: string;
   fact: string;
@@ -92,6 +98,7 @@ export type ExtensionSettings = {
    * Atomic facts the LLM should always remember
    */
   persistentMemories: PersistentMemory[];
+  domainPersonas: DomainPersona[];
 
   /**
    * Whether to bypass WebLLM and use an external Ollama instance
@@ -114,6 +121,7 @@ export const DEFAULT_SETTINGS: ExtensionSettings = {
   customInstructions: "",
   customActions: [],
   persistentMemories: [],
+  domainPersonas: [],
   useOllama: false,
   ollamaEndpoint: "http://localhost:11434",
   ollamaModelId: "llama3.2",
