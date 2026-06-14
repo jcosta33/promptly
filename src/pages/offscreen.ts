@@ -372,3 +372,47 @@ listen_for_streams("promptly-inference", async (stream, identifier) => {
     logger.log("Inference connection disconnected");
   };
 });
+
+import { pipeline, env } from '@xenova/transformers';
+
+// Configure transformers for the browser environment
+env.allowLocalModels = false;
+env.useBrowserCache = false; // We can set this to true if it causes issues, but false forces re-download if cache corrupted.
+
+let extractor: any = null;
+
+const getExtractor = async () => {
+  if (!extractor) {
+    logger.log("Loading Xenova feature extractor...");
+    // Using a tiny quantized model for feature extraction
+    extractor = await pipeline('feature-extraction', 'Xenova/all-MiniLM-L6-v2', {
+      quantized: true,
+    });
+  }
+  return extractor;
+};
+
+// Listen for embedding requests
+chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
+  if (message.type === EventType.GENERATE_EMBEDDING) {
+    const text = message.payload?.text;
+    if (!text) {
+      sendResponse({ error: "No text provided for embedding" });
+      return true;
+    }
+
+    getExtractor()
+      .then(async (extract) => {
+        const output = await extract(text, { pooling: 'mean', normalize: true });
+        // The output is a tensor, we need to convert it to a regular number array
+        const embeddingArray = Array.from(output.data);
+        sendResponse({ embedding: embeddingArray });
+      })
+      .catch((err) => {
+        logger.error("Failed to generate embedding", err);
+        sendResponse({ error: err.message });
+      });
+
+    return true; // Keep the message channel open for async response
+  }
+});

@@ -36,6 +36,7 @@ export const EventType = {
   TRIGGER_CONTEXT_ACTION: "trigger_context_action",
   OMNIBOX_INPUT: "omnibox_input",
   PERFORM_WEB_SEARCH: "perform_web_search",
+  GENERATE_EMBEDDING: "generate_embedding",
 } as const;
 
 export type EventType = (typeof EventType)[keyof typeof EventType];
