@@ -8,6 +8,7 @@ import type { ExtensionSettings } from "$/modules/configuration/models/user_sett
 import type { MessageEvent } from "$/modules/messaging/helpers/create_message_event";
 import { get_settings } from "$/modules/configuration/use_cases/get_settings";
 import "./normalize.css";
+import "katex/dist/katex.min.css";
 
 export default defineContentScript({
   matches: ["*://*/*"],

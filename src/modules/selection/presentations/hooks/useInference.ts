@@ -25,6 +25,11 @@ export type InferenceState = {
   startedAt?: number;
   lastActivityAt?: number;
   isStalled: boolean;
+  usage?: {
+    prompt_tokens?: number;
+    completion_tokens?: number;
+    total_tokens?: number;
+  };
 };
 
 export type UseInferenceOptions = {
@@ -146,9 +151,16 @@ export const useInference = (options?: UseInferenceOptions) => {
     };
   }, [cleanupStream, sendStopInference]);
 
-  const runInference = (request: InferenceRequest) => {
+  const runInference = async (request: InferenceRequest) => {
     cleanupStream();
     const requestId = `req_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+
+    
+    try {
+      await chrome.runtime.sendMessage({ type: "WAKE_UP_OFFSCREEN" });
+    } catch (e) {
+      logger.warn("Failed to wake up offscreen document, inference might fail if offscreen is suspended", e);
+    }
 
     const stream = create_stream_connection({
       connectionName: "promptly-inference",
@@ -165,6 +177,7 @@ export const useInference = (options?: UseInferenceOptions) => {
       startedAt,
       lastActivityAt: startedAt,
       isStalled: false,
+      usage: undefined,
     });
     startStallMonitoring(requestId);
 
@@ -202,13 +215,14 @@ export const useInference = (options?: UseInferenceOptions) => {
         stopStallMonitoring();
         const lastActivityAt = Date.now();
 
-        setInferenceState((state) => {
+                setInferenceState((state) => {
           return state.requestId === requestId
             ? {
                 ...state,
                 status: "complete",
                 lastActivityAt,
                 isStalled: false,
+                usage: payload.usage,
               }
             : state;
         });

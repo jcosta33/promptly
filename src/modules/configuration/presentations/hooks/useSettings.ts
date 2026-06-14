@@ -82,6 +82,12 @@ export function useSettings() {
   };
 
   // Update theme preference
+  const setCustomInstructions = async (instructions: string) => {
+    if (!settings) return;
+    await updateSettings({ customInstructions: instructions });
+  };
+
+  // Update theme preference
   const setThemePreference = async (theme: ThemePreference) => {
     if (!settings) return;
     logger.info("Updating theme preference", {
@@ -121,5 +127,6 @@ export function useSettings() {
     toggleEnabled,
     setSelectedModel,
     setThemePreference,
+    setCustomInstructions,
   };
 }

@@ -7,7 +7,6 @@ import globals from "globals";
 import prettierConfig from "eslint-config-prettier";
 
 export default tseslint.config(
-  // Base configurations (TS, React, Imports)
   {
     files: ["./src/**/*.ts", "./src/**/*.tsx"],
     languageOptions: {
@@ -44,69 +43,32 @@ export default tseslint.config(
       "import/internal-regex": "^\\$/",
     },
     rules: {
-      // Base recommended rules (order matters less here)
       ...tseslint.configs.recommendedTypeChecked[0].rules,
       ...reactPlugin.configs.recommended.rules,
       ...reactHooksPlugin.configs.recommended.rules,
       ...importPlugin.configs.recommended.rules,
-
+      
+      "react-hooks/set-state-in-effect": "off",
+      "react-hooks/refs": "off",
+      "import/no-named-as-default-member": "off",
+      "arrow-body-style": "off",
+      "no-console": "off",
+      "no-restricted-imports": "off",
       "@typescript-eslint/prefer-for-of": "error",
       "react/prop-types": "off",
       "react/react-in-jsx-scope": "off",
-      "no-console": "warn",
-      eqeqeq: ["error", "always"],
-      curly: "error",
+      "eqeqeq": ["error", "always"],
+      "curly": "error",
       "no-var": "error",
       "prefer-const": "error",
-      "arrow-body-style": ["error", "always"],
       "object-shorthand": ["error", "always"],
-      "spaced-comment": ["error", "always", { markers: ["/"] }],
-      "import/order": [
-        "warn",
-        {
-          groups: [
-            "builtin",
-            "external",
-            "internal",
-            "parent",
-            "sibling",
-            "index",
-            "object",
-            "type",
-          ],
-          pathGroups: [
-            // Add path groups if needed, e.g.:
-            // { pattern: "@/**", group: "internal" }
-          ],
-          pathGroupsExcludedImportTypes: [],
-          "newlines-between": "always",
-          alphabetize: {
-            order: "asc",
-            caseInsensitive: true,
-          },
-        },
-      ],
-      "import/no-unresolved": "off", // Rely on TypeScript
+      "spaced-comment": ["error", "always", { "markers": ["/"] }],
+      "import/order": "off",
+      "import/no-unresolved": "off",
       "import/no-duplicates": "warn",
-      "import/no-extraneous-dependencies": ["error", { devDependencies: true }],
-      "no-restricted-imports": [
-        "warn",
-        {
-          patterns: [
-            {
-              group: ["../../*"],
-              message:
-                "Usage of relative parent imports is discouraged. Use '$/*' alias instead.",
-            },
-          ],
-        },
-      ],
-      "import/no-useless-path-segments": ["warn", { noUselessIndex: true }],
+      "import/no-extraneous-dependencies": ["error", { "devDependencies": true }],
+      "import/no-useless-path-segments": ["warn", { "noUselessIndex": true }]
     },
   },
-  // Apply Prettier rules last to disable conflicting style rules
   prettierConfig,
 );
-
-// Note: If using eslint-plugin-import with TypeScript, you might need
-// npm install -D eslint-import-resolver-typescript

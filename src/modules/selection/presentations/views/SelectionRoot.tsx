@@ -19,6 +19,8 @@ import type { MessageEvent } from "$/modules/messaging/helpers/create_message_ev
  */
 const PromptlyRoot: FC = () => {
   const [showOverlay, setShowOverlay] = useState(false);
+  const [initialActionId, setInitialActionId] = useState<string | undefined>();
+  const [omniboxText, setOmniboxText] = useState<string | undefined>();
   const [isEnabled, setIsEnabled] = useState(true);
   const { selection, mousePosition, clearSelection } = useSelection({
     enabled: isEnabled,
@@ -37,6 +39,26 @@ const PromptlyRoot: FC = () => {
         logger.warn("Unable to load Promptly enabled setting", error);
       });
 
+    
+    const unsubscribeContext = subscribe<{ actionId: string }>(
+      EventType.TRIGGER_CONTEXT_ACTION as any,
+      (event) => {
+        setInitialActionId(event.payload.actionId);
+        setShowOverlay(true);
+      }
+    );
+
+    
+    const unsubscribeOmnibox = subscribe<{ text: string }>(
+      EventType.OMNIBOX_INPUT as any,
+      (event) => {
+        setOmniboxText(event.payload.text);
+        setInitialActionId(undefined);
+    setOmniboxText(undefined);
+        setShowOverlay(true);
+      }
+    );
+
     const unsubscribe = subscribe<ExtensionSettings>(
       EventType.SETTINGS_UPDATE,
       (event: MessageEvent<ExtensionSettings>) => {
@@ -47,6 +69,8 @@ const PromptlyRoot: FC = () => {
     return () => {
       isMounted = false;
       unsubscribe();
+      unsubscribeContext();
+      unsubscribeOmnibox();
     };
   }, []);
 
@@ -62,23 +86,40 @@ const PromptlyRoot: FC = () => {
   };
 
   const handleOverlayClose = () => {
+    setInitialActionId(undefined);
+    setOmniboxText(undefined);
     setShowOverlay(false);
     clearSelection();
   };
 
+  
+  const mockSelection = omniboxText ? {
+    text: omniboxText,
+    llmFormattedText: omniboxText,
+    rect: new DOMRect(window.innerWidth / 2 - 200, 100, 400, 500),
+    pageUrl: window.location.href,
+    pageTitle: document.title,
+    contextTypes: ["text"],
+    dataTypes: ["text"],
+  } : null;
+  
+  const effectiveSelection = selection || mockSelection;
+  const effectivePosition = mousePosition || { x: window.innerWidth / 2, y: 150 };
+
   return (
     <>
-      {selection && !showOverlay && mousePosition && (
+      {effectiveSelection && !showOverlay && mousePosition && !omniboxText && (
         <SelectionTrigger
-          position={mousePosition}
+          position={effectivePosition}
           onClick={handleTriggerClick}
         />
       )}
 
-      {selection && showOverlay && mousePosition && (
+      {effectiveSelection && showOverlay && effectivePosition && (
         <PromptlyOverlay
-          selectionData={selection}
-          position={mousePosition}
+          selectionData={effectiveSelection as any}
+          initialActionId={initialActionId}
+          position={effectivePosition}
           onClose={handleOverlayClose}
         />
       )}

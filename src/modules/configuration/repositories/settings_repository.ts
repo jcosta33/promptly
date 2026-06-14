@@ -9,7 +9,7 @@ import {
 const SETTINGS_STORAGE_KEY = "promptly-settings";
 
 /**
- * Save user settings to chrome.storage.local
+ * Save user settings to chrome.storage.sync
  *
  * @param settings The settings object to save
  * @returns A promise that resolves when the settings are saved
@@ -18,7 +18,7 @@ export async function save_settings(
   settings: ExtensionSettings,
 ): Promise<void> {
   try {
-    await chrome.storage.local.set({ [SETTINGS_STORAGE_KEY]: settings });
+    await chrome.storage.sync.set({ [SETTINGS_STORAGE_KEY]: settings });
   } catch (error) {
     logger.error("Error saving settings:", error);
     throw new Error(
@@ -28,13 +28,13 @@ export async function save_settings(
 }
 
 /**
- * Load user settings from chrome.storage.local
+ * Load user settings from chrome.storage.sync
  *
  * @returns A promise that resolves with the loaded settings, or the default settings if none are found
  */
 export async function load_settings(): Promise<ExtensionSettings> {
   try {
-    const result = await chrome.storage.local.get(SETTINGS_STORAGE_KEY);
+    const result = await chrome.storage.sync.get(SETTINGS_STORAGE_KEY);
 
     if (result && result[SETTINGS_STORAGE_KEY]) {
       return result[SETTINGS_STORAGE_KEY] as ExtensionSettings;

@@ -27,6 +27,23 @@ export const CodeHighlightTheme = {
 export type CodeHighlightTheme =
   (typeof CodeHighlightTheme)[keyof typeof CodeHighlightTheme];
 
+export type PersistentMemory = {
+  id: string;
+  fact: string;
+};
+
+export type CustomAction = {
+  id: string;
+  name: string;
+  prompt: string;
+};
+
+export type Persona = {
+  id: string;
+  name: string;
+  instructions: string;
+};
+
 /**
  * Extension settings type
  */
@@ -55,6 +72,26 @@ export type ExtensionSettings = {
    * Whether to show all available actions or only contextual ones
    */
   showAllActions: boolean;
+
+  /**
+   * Custom global instructions merged into the LLM system prompt
+   */
+  customInstructions: string;
+
+  /**
+   * ID of currently active persona
+   */
+  activePersonaId?: string;
+
+  /**
+   * User-defined custom actions for the context menu
+   */
+  customActions: CustomAction[];
+
+  /**
+   * Atomic facts the LLM should always remember
+   */
+  persistentMemories: PersistentMemory[];
 };
 
 /**
@@ -67,4 +104,7 @@ export const DEFAULT_SETTINGS: ExtensionSettings = {
   themePreference: ThemePreference.SYSTEM,
   codeHighlightTheme: CodeHighlightTheme.GITHUB,
   showAllActions: false,
+  customInstructions: "",
+  customActions: [],
+  persistentMemories: [],
 };

@@ -1,0 +1,10 @@
+{
+  "extensionName": {
+    "message": "Promptly",
+    "description": "Name of the extension"
+  },
+  "extensionDescription": {
+    "message": "A local-first, privacy-focused AI assistant that runs entirely in your browser using WebGPU.",
+    "description": "Description of the extension"
+  }
+}

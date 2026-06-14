@@ -30,7 +30,20 @@ export async function run_inference(
     throw new Error("No LLM engine provided");
   }
 
-  const { messages } = request;
+    const { messages } = request;
+
+  // Context Truncation: Sliding window to prevent WebGPU OOM
+  const MAX_HISTORY = 10;
+  let truncatedMessages = messages;
+  if (messages.length > MAX_HISTORY + 1) {
+    const systemMessage = messages[0];
+    let recentMessages = messages.slice(-MAX_HISTORY);
+    // Ensure the first message after system is a user message
+    if (recentMessages.length > 0 && recentMessages[0].role === "assistant") {
+      recentMessages = recentMessages.slice(1);
+    }
+    truncatedMessages = [systemMessage, ...recentMessages];
+  }
 
   const parameters = {
     ...DEFAULT_INFERENCE_PARAMETERS,
@@ -45,7 +58,7 @@ export async function run_inference(
     // Call generate_text_stream, results handled by callbacks
     await generate_text_stream({
       engine,
-      messages,
+      messages: truncatedMessages,
       parameters,
       onToken: (_token: string) => {
         // This callback is now handled by the caller (background script)

@@ -178,7 +178,8 @@ export function create_stream(options: MessageStreamOptions): {
   onMessage: <TEventType extends EventType>(
     eventType: TEventType,
     handler: TypedMessageHandler<TEventType>,
-  ) => () => void;
+      ) => () => void;
+      onDisconnect: (handler: () => void) => void;
 } {
   const connectionName =
     options.connectionName || generate_connection_name("stream");
@@ -265,6 +266,9 @@ export function create_stream(options: MessageStreamOptions): {
     send,
     close,
     onMessage,
+    onDisconnect: (handler: () => void): void => {
+      port.onDisconnect.addListener(handler);
+    },
   };
 }
 
@@ -284,6 +288,7 @@ export function listen_for_streams(
         eventType: TEventType,
         handler: TypedMessageHandler<TEventType>,
       ) => () => void;
+      onDisconnect: (handler: () => void) => void;
     },
     identifier: number | string,
   ) => void,
@@ -320,6 +325,9 @@ export function listen_for_streams(
           logger.error("Error disconnecting port:", error);
         }
         remove_connection(connectionType, identifier);
+      },
+      onDisconnect: (handler: () => void): void => {
+        port.onDisconnect.addListener(handler);
       },
       onMessage: <TEventType extends EventType>(
         eventType: TEventType,

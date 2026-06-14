@@ -17,6 +17,7 @@ export const EventType = {
   INFERENCE_COMPLETE: "inference_complete",
   INFERENCE_ERROR: "inference_error",
   STOP_INFERENCE: "stop_inference",
+  KEEP_ALIVE: "keep_alive",
 
   // Action events
   REQUEST_ACTION: "request_action",
@@ -32,11 +33,17 @@ export const EventType = {
 
   // Context events
   PAGE_CONTEXT_UPDATED: "page_context_updated",
+  TRIGGER_CONTEXT_ACTION: "trigger_context_action",
+  OMNIBOX_INPUT: "omnibox_input",
 } as const;
 
 export type EventType = (typeof EventType)[keyof typeof EventType];
 
 export type DefaultPayload = Record<string, any>;
+
+export type TriggerContextActionPayload = { actionId: string };
+
+export type OmniboxInputPayload = { text: string };
 
 export type ModelLoadingProgressPayload = {
   model: string;
@@ -119,6 +126,10 @@ export type RequestActionPayload = {
   modelId?: string;
 };
 
+export type KeepAlivePayload = {
+  requestId?: string;
+};
+
 export type StopInferencePayload = {
   requestId: string;
 };
@@ -137,6 +148,9 @@ export type EventPayloadMap = {
   [EventType.UNLOAD_MODEL]: ModelControlRequestPayload;
   [EventType.REQUEST_ACTION]: RequestActionPayload;
   [EventType.STOP_INFERENCE]: StopInferencePayload;
+  [EventType.TRIGGER_CONTEXT_ACTION]: TriggerContextActionPayload;
+  [EventType.OMNIBOX_INPUT]: OmniboxInputPayload;
+  [EventType.KEEP_ALIVE]: KeepAlivePayload;
   [key: string]: DefaultPayload; // Allow any EventType string with a default payload
 };
 

@@ -1,6 +1,28 @@
 import { ModelFamily } from "../models/inference_model";
 
 export const AVAILABLE_MODELS = {
+
+  "DeepSeek": [
+    {
+      name: "DeepSeek-R1-Distill-Llama-8B-q4f16_1-MLC",
+      display_name: "DeepSeek R1 Distill Llama 8B (4-bit)",
+      provider: "DeepSeek",
+      family: "DeepSeek",
+      version: "R1",
+      parameter_count: "8B",
+      quantization: "q4f16_1",
+      precision: "4-bit float16 hybrid",
+      model_type: "instruct",
+      recommended_config: {
+        temperature: 0.6,
+        top_p: 0.95,
+      },
+      memory_requirements: "≈5.5 GB VRAM",
+      huggingface_link: "https://huggingface.co/mlc-ai/DeepSeek-R1-Distill-Llama-8B-q4f16_1-MLC",
+      tags: ["high-accuracy", "coding", "reasoning"],
+      short_description: "DeepSeek's powerful reasoning model distilled into the Llama 8B architecture. Exceptional at coding and logic."
+    }
+  ],
   "Llama 2": [
     {
       name: "Llama-2-7b-chat-hf-q4f16_1-MLC",

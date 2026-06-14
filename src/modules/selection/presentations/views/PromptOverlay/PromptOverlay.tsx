@@ -1,5 +1,5 @@
 import { useState, useEffect, FC, useRef } from "react";
-import { PiXCircleBold } from "react-icons/pi";
+import { PiXCircleBold, PiChatCircleTextBold } from "react-icons/pi";
 
 import {
   Message,
@@ -13,6 +13,7 @@ import { Flex } from "@/src/components/Flex/Flex";
 import { Text } from "@/src/components/Text/Text";
 import { ActionDefinition } from "@/src/modules/actions/models/action_models";
 import { get_applicable_actions } from "@/src/modules/actions/use_cases/get_applicable_actions";
+import { get_settings } from "@/src/modules/configuration/use_cases/get_settings";
 import { PageCategory } from "@/src/modules/context/models/context";
 import { get_page_context } from "@/src/modules/context/use_cases/get_page_context";
 import { SelectionData } from "@/src/modules/selection/models/selection";
@@ -26,6 +27,7 @@ export type PromptlyOverlayProps = {
   selectionData: SelectionData;
   position: { x: number; y: number };
   onClose: () => void;
+  initialActionId?: string;
 };
 
 type Position = {
@@ -78,9 +80,33 @@ export const PromptlyOverlay: FC<PromptlyOverlayProps> = ({
   selectionData,
   position,
   onClose,
+  initialActionId,
 }) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [pageContext, setPageContext] = useState<{ category: PageCategory }>();
+
+  const [customActions, setCustomActions] = useState<ActionDefinition[]>([]);
+
+  useEffect(() => {
+    get_settings().then((settings) => {
+      if (settings.customActions) {
+        const mappedActions: ActionDefinition[] = settings.customActions.map(ca => ({
+          id: ca.id,
+          name: ca.name,
+          description: "Custom Action",
+          icon: PiChatCircleTextBold as any,
+          contextTypes: ["text", "code", "image", "link", "input", "unknown"] as any,
+          dataTypes: ["text", "code", "image", "url", "unknown"] as any,
+          pageCategories: ["article", "documentation", "code_repository", "social_media", "video", "shopping", "search_results", "unknown"] as any,
+          llmParams: {},
+          systemPrompt: ca.prompt,
+          userPrompt: "{{text}}"
+        }));
+        setCustomActions(mappedActions);
+      }
+    });
+  }, []);
+
   const [hideFirstMessage, setHideFirstMessage] = useState(false);
   const [activeAction, setActiveAction] = useState<ActionDefinition | null>(
     null,
@@ -89,6 +115,42 @@ export const PromptlyOverlay: FC<PromptlyOverlayProps> = ({
     useState<LastInferenceRequest | null>(null);
 
   const dragHandleRef = useRef<HTMLDivElement>(null);
+
+  // Hydrate conversation from local storage on mount
+  useEffect(() => {
+    chrome.storage.local.get(["promptly_active_conversation", "promptly_last_inference_request"]).then((result) => {
+      // Only hydrate if we are not being forced to trigger an initial action
+      if (!initialActionId && result.promptly_active_conversation && (result.promptly_active_conversation as Message[]).length > 0) {
+        setMessages(result.promptly_active_conversation as Message[]);
+        setHideFirstMessage(true); // Hide system prompts from history
+        if (result.promptly_last_inference_request) {
+          setLastInferenceRequest(result.promptly_last_inference_request as LastInferenceRequest);
+        }
+      }
+    });
+  }, [initialActionId]);
+
+  // Persist conversation whenever it changes
+  useEffect(() => {
+    if (messages.length > 0) {
+      const MAX_HISTORY = 50;
+      let truncatedMessages = messages;
+      if (messages.length > MAX_HISTORY + 1) {
+        const systemMessage = messages[0];
+        let recentMessages = messages.slice(-MAX_HISTORY);
+        if (recentMessages.length > 0 && recentMessages[0].role === "assistant") {
+          recentMessages = recentMessages.slice(1);
+        }
+        truncatedMessages = [systemMessage, ...recentMessages];
+      }
+
+      chrome.storage.local.set({ 
+        promptly_active_conversation: truncatedMessages,
+        promptly_last_inference_request: lastInferenceRequest
+      });
+    }
+  }, [messages, lastInferenceRequest]);
+
 
   const {
     position: currentPosition,
@@ -123,17 +185,20 @@ export const PromptlyOverlay: FC<PromptlyOverlayProps> = ({
     setPageContext(context);
   }, [selectionData]);
 
+
+
   let actions: ActionDefinition[] = [];
 
   if (pageContext && selectionData) {
-    actions = get_applicable_actions({
+    const predefinedActions = get_applicable_actions({
       contextTypes: selectionData.contextTypes,
       dataTypes: selectionData.dataTypes,
       pageCategory: pageContext.category,
     });
+    actions = [...predefinedActions, ...customActions];
   }
 
-  const handleActionSelect = (action: ActionDefinition) => {
+  const handleActionSelect = async (action: ActionDefinition) => {
     setActiveAction(action);
     setHideFirstMessage(true);
 
@@ -144,8 +209,23 @@ export const PromptlyOverlay: FC<PromptlyOverlayProps> = ({
                             Selection Types: ${selectionData.contextTypes.join(", ")}
                           --- END CONTEXT ---`;
 
-    // Combine the action's system prompt with the context
-    const systemContent = `${action.systemPrompt}\n\n${contextString}`;
+    let customInstructions = "";
+    let memoryInstructions = "";
+    try {
+      const settings = await get_settings();
+      if (settings.customInstructions) {
+        customInstructions = `\n\n--- GLOBAL CUSTOM INSTRUCTIONS ---\n${settings.customInstructions}`;
+      }
+      if (settings.persistentMemories && settings.persistentMemories.length > 0) {
+        const facts = settings.persistentMemories.map((m: any) => `- ${m.fact}`).join("\n");
+        memoryInstructions = `\n\n--- USER PERSISTENT MEMORY ---\nThe user has explicitly asked you to remember the following facts about them. You must strictly adhere to these facts in your response:\n${facts}`;
+      }
+    } catch (e) {
+      logger.warn("Could not fetch settings for custom instructions", e);
+    }
+
+    // Combine the action's system prompt with the context and custom instructions
+    const systemContent = `${action.systemPrompt}${customInstructions}${memoryInstructions}\n\n${contextString}`;
 
     const initialMessages: Message[] = [
       { role: "system", content: systemContent }, // Use the enhanced system content
@@ -165,8 +245,15 @@ export const PromptlyOverlay: FC<PromptlyOverlayProps> = ({
     }
   };
 
-  const handleSendFollowUp = (message: string) => {
-    const userMessage: Message = { role: "user", content: message };
+  const handleSendFollowUp = (message: string, includeContext?: boolean) => {
+    let finalMessageContent = message;
+
+    if (includeContext) {
+      const pageText = document.body.innerText.substring(0, 15000);
+      finalMessageContent = `--- PAGE CONTEXT (First 15,000 chars) ---\n${pageText}\n--- END PAGE CONTEXT ---\n\nUser: ${message}`;
+    }
+
+    const userMessage: Message = { role: "user", content: finalMessageContent };
 
     const newMessages: Message[] = [...messages];
 
@@ -174,7 +261,7 @@ export const PromptlyOverlay: FC<PromptlyOverlayProps> = ({
       newMessages.push(
         {
           role: "user",
-          content: `${selectionData.llmFormattedText}\n\n${message}`,
+          content: `${selectionData.llmFormattedText}\n\n${finalMessageContent}`,
         },
         { role: "assistant", content: "" },
       );
@@ -239,7 +326,7 @@ export const PromptlyOverlay: FC<PromptlyOverlayProps> = ({
     runInference(lastInferenceRequest);
   };
 
-  const handleClearConversation = () => {
+    const handleClearConversation = () => {
     if (isLoading) {
       cancelInference();
     }
@@ -247,6 +334,7 @@ export const PromptlyOverlay: FC<PromptlyOverlayProps> = ({
     setHideFirstMessage(false);
     setActiveAction(null);
     setLastInferenceRequest(null);
+    chrome.storage.local.remove(["promptly_active_conversation", "promptly_last_inference_request"]);
   };
 
   const isLoading =
@@ -271,6 +359,17 @@ export const PromptlyOverlay: FC<PromptlyOverlayProps> = ({
       window.removeEventListener("keydown", handleKeyDown);
     };
   }, [inferenceState.status]);
+
+  
+  // Trigger initial action if provided
+  useEffect(() => {
+    if (initialActionId && actions.length > 0 && !activeAction && !messages.length) {
+      const actionToTrigger = actions.find((a) => {return a.id === initialActionId}) || actions[0];
+      if (actionToTrigger) {
+        handleActionSelect(actionToTrigger);
+      }
+    }
+  }, [initialActionId, actions, activeAction, messages.length]);
 
   return (
     <div
@@ -324,6 +423,9 @@ export const PromptlyOverlay: FC<PromptlyOverlayProps> = ({
             onRetryLatest={handleRetryLatest}
             onClearConversation={handleClearConversation}
             canRetry={Boolean(lastInferenceRequest)}
+            usage={inferenceState.usage}
+            startedAt={inferenceState.startedAt}
+            completedAt={inferenceState.status === 'complete' ? inferenceState.lastActivityAt : undefined}
           />
 
           <Flex wrap="wrap" gap="sm">

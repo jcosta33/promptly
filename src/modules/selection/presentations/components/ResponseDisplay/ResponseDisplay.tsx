@@ -2,12 +2,17 @@ import { useState, useRef, useEffect, KeyboardEvent, FC } from "react";
 import {
   PiCheckBold,
   PiArrowCounterClockwiseBold,
+  PiDownloadBold,
   PiCopyBold,
   PiPlayBold,
   PiPlayPauseBold,
   PiTrashBold,
   PiWarningBold,
   PiXCircleBold,
+  PiSpeakerHighBold,
+  PiSpeakerSlashBold,
+  PiMicrophoneBold,
+  PiMicrophoneSlashBold,
 } from "react-icons/pi";
 
 import { Box } from "$/components/Box/Box";
@@ -15,6 +20,7 @@ import { Button } from "$/components/Button/Button";
 import { Flex } from "$/components/Flex/Flex";
 import { Input } from "$/components/Input/Input";
 import { Markdown } from "$/components/Markdown/Markdown";
+import { Text } from "$/components/Text/Text";
 import { Message } from "$/modules/inference/models/inference_model";
 
 import styles from "./ResponseDisplay.module.css";
@@ -25,12 +31,15 @@ export type ResponseDisplayProps = {
   isLoading: boolean;
   isStalled: boolean;
   error?: string;
-  onSendFollowUp: (message: string) => void;
+  onSendFollowUp: (message: string, includeContext: boolean) => void;
   onStop: () => void;
   onCancel: () => void;
   onRetryLatest: () => void;
   onClearConversation: () => void;
   canRetry: boolean;
+  usage?: { prompt_tokens?: number; completion_tokens?: number; total_tokens?: number; };
+  startedAt?: number;
+  completedAt?: number;
 };
 
 type CopyStatus = "idle" | "copied" | "error";
@@ -50,9 +59,16 @@ export const ResponseDisplay: FC<ResponseDisplayProps> = ({
   onRetryLatest,
   onClearConversation,
   canRetry,
+  usage,
+  startedAt,
+  completedAt,
 }) => {
   const [followUpText, setFollowUpText] = useState("");
   const [copyStatus, setCopyStatus] = useState<CopyStatus>("idle");
+  const [isSpeaking, setIsSpeaking] = useState(false);
+  const [isListening, setIsListening] = useState(false);
+  const [includeContext, setIncludeContext] = useState(false);
+  const recognitionRef = useRef<any>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const latestAssistantMessage = messages.toReversed().find((message) => {
     return message.role === "assistant" && message.content.trim().length > 0;
@@ -79,7 +95,7 @@ export const ResponseDisplay: FC<ResponseDisplayProps> = ({
 
   const handleSubmit = () => {
     if (followUpText.trim() && !isLoading) {
-      onSendFollowUp(followUpText);
+      onSendFollowUp(followUpText, includeContext);
       setFollowUpText("");
     }
   };
@@ -92,7 +108,20 @@ export const ResponseDisplay: FC<ResponseDisplayProps> = ({
     onCancel();
   };
 
+  
+  const handleDownload = () => {
+    try {
+      const chatText = messages
+        .map((m) => {return `**${m.role === "user" ? "You" : "Promptly"}**:\n\n${m.content}`})
+        .join("\n\n---\n\n");
+      chrome.runtime.sendMessage({ type: "DOWNLOAD_MARKDOWN", payload: { text: chatText } });
+    } catch (e) {
+      console.error("Failed to trigger download:", e);
+    }
+  };
+
   const handleCopyLatestResponse = async () => {
+
     if (!latestAssistantMessage) {
       return;
     }
@@ -110,7 +139,99 @@ export const ResponseDisplay: FC<ResponseDisplayProps> = ({
     }
   };
 
+  // Cleanup speech on unmount
+  useEffect(() => {
+    return () => {
+      if (window.speechSynthesis.speaking) {
+        window.speechSynthesis.cancel();
+      }
+    };
+  }, []);
+
+  const handleToggleSpeech = () => {
+    if (!latestAssistantMessage) return;
+
+    if (isSpeaking) {
+      window.speechSynthesis.cancel();
+      setIsSpeaking(false);
+    } else {
+      // Basic markdown removal for speech
+      const textToSpeak = latestAssistantMessage.content.replace(/[*_#`]/g, '');
+      const utterance = new SpeechSynthesisUtterance(textToSpeak);
+      utterance.onend = () => {return setIsSpeaking(false)};
+      utterance.onerror = () => {return setIsSpeaking(false)};
+      window.speechSynthesis.speak(utterance);
+      setIsSpeaking(true);
+    }
+  };
+
+  // Setup Speech Recognition
+  useEffect(() => {
+    // @ts-ignore - Vendor prefixes
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (SpeechRecognition) {
+      const recognition = new SpeechRecognition();
+      recognition.continuous = true;
+      recognition.interimResults = true;
+
+      recognition.onresult = (event: any) => {
+        let finalTranscript = "";
+        for (let i = event.resultIndex; i < event.results.length; ++i) {
+          if (event.results[i].isFinal) {
+            finalTranscript += event.results[i][0].transcript;
+          }
+        }
+        if (finalTranscript) {
+          setFollowUpText((prev) => {return prev + (prev ? " " : "") + finalTranscript});
+        }
+      };
+
+      recognition.onerror = (event: any) => {
+        if (event.error === "not-allowed") {
+          alert("Microphone access blocked by the current website.");
+        }
+        setIsListening(false);
+      };
+
+      recognition.onend = () => {
+        setIsListening(false);
+      };
+
+      recognitionRef.current = recognition;
+    }
+
+    return () => {
+      if (recognitionRef.current) {
+        recognitionRef.current.stop();
+      }
+    };
+  }, []);
+
+  const handleToggleListening = () => {
+    if (isListening) {
+      recognitionRef.current?.stop();
+      setIsListening(false);
+    } else {
+      setFollowUpText(""); // Clear before dictating, or leave it. Let's just append.
+      recognitionRef.current?.start();
+      setIsListening(true);
+    }
+  };
+
+
+
+
+  const stabilizeMarkdown = (content: string, isLatest: boolean) => {
+    if (!isLoading || !isLatest || !content) return content;
+    const codeBlockCount = (content.match(/```/g) || []).length;
+    if (codeBlockCount % 2 !== 0) {
+      return content + "\n```";
+    }
+    return content;
+  };
+
   const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
+
     if (event.key === "Enter" && event.ctrlKey) {
       event.preventDefault();
       handleSubmit();
@@ -146,6 +267,17 @@ export const ResponseDisplay: FC<ResponseDisplayProps> = ({
             >
               <PiArrowCounterClockwiseBold />
             </Button>
+            
+            <Button
+              color="tertiary"
+              size="sm"
+              onClick={handleDownload}
+              aria-label="Download conversation"
+              title="Download conversation"
+              disabled={messages.length === 0}
+            >
+              <PiDownloadBold />
+            </Button>
             <Button
               color="tertiary"
               size="sm"
@@ -155,6 +287,20 @@ export const ResponseDisplay: FC<ResponseDisplayProps> = ({
             >
               <PiTrashBold />
             </Button>
+
+            
+            {canCopyLatestResponse ? (
+              <Button
+                color={isSpeaking ? "primary" : "tertiary"}
+                size="sm"
+                onClick={handleToggleSpeech}
+                title={isSpeaking ? "Stop speaking" : "Read aloud"}
+                aria-label={isSpeaking ? "Stop speaking" : "Read aloud"}
+              >
+                {isSpeaking ? <PiSpeakerSlashBold /> : <PiSpeakerHighBold />}
+              </Button>
+            ) : null}
+
             {canCopyLatestResponse ? (
               <Button
                 color={copyStatus === "error" ? "danger" : "tertiary"}
@@ -267,7 +413,7 @@ export const ResponseDisplay: FC<ResponseDisplayProps> = ({
                     </Box>
                   ) : msg.content ? (
                     <Markdown className={styles.message}>
-                      {msg.content}
+                      {stabilizeMarkdown(msg.content, index === 0)}
                     </Markdown>
                   ) : (
                     <span className={styles.thinking}>Thinking...</span>
@@ -292,11 +438,28 @@ export const ResponseDisplay: FC<ResponseDisplayProps> = ({
             )}
 
             <div ref={messagesEndRef} />
+
+        {usage && completedAt && startedAt && (
+          <Text size="xs" color="muted" style={{ textAlign: "right", marginTop: "4px" }}>
+            {usage.total_tokens} tokens • {((usage.completion_tokens || 0) / (Math.max(completedAt - startedAt, 1) / 1000)).toFixed(1)} tokens/sec
+          </Text>
+        )}
+
           </Box>
         </>
       ) : null}
 
       <Flex direction="row" gap="xs" className={styles.followUpContainer}>
+
+        <Button
+          color={isListening ? "danger" : "secondary"}
+          onClick={handleToggleListening}
+          aria-label={isListening ? "Stop dictation" : "Start dictation"}
+          disabled={!recognitionRef.current || isLoading}
+        >
+          {isListening ? <PiMicrophoneSlashBold /> : <PiMicrophoneBold />}
+        </Button>
+
         <Input
           placeholder="Ask a question..."
           value={followUpText}
@@ -324,6 +487,18 @@ export const ResponseDisplay: FC<ResponseDisplayProps> = ({
             <PiPlayBold />
           </Button>
         )}
+      </Flex>
+
+      <Flex direction="row" gap="xs" align="center" style={{ marginTop: '4px', justifyContent: 'flex-end' }}>
+        <input 
+          type="checkbox" 
+          id="include-context" 
+          checked={includeContext} 
+          onChange={(e) => setIncludeContext(e.target.checked)} 
+        />
+        <label htmlFor="include-context" style={{ cursor: "pointer", userSelect: "none" }}><Text size="xs" color="muted">
+          Include Page Context
+        </Text></label>
       </Flex>
     </>
   );

@@ -27,16 +27,20 @@ export default defineConfig({
   },
 
   manifest: {
-    name: "Promptly",
+    name: "__MSG_extensionName__",
+    default_locale: "en",
     description:
       "Select text on any website and analyze it using WebLLM models that run directly in your browser.",
 
-    // content_security_policy: {
-    //   extension_pages:
-    //     "style-src-elem 'self'; font-src 'self'; script-src 'self' 'wasm-unsafe-eval'; default-src 'self' data:; connect-src 'self' data: http://localhost:8000 https://huggingface.co https://cdn-lfs.huggingface.co https://cdn-lfs-us-1.huggingface.co https://raw.githubusercontent.com https://cdn-lfs-us-1.hf.co",
-    // },
+    ...(process.env.NODE_ENV === "production" ? {
+      content_security_policy: {
+        extension_pages:
+          "style-src-elem 'self'; font-src 'self'; script-src 'self' 'wasm-unsafe-eval'; default-src 'self' data:; connect-src 'self' data: http://localhost:8000 https://huggingface.co https://cdn-lfs.huggingface.co https://cdn-lfs-us-1.huggingface.co https://raw.githubusercontent.com https://cdn-lfs-us-1.hf.co",
+      }
+    } : {}),
 
-    permissions: ["storage", "tabs"],
+    permissions: ["storage", "tabs", "contextMenus", "offscreen"],
+    omnibox: { keyword: "promptly" },
     host_permissions: ["<all_urls>"],
     action: {
       default_popup: "popup/index.html",
