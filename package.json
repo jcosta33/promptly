@@ -36,6 +36,8 @@
     "idb": "^8.0.3",
     "katex": "^0.17.0",
     "pdfjs-dist": "^6.0.227",
+    "pyodide": "^314.0.0",
+    "quickjs-emscripten": "^0.32.0",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
     "react-highlight": "^0.15.0",

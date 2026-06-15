@@ -1,3 +1,6 @@
+import { loadPyodide } from "pyodide";
+import { getQuickJS } from "quickjs-emscripten";
+
 import {
   EventType,
   type ModelRuntimeStatus,
@@ -505,6 +508,8 @@ const processQueue = async () => {
       }
     } else if (item.type === EventType.TRANSCRIBE_AUDIO) {
       await handleTranscribeAudio(item);
+    } else if (item.type === EventType.EXECUTE_CODE) {
+      await handleExecuteCode(item);
     }
     } catch (err: any) {
       logger.error("Failed to process embedding queue item", err);
@@ -517,7 +522,7 @@ const processQueue = async () => {
 
 // Listen for embedding requests
 chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
-  if (message.type === EventType.PERFORM_KNOWLEDGE_SEARCH || message.type === EventType.GENERATE_EMBEDDING || message.type === EventType.TRANSCRIBE_AUDIO) {
+  if (message.type === EventType.PERFORM_KNOWLEDGE_SEARCH || message.type === EventType.GENERATE_EMBEDDING || message.type === EventType.TRANSCRIBE_AUDIO || message.type === EventType.EXECUTE_CODE) {
     const text = message.payload?.text;
     if (!text) {
       sendResponse({ error: "No text provided" });
@@ -558,6 +563,81 @@ const handleTranscribeAudio = async (item: QueueItem) => {
     item.sendResponse({ text: output.text });
   } catch (err: any) {
     logger.error("Failed to transcribe audio", err);
+    item.sendResponse({ error: err.message });
+  }
+};
+
+let pyodideInstance: any = null;
+
+const getPyodide = async () => {
+  if (!pyodideInstance) {
+    logger.log("Loading Pyodide...");
+    pyodideInstance = await loadPyodide({
+      indexURL: "https://cdn.jsdelivr.net/pyodide/v0.25.0/full/" // Load from CDN since it's large
+    });
+  }
+  return pyodideInstance;
+};
+
+const handleExecuteCode = async (item: QueueItem) => {
+  const { language, code } = item.payload;
+  try {
+    let output = "";
+    
+    if (language === "javascript" || language === "js") {
+      const QuickJS = await getQuickJS();
+      const vm = QuickJS.newContext();
+      
+      // Override console.log to capture output
+      let capturedOutput = "";
+      const logHandle = vm.newFunction("log", (...args: any[]) => {
+        const nativeArgs = args.map(vm.dump);
+        capturedOutput += nativeArgs.join(" ") + "\n";
+      });
+      const consoleHandle = vm.newObject();
+      vm.setProp(consoleHandle, "log", logHandle);
+      vm.setProp(vm.global, "console", consoleHandle);
+      
+      consoleHandle.dispose();
+      logHandle.dispose();
+
+      const result = vm.evalCode(code);
+      if (result.error) {
+        output = "Error: " + vm.dump(result.error);
+        result.error.dispose();
+      } else {
+        output = capturedOutput;
+        const resultValue = vm.dump(result.value);
+        if (resultValue !== undefined && resultValue !== "undefined") {
+          output += (output ? "\n" : "") + resultValue;
+        }
+        result.value.dispose();
+      }
+      vm.dispose();
+    } else if (language === "python" || language === "py") {
+      const pyodide = await getPyodide();
+      
+      // Redirect stdout
+      pyodide.runPython(`
+import sys
+import io
+sys.stdout = io.StringIO()
+      `);
+      
+      const result = await pyodide.runPythonAsync(code);
+      const stdout = pyodide.runPython("sys.stdout.getvalue()");
+      
+      output = stdout;
+      if (result !== undefined && result !== null) {
+        output += (output ? "\n" : "") + String(result);
+      }
+    } else {
+      throw new Error(`Unsupported language: ${language}`);
+    }
+
+    item.sendResponse({ output });
+  } catch (err: any) {
+    logger.error("Failed to execute code", err);
     item.sendResponse({ error: err.message });
   }
 };

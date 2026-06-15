@@ -1,6 +1,6 @@
 import { type FC, memo, useState } from "react";
 import Highlight from "react-highlight";
-import { PiCopyBold, PiCheckBold } from "react-icons/pi";
+import { PiCopyBold, PiCheckBold, PiPlayBold, PiSpinnerBold } from "react-icons/pi";
 import ReactMarkdown from "react-markdown";
 import rehypeSanitize, { defaultSchema } from "rehype-sanitize";
 
@@ -25,6 +25,39 @@ const CodeBlock = ({ className, children, ...props }: any) => {
   const codeText = String(children).trim();
   const isMultiLine = codeText.includes("\n");
   const [copied, setCopied] = useState(false);
+  const [executing, setExecuting] = useState(false);
+  const [output, setOutput] = useState<string | null>(null);
+  
+  // Try to determine language from className (e.g. language-python)
+  const languageMatch = /language-(\w+)/.exec(className || "");
+  const language = languageMatch ? languageMatch[1] : null;
+  const isExecutable = language === "python" || language === "javascript" || language === "js" || language === "py";
+
+  const handleExecute = () => {
+    if (!isExecutable) return;
+    setExecuting(true);
+    setOutput(null);
+
+    chrome.runtime.sendMessage(
+      {
+        type: "execute_code",
+        payload: {
+          language,
+          code: codeText,
+        },
+      },
+      (response) => {
+        setExecuting(false);
+        if (response && response.error) {
+          setOutput(`Error: ${response.error}`);
+        } else if (response && response.output !== undefined) {
+          setOutput(response.output || "Execution completed (no output).");
+        } else {
+          setOutput("Execution failed: Unknown error.");
+        }
+      }
+    );
+  };
 
   const handleCopy = async () => {
     try {
@@ -39,28 +72,69 @@ const CodeBlock = ({ className, children, ...props }: any) => {
   if (isMultiLine) {
     return (
       <div style={{ position: "relative" }}>
-        <button 
-          onClick={handleCopy}
-          aria-label="Copy code"
-          style={{
-            position: "absolute",
-            top: "8px",
-            right: "8px",
-            background: "rgba(255, 255, 255, 0.1)",
-            border: "none",
+        <div style={{ position: "absolute", top: "8px", right: "8px", display: "flex", gap: "8px", zIndex: 10 }}>
+          {isExecutable && (
+            <button 
+              onClick={handleExecute}
+              aria-label="Run code"
+              disabled={executing}
+              style={{
+                background: "var(--promptly-primary)",
+                border: "none",
+                borderRadius: "4px",
+                color: "var(--promptly-on-primary)",
+                cursor: executing ? "not-allowed" : "pointer",
+                padding: "4px 8px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: "4px",
+                fontSize: "12px",
+                fontWeight: "bold"
+              }}
+            >
+              {executing ? <PiSpinnerBold className="spin" /> : <PiPlayBold />}
+              {executing ? "Running..." : "Run"}
+            </button>
+          )}
+          <button 
+            onClick={handleCopy}
+            aria-label="Copy code"
+            style={{
+              background: "rgba(255, 255, 255, 0.1)",
+              border: "none",
+              borderRadius: "4px",
+              color: copied ? "#4ade80" : "#a1a1aa",
+              cursor: "pointer",
+              padding: "4px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            {copied ? <PiCheckBold /> : <PiCopyBold />}
+          </button>
+        </div>
+        <Highlight className={`markdownCodeBlock ${className || ""}`}>{codeText}</Highlight>
+        
+        {output !== null && (
+          <div style={{
+            marginTop: "8px",
+            background: "var(--promptly-bg-tertiary)",
+            color: "var(--promptly-text-primary)",
+            padding: "8px 12px",
             borderRadius: "4px",
-            color: copied ? "#4ade80" : "#a1a1aa",
-            cursor: "pointer",
-            padding: "4px",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            zIndex: 10
-          }}
-        >
-          {copied ? <PiCheckBold /> : <PiCopyBold />}
-        </button>
-        <Highlight className="markdownCodeBlock">{codeText}</Highlight>
+            fontSize: "13px",
+            fontFamily: "monospace",
+            whiteSpace: "pre-wrap",
+            borderLeft: "4px solid var(--promptly-primary)",
+            maxHeight: "200px",
+            overflowY: "auto"
+          }}>
+            <div style={{ fontSize: "11px", color: "var(--promptly-text-muted)", marginBottom: "4px", textTransform: "uppercase", fontWeight: "bold" }}>Output</div>
+            {output}
+          </div>
+        )}
       </div>
     );
   } else {
