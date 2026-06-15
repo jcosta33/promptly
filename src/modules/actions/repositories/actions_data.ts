@@ -28,6 +28,7 @@ import {
   PiMusicNoteSimple,
   PiSuitcaseSimple,
   PiBookOpenText,
+  PiImage,
 } from "react-icons/pi";
 
 import {
@@ -45,6 +46,18 @@ const ANY_CONTEXT = Object.values(SelectionContextType);
 const ANY_DATA = Object.values(SelectionDataType);
 
 export const PREDEFINED_ACTIONS: ActionDefinition[] = [
+  {
+    id: "generate_image",
+    name: "Generate Image",
+    description: "Generate an image using Stable Diffusion/ComfyUI",
+    contextTypes: ANY_CONTEXT,
+    dataTypes: ANY_DATA,
+    pageCategories: ALL_PAGE_CATEGORIES,
+    systemPrompt: "You are an image prompt engineer. Enhance the following description into a highly detailed Stable Diffusion prompt. Output ONLY the raw prompt string, no markdown, no quotes.",
+    userPrompt: "Generate an image prompt based on: {{selection}}",
+    llmParams: PARAMETER_PRESETS.CREATIVE,
+    icon: PiImage,
+  },
   {
     id: "define",
     name: "Define",

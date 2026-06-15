@@ -1,5 +1,7 @@
+import { Readability } from "@mozilla/readability";
+
 import { useState, useEffect, FC, useRef } from "react";
-import { PiXCircleBold, PiChatCircleTextBold, PiBrainBold } from "react-icons/pi";
+import { PiXCircleBold, PiChatCircleTextBold, PiBrainBold, PiChatCircleBold } from "react-icons/pi";
 
 import {
   Message,
@@ -202,6 +204,35 @@ export const PromptlyOverlay: FC<PromptlyOverlayProps> = ({
     setActiveAction(action);
     setHideFirstMessage(true);
 
+    if (action.id === "generate_image") {
+      try {
+        setMessages([
+          { role: "user", content: `Generate image: ${selectionData.text}` },
+          { role: "assistant", content: `[Generating Image...]` }
+        ]);
+        
+        chrome.runtime.sendMessage({
+          type: "generate_image",
+          payload: { prompt: selectionData.text }
+        }, (response) => {
+          if (response && response.b64_json) {
+            setMessages([
+              { role: "user", content: `Generate image: ${selectionData.text}` },
+              { role: "assistant", content: `![Generated Image](data:image/png;base64,${response.b64_json})` }
+            ]);
+          } else {
+             setMessages([
+              { role: "user", content: `Generate image: ${selectionData.text}` },
+              { role: "assistant", content: `Failed to generate image.` }
+            ]);
+          }
+        });
+      } catch(e) {
+        console.error(e);
+      }
+      return;
+    }
+
     const contextString = `Consider the following context when formulating your response:
                           --- CONTEXT ---
                             Page URL: ${selectionData.pageUrl}
@@ -251,7 +282,15 @@ export const PromptlyOverlay: FC<PromptlyOverlayProps> = ({
 
     if (includeContext) {
       // 1. Existing Page Context
-      const pageText = document.body.innerText.substring(0, 15000);
+            let pageText = "";
+      try {
+        const docClone = document.cloneNode(true) as Document;
+        const article = new Readability(docClone).parse();
+        pageText = article && article.textContent ? article.textContent : document.body.innerText;
+      } catch(e) {
+        pageText = document.body.innerText;
+      }
+      pageText = pageText.substring(0, 15000);
       finalMessageContent = `--- PAGE CONTEXT (First 15,000 chars) ---\n${pageText}\n--- END PAGE CONTEXT ---\n\nUser: ${message}`;
       
       // 2. Workspace Knowledge Base RAG
@@ -357,7 +396,15 @@ export const PromptlyOverlay: FC<PromptlyOverlayProps> = ({
   const handleSaveToBrain = async () => {
     setIsSavingBrain(true);
     try {
-      const pageText = document.body.innerText.substring(0, 100000); // Grab up to 100k chars of the document
+            let pageText = "";
+      try {
+        const docClone = document.cloneNode(true) as Document;
+        const article = new Readability(docClone).parse();
+        pageText = article && article.textContent ? article.textContent : document.body.innerText;
+      } catch(e) {
+        pageText = document.body.innerText;
+      }
+      pageText = pageText.substring(0, 100000); // Grab up to 100k chars of the document
       await chrome.runtime.sendMessage({
         type: "store_knowledge",
         payload: {
@@ -419,7 +466,32 @@ export const PromptlyOverlay: FC<PromptlyOverlayProps> = ({
     runInference(lastInferenceRequest);
   };
 
-    const handleClearConversation = () => {
+      const handleNewChat = () => {
+    if (isLoading) {
+      cancelInference();
+    }
+    
+    // Epic 111: Archive current chat before clearing
+    if (messages.length > 0) {
+      chrome.storage.local.get("promptly_sessions", (res) => {
+        const sessions: any[] = Array.isArray(res.promptly_sessions) ? res.promptly_sessions : [];
+        sessions.push({
+          id: Date.now().toString(),
+          timestamp: Date.now(),
+          messages: [...messages]
+        });
+        chrome.storage.local.set({ promptly_sessions: sessions });
+      });
+    }
+
+    setMessages([]);
+    setHideFirstMessage(false);
+    setActiveAction(null);
+    setLastInferenceRequest(null);
+    chrome.storage.local.remove(["promptly_active_conversation", "promptly_last_inference_request"]);
+  };
+
+  const handleClearConversation = () => {
     if (isLoading) {
       cancelInference();
     }
@@ -493,6 +565,16 @@ export const PromptlyOverlay: FC<PromptlyOverlayProps> = ({
               &quot;{selectionData.text.substring(0, 100)}
               {selectionData.text.length > 100 ? "..." : ""}&quot;
             </Text>
+            <Button
+              className={styles.closeButton}
+              color="tertiary"
+              size="sm"
+              onClick={handleNewChat}
+              aria-label="New Chat"
+              title="New Chat"
+            >
+              <PiChatCircleBold />
+            </Button>
             <Button
               className={styles.closeButton}
               color="tertiary"

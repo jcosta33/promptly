@@ -511,6 +511,30 @@ const processQueue = async () => {
       await handleTranscribeAudio(item);
     } else if (item.type === EventType.EXECUTE_CODE) {
       await handleExecuteCode(item);
+    } else if (item.type === EventType.GENERATE_IMAGE) {
+      try {
+        const settings = await get_settings();
+        const { prompt } = item.payload;
+        const response = await fetch(settings.imageGenerationEndpoint, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            prompt: prompt,
+            n: 1,
+            size: "512x512",
+            response_format: "b64_json"
+          })
+        });
+        const data = await response.json();
+        if (data.data && data.data.length > 0) {
+          item.sendResponse({ b64_json: data.data[0].b64_json });
+        } else {
+          item.sendResponse({ error: "Failed to generate image" });
+        }
+      } catch (err: any) {
+        logger.error("Image generation error", err);
+        item.sendResponse({ error: err.message });
+      }
     } else if (item.type === EventType.STORE_KNOWLEDGE) {
       const { filename, text } = item.payload;
       const chunks = chunkText(text, 300, 50);
@@ -534,7 +558,7 @@ const processQueue = async () => {
 
 // Listen for embedding requests
 chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
-  if (message.type === EventType.PERFORM_KNOWLEDGE_SEARCH || message.type === EventType.GENERATE_EMBEDDING || message.type === EventType.TRANSCRIBE_AUDIO || message.type === EventType.EXECUTE_CODE || message.type === EventType.STORE_KNOWLEDGE) {
+  if (message.type === EventType.PERFORM_KNOWLEDGE_SEARCH || message.type === EventType.GENERATE_EMBEDDING || message.type === EventType.TRANSCRIBE_AUDIO || message.type === EventType.EXECUTE_CODE || message.type === EventType.STORE_KNOWLEDGE || message.type === EventType.GENERATE_IMAGE) {
     const text = message.payload?.text;
     if (!text) {
       sendResponse({ error: "No text provided" });

@@ -14,9 +14,15 @@ importers:
       '@mlc-ai/web-llm':
         specifier: ^0.2.84
         version: 0.2.84
+      '@mozilla/readability':
+        specifier: ^0.6.0
+        version: 0.6.0
       '@tanstack/react-query':
         specifier: ^5.101.0
         version: 5.101.0(react@19.2.7)
+      '@types/mozilla-readability':
+        specifier: ^0.2.1
+        version: 0.2.1
       '@types/postcss-prefix-selector':
         specifier: ^1.16.3
         version: 1.16.3
@@ -576,6 +582,10 @@ packages:
 
   '@mlc-ai/web-llm@0.2.84':
     resolution: {integrity: sha512-hrOWzK4/nGNmgoRKT8pgVmZZ2oEPpbblIWQOwpqNyvK2dysHw3KVB1gNJOuRcQfKOPhucEhX1NJzXzgMDnwSCQ==}
+
+  '@mozilla/readability@0.6.0':
+    resolution: {integrity: sha512-juG5VWh4qAivzTAeMzvY9xs9HY5rAcr2E4I7tiSSCokRFi7XIZCAu92ZkSTsIj1OPceCifL3cpfteP3pDT9/QQ==}
+    engines: {node: '>=14.0.0'}
 
   '@napi-rs/canvas-android-arm64@1.0.0':
     resolution: {integrity: sha512-3hNKJObUK7JsCF9aJlVCs1J0/KE/gGfZNeK8MO1ge6bB3aicr5walGme9t9No1f/oyk9GgvdAT/rjSdsx3gbIw==}
@@ -1476,6 +1486,9 @@ packages:
 
   '@types/minimatch@3.0.5':
     resolution: {integrity: sha512-Klz949h02Gz2uZCMGwDUSDS1YBlTdDDgbWHi+81l29tQALUtvz4rAYi5uoVhE5Lagoq6DeqAUlbrHvW/mXDgdQ==}
+
+  '@types/mozilla-readability@0.2.1':
+    resolution: {integrity: sha512-RjLpe3MIpj53L+q50DTNlhv6KjHjgajFQwAF4KuxVZTa2+6Cs2UNAxS5awxABfZEHRYjGKeRDB21Zrtnsi911w==}
 
   '@types/ms@2.1.0':
     resolution: {integrity: sha512-GsCCIZDE/p3i96vtEqx+7dBUGXrc7zeSK3wwPHIaRThS+9OhWIXRqzs4d6k1SVU8g91DrNRWxWUGhp5KXQb2VA==}
@@ -5478,6 +5491,8 @@ snapshots:
     dependencies:
       loglevel: 1.9.2
 
+  '@mozilla/readability@0.6.0': {}
+
   '@napi-rs/canvas-android-arm64@1.0.0':
     optional: true
 
@@ -6205,6 +6220,8 @@ snapshots:
   '@types/mdx@2.0.14': {}
 
   '@types/minimatch@3.0.5': {}
+
+  '@types/mozilla-readability@0.2.1': {}
 
   '@types/ms@2.1.0': {}
 

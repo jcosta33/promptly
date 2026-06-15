@@ -110,6 +110,8 @@ export type ExtensionSettings = {
   customApiEndpoint: string;
   customApiKey: string;
   customApiModelId: string;
+  useImageGeneration: boolean;
+  imageGenerationEndpoint: string;
 };
 
 /**
@@ -133,4 +135,6 @@ export const DEFAULT_SETTINGS: ExtensionSettings = {
   customApiEndpoint: "https://api.openai.com/v1",
   customApiKey: "",
   customApiModelId: "gpt-3.5-turbo",
+  useImageGeneration: false,
+  imageGenerationEndpoint: "http://127.0.0.1:7860/v1/images/generations",
 };
