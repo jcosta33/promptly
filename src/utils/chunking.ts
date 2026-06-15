@@ -3,6 +3,7 @@ export const chunkText = (text: string, maxWords = 200, overlapWords = 50): stri
 
   // Remove excessive whitespace
   const cleanText = text.replace(/\s+/g, ' ').trim();
+  if (cleanText === '') return [];
   const words = cleanText.split(' ');
   
   if (words.length <= maxWords) {
