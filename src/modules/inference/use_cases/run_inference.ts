@@ -53,12 +53,15 @@ export async function run_inference(
             role: "user", // Must be user to satisfy WebLLM role alternation rules
             content: `[System Note: The oldest ${prunedCount} messages in this conversation have been summarized and archived to conserve context memory. Maintain continuity with the user.]`
         };
+        if (recentMessages.length > 0 && recentMessages[0].role === "user") {
+            recentMessages.shift();
+        }
         recentMessages = [summaryMessage, ...recentMessages];
-    }
-
-    // Ensure the array correctly alternates roles, starting with User
-    if (recentMessages.length > 0 && recentMessages[0].role === "assistant") {
-      recentMessages.shift(); // Remove the leading assistant message
+    } else {
+        // Ensure the array correctly alternates roles, starting with User
+        if (recentMessages.length > 0 && recentMessages[0].role === "assistant") {
+          recentMessages.shift(); // Remove the leading assistant message
+        }
     }
 
     truncatedMessages = hasSystem && systemMessage ? [systemMessage, ...recentMessages] : recentMessages;
