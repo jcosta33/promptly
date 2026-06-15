@@ -189,18 +189,19 @@ export const PromptlyOverlay: FC<PromptlyOverlayProps> = ({
 
 
 
-  let actions: ActionDefinition[] = [];
+  const actions = useMemo(() => {
+    if (pageContext && selectionData) {
+      const predefinedActions = get_applicable_actions({
+        contextTypes: selectionData.contextTypes,
+        dataTypes: selectionData.dataTypes,
+        pageCategory: pageContext.category,
+      });
+      return [...predefinedActions, ...customActions];
+    }
+    return [];
+  }, [pageContext, selectionData, customActions]);
 
-  if (pageContext && selectionData) {
-    const predefinedActions = get_applicable_actions({
-      contextTypes: selectionData.contextTypes,
-      dataTypes: selectionData.dataTypes,
-      pageCategory: pageContext.category,
-    });
-    actions = [...predefinedActions, ...customActions];
-  }
-
-  const handleActionSelect = async (action: ActionDefinition) => {
+  const handleActionSelect = useCallback(async (action: ActionDefinition) => {
     setActiveAction(action);
     setHideFirstMessage(true);
 
@@ -275,7 +276,7 @@ export const PromptlyOverlay: FC<PromptlyOverlayProps> = ({
       setLastInferenceRequest(request);
       runInference(request);
     }
-  };
+  }, [selectionData, pageContext, runInference]);
 
   const handleSendFollowUp = async (message: string, includeContext?: boolean, performWebSearch?: boolean, imageUri?: string) => {
     let finalMessageContent = message;
@@ -441,7 +442,7 @@ export const PromptlyOverlay: FC<PromptlyOverlayProps> = ({
     });
   };
 
-  const handleClose = () => {
+  const handleClose = useCallback(() => {
     if (
       inferenceState.status === "streaming" ||
       inferenceState.status === "loading"
@@ -450,7 +451,7 @@ export const PromptlyOverlay: FC<PromptlyOverlayProps> = ({
     }
     setMessages([]);
     onClose();
-  };
+  }, [inferenceState.status, cancelInference, onClose]);
 
   const handleRetryLatest = () => {
     if (!lastInferenceRequest) {
@@ -525,7 +526,7 @@ export const PromptlyOverlay: FC<PromptlyOverlayProps> = ({
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [inferenceState.status]);
+  }, [inferenceState.status, handleClose]);
 
   
   // Trigger initial action if provided
@@ -536,7 +537,7 @@ export const PromptlyOverlay: FC<PromptlyOverlayProps> = ({
         handleActionSelect(actionToTrigger);
       }
     }
-  }, [initialActionId, actions, activeAction, messages.length]);
+  }, [initialActionId, actions, activeAction, messages.length, handleActionSelect]);
 
   return (
     <div

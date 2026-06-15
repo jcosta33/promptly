@@ -53,7 +53,7 @@ export const useDraggable = ({ handleRef }: UseDraggableOptions) => {
       on_drag_move: handleDragMove,
       on_drag_end: handleDragEnd,
     });
-  }, []);
+  }, [handleRef]);
 
   return {
     position,
