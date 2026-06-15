@@ -305,6 +305,25 @@ export const AVAILABLE_MODELS = {
   ],
   "Llama 3.2": [
     {
+      name: "Llama-3.2-11B-Vision-Instruct-q4f16_1-MLC",
+      display_name: "Llama 3.2 11B Vision Instruct (4-bit)",
+      provider: "Meta",
+      family: "llama",
+      version: "3.2",
+      parameter_count: "11B",
+      quantization: "q4f16_1",
+      precision: "4-bit float16 hybrid",
+      model_type: "instruct",
+      recommended_config: {
+        temperature: 0.6,
+        top_p: 0.9,
+      },
+      memory_requirements: "≈10 GB VRAM",
+      huggingface_link: "https://huggingface.co/mlc-ai/Llama-3.2-11B-Vision-Instruct-q4f16_1-MLC",
+      tags: ["vision", "multimodal", "high-accuracy"],
+      short_description: "Llama 3.2 11B Vision model. Requires accepting Meta's terms on HuggingFace."
+    },
+    {
       name: "Llama-3.2-1B-Instruct-q4f16_1-MLC",
       display_name: "Llama 3.2 1B Instruct (4-bit)",
       provider: "Community",
