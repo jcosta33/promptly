@@ -211,6 +211,7 @@ export const PromptlyOverlay: FC<PromptlyOverlayProps> = ({
           { role: "assistant", content: `[Generating Image...]` }
         ]);
         
+        await chrome.runtime.sendMessage({ type: "WAKE_UP_OFFSCREEN" });
         chrome.runtime.sendMessage({
           type: "generate_image",
           payload: { prompt: selectionData.text }
@@ -405,6 +406,7 @@ export const PromptlyOverlay: FC<PromptlyOverlayProps> = ({
         pageText = document.body.innerText;
       }
       pageText = pageText.substring(0, 100000); // Grab up to 100k chars of the document
+      await chrome.runtime.sendMessage({ type: "WAKE_UP_OFFSCREEN" });
       await chrome.runtime.sendMessage({
         type: "store_knowledge",
         payload: {

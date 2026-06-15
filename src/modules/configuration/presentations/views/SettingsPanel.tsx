@@ -528,6 +528,7 @@ export const SettingsPanel: FC = () => {
                   text = await file.text();
                 }
                 
+                await chrome.runtime.sendMessage({ type: "WAKE_UP_OFFSCREEN" });
                 const chunks = chunkText(text, 300, 50);
                 
                 for (const chunk of chunks) {
