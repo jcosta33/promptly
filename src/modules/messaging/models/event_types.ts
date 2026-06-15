@@ -39,6 +39,7 @@ export const EventType = {
   GENERATE_EMBEDDING: "generate_embedding",
   PERFORM_KNOWLEDGE_SEARCH: "perform_knowledge_search",
   DOWNLOAD_FILE: "download_file",
+  TRANSCRIBE_AUDIO: "transcribe_audio",
 } as const;
 
 export type EventType = (typeof EventType)[keyof typeof EventType];

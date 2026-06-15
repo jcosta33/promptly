@@ -113,7 +113,7 @@ export const ResponseDisplay: FC<ResponseDisplayProps> = ({
     };
     reader.readAsDataURL(file);
   };
-  const recognitionRef = useRef<any>(null);
+  
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const latestAssistantMessage = messages.toReversed().find((message) => {
     return message.role === "assistant" && getMessageString(message.content).trim().length > 0;
@@ -211,61 +211,78 @@ export const ResponseDisplay: FC<ResponseDisplayProps> = ({
     }
   };
 
-  // Setup Speech Recognition
+  // Setup Whisper WebGPU Web Audio API Recorder
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const audioChunksRef = useRef<Blob[]>([]);
+  const audioContextRef = useRef<AudioContext | null>(null);
+
   useEffect(() => {
-    // @ts-ignore - Vendor prefixes
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (SpeechRecognition) {
-      const recognition = new SpeechRecognition();
-      recognition.continuous = true;
-      recognition.interimResults = true;
-
-      recognition.onresult = (event: any) => {
-        let finalTranscript = "";
-        for (let i = event.resultIndex; i < event.results.length; ++i) {
-          if (event.results[i].isFinal) {
-            finalTranscript += event.results[i][0].transcript;
-          }
-        }
-        if (finalTranscript) {
-          setFollowUpText((prev) => {return prev + (prev ? " " : "") + finalTranscript});
-        }
-      };
-
-      recognition.onerror = (event: any) => {
-        if (event.error === "not-allowed") {
-          alert("Microphone access blocked by the current website.");
-        }
-        setIsListening(false);
-      };
-
-      recognition.onend = () => {
-        setIsListening(false);
-      };
-
-      recognitionRef.current = recognition;
-    }
-
     return () => {
-      if (recognitionRef.current) {
-        recognitionRef.current.stop();
+      if (mediaRecorderRef.current) {
+        mediaRecorderRef.current.stop();
+        mediaRecorderRef.current.stream.getTracks().forEach(track => track.stop());
       }
     };
   }, []);
 
-  const handleToggleListening = () => {
+  const handleToggleListening = async () => {
     if (isListening) {
-      recognitionRef.current?.stop();
+      if (mediaRecorderRef.current) {
+        mediaRecorderRef.current.stop();
+        mediaRecorderRef.current.stream.getTracks().forEach(track => track.stop());
+      }
       setIsListening(false);
     } else {
-      setFollowUpText(""); // Clear before dictating, or leave it. Let's just append.
-      recognitionRef.current?.start();
-      setIsListening(true);
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        const mediaRecorder = new MediaRecorder(stream);
+        mediaRecorderRef.current = mediaRecorder;
+        audioChunksRef.current = [];
+
+        mediaRecorder.ondataavailable = (e) => {
+          if (e.data.size > 0) audioChunksRef.current.push(e.data);
+        };
+
+        mediaRecorder.onstop = async () => {
+          const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
+          
+          try {
+            if (!audioContextRef.current) {
+              audioContextRef.current = new AudioContext({ sampleRate: 16000 });
+            }
+            const arrayBuffer = await audioBlob.arrayBuffer();
+            const audioBuffer = await audioContextRef.current.decodeAudioData(arrayBuffer);
+            const float32Array = audioBuffer.getChannelData(0);
+            
+            setFollowUpText((prev) => (prev ? prev + " [Transcribing...]" : "[Transcribing...]"));
+
+            chrome.runtime.sendMessage(
+              { 
+                type: "transcribe_audio", 
+                payload: { audioData: Array.from(float32Array) } 
+              },
+              (response) => {
+                setFollowUpText((prev) => prev.replace(" [Transcribing...]", "").replace("[Transcribing...]", ""));
+                if (response && response.text) {
+                  setFollowUpText((prev) => (prev ? prev + " " + response.text.trim() : response.text.trim()));
+                } else if (response && response.error) {
+                  console.error("Transcription error:", response.error);
+                }
+              }
+            );
+          } catch (error) {
+            console.error("Error processing audio:", error);
+            setFollowUpText((prev) => prev.replace(" [Transcribing...]", "").replace("[Transcribing...]", ""));
+          }
+        };
+
+        mediaRecorder.start();
+        setIsListening(true);
+      } catch (err) {
+        console.error("Microphone access denied:", err);
+      }
     }
   };
-
-
-
 
   const stabilizeMarkdown = (content: string, isLatest: boolean) => {
     if (!isLoading || !isLatest || !content) return content;
@@ -520,7 +537,7 @@ export const ResponseDisplay: FC<ResponseDisplayProps> = ({
           color={isListening ? "danger" : "secondary"}
           onClick={handleToggleListening}
           aria-label={isListening ? "Stop dictation" : "Start dictation"}
-          disabled={!recognitionRef.current || isLoading}
+          disabled={isLoading}
         >
           {isListening ? <PiMicrophoneSlashBold /> : <PiMicrophoneBold />}
         </Button>

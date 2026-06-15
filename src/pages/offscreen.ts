@@ -474,7 +474,8 @@ const getExtractor = async () => {
 // Embedding Queue to prevent WebGPU OOM
 interface QueueItem {
   type: EventType;
-  text: string;
+  text?: string;
+  payload?: any;
   sendResponse: (response: any) => void;
 }
 
@@ -490,6 +491,7 @@ const processQueue = async () => {
     if (!item) continue;
 
     try {
+      if (item.type === EventType.PERFORM_KNOWLEDGE_SEARCH || item.type === EventType.GENERATE_EMBEDDING) {
       const extract = await getExtractor();
       const output = await extract(item.text, { pooling: 'mean', normalize: true });
       const embeddingArray = Array.from(output.data) as number[];
@@ -501,6 +503,9 @@ const processQueue = async () => {
       } else if (item.type === EventType.GENERATE_EMBEDDING) {
         item.sendResponse({ embedding: embeddingArray });
       }
+    } else if (item.type === EventType.TRANSCRIBE_AUDIO) {
+      await handleTranscribeAudio(item);
+    }
     } catch (err: any) {
       logger.error("Failed to process embedding queue item", err);
       item.sendResponse({ error: err.message });
@@ -512,7 +517,7 @@ const processQueue = async () => {
 
 // Listen for embedding requests
 chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
-  if (message.type === EventType.PERFORM_KNOWLEDGE_SEARCH || message.type === EventType.GENERATE_EMBEDDING) {
+  if (message.type === EventType.PERFORM_KNOWLEDGE_SEARCH || message.type === EventType.GENERATE_EMBEDDING || message.type === EventType.TRANSCRIBE_AUDIO) {
     const text = message.payload?.text;
     if (!text) {
       sendResponse({ error: "No text provided" });
@@ -521,7 +526,8 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
 
     embeddingQueue.push({
       type: message.type,
-      text,
+      text: message.payload?.text,
+      payload: message.payload,
       sendResponse
     });
     
@@ -529,3 +535,29 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
     return true; // Keep the message channel open for async response
   }
 });
+
+let transcriber: any = null;
+
+const getTranscriber = async () => {
+  if (!transcriber) {
+    logger.log("Loading Xenova Whisper transcriber...");
+    transcriber = await pipeline('automatic-speech-recognition', 'Xenova/whisper-tiny.en', {
+      quantized: true,
+    });
+  }
+  return transcriber;
+};
+
+// Add to processQueue
+const handleTranscribeAudio = async (item: QueueItem) => {
+  try {
+    const t = await getTranscriber();
+    // Float32Array comes as a regular array in the message payload or Float32Array directly
+    const audioData = new Float32Array(item.payload.audioData);
+    const output = await t(audioData);
+    item.sendResponse({ text: output.text });
+  } catch (err: any) {
+    logger.error("Failed to transcribe audio", err);
+    item.sendResponse({ error: err.message });
+  }
+};
