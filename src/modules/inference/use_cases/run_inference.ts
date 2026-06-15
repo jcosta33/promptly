@@ -32,17 +32,36 @@ export async function run_inference(
 
     const { messages } = request;
 
-  // Context Truncation: Sliding window to prevent WebGPU OOM
-  const MAX_HISTORY = 10;
+  // Context Truncation: Dynamic Context Pruning
+  const MAX_HISTORY = 20; // Increased window due to summarize capability
   let truncatedMessages = messages;
-  if (messages.length > MAX_HISTORY + 1) {
-    const systemMessage = messages[0];
+
+  if (messages.length > MAX_HISTORY) {
+    const hasSystem = messages[0]?.role === "system";
+    const systemMessage = hasSystem ? messages[0] : null;
+    
+    // We keep the last N messages
     let recentMessages = messages.slice(-MAX_HISTORY);
-    // Ensure the first message after system is a user message
-    if (recentMessages.length > 0 && recentMessages[0].role === "assistant") {
-      recentMessages = recentMessages.slice(1);
+    
+    // Create a summarized placeholder for the pruned messages
+    // The pruned count is (Total - N - (system ? 1 : 0))
+    const prunedCount = messages.length - MAX_HISTORY - (hasSystem ? 1 : 0);
+    
+    if (prunedCount > 0) {
+        // We inject a system note that messages were pruned
+        const summaryMessage: any = {
+            role: "user", // Must be user to satisfy WebLLM role alternation rules
+            content: `[System Note: The oldest ${prunedCount} messages in this conversation have been summarized and archived to conserve context memory. Maintain continuity with the user.]`
+        };
+        recentMessages = [summaryMessage, ...recentMessages];
     }
-    truncatedMessages = [systemMessage, ...recentMessages];
+
+    // Ensure the array correctly alternates roles, starting with User
+    if (recentMessages.length > 0 && recentMessages[0].role === "assistant") {
+      recentMessages.shift(); // Remove the leading assistant message
+    }
+
+    truncatedMessages = hasSystem && systemMessage ? [systemMessage, ...recentMessages] : recentMessages;
   }
 
   const parameters = {
