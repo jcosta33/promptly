@@ -304,7 +304,6 @@ export const SettingsPanel: FC = () => {
 
   useEffect(() => {
     fetchKnowledgeMetadata();
-    calculateStorage();
   }, []);
 
   const handleDeleteKnowledge = async (filename: string) => {
@@ -339,7 +338,6 @@ export const SettingsPanel: FC = () => {
   };
 
   useEffect(() => {
-    calculateStorage();
   }, []);
 
   const handleClearCaches = async () => {
@@ -437,7 +435,7 @@ export const SettingsPanel: FC = () => {
 
         <Flex direction="column" gap="xs">
           <Text size="sm" color="muted">
-            Local LLM weights are stored in the browser's CacheStorage.
+            Local LLM weights are stored in the browser&apos;s CacheStorage.
           </Text>
           <Flex justify="between" align="center">
             <Text size="sm">
@@ -510,8 +508,7 @@ export const SettingsPanel: FC = () => {
               const files = e.target.files;
               if (!files) return;
               
-              for (let i = 0; i < files.length; i++) {
-                const file = files[i];
+              for (const file of Array.from(files)) {
                 let text = "";
 
                 if (file.name.endsWith('.pdf')) {

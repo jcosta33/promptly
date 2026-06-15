@@ -4,6 +4,25 @@ export const AVAILABLE_MODELS = {
 
   "DeepSeek": [
     {
+      name: "DeepSeek-R1-Distill-Llama-70B-q3f16_1-MLC",
+      display_name: "DeepSeek R1 Distill Llama 70B (3-bit)",
+      provider: "DeepSeek",
+      family: "DeepSeek",
+      version: "R1",
+      parameter_count: "70B",
+      quantization: "q3f16_1",
+      precision: "3-bit float16 hybrid",
+      model_type: "instruct",
+      recommended_config: {
+        temperature: 0.6,
+        top_p: 0.95,
+      },
+      memory_requirements: "≈35 GB VRAM",
+      huggingface_link: "https://huggingface.co/mlc-ai/DeepSeek-R1-Distill-Llama-70B-q3f16_1-MLC",
+      tags: ["high-accuracy", "reasoning", "heavy"],
+      short_description: "DeepSeek's powerful reasoning model distilled into the Llama 70B architecture."
+    },
+    {
       name: "DeepSeek-R1-Distill-Llama-8B-q4f16_1-MLC",
       display_name: "DeepSeek R1 Distill Llama 8B (4-bit)",
       provider: "DeepSeek",
@@ -263,6 +282,27 @@ export const AVAILABLE_MODELS = {
     },
   ],
 
+  "Llama 3.3": [
+    {
+      name: "Llama-3.3-70B-Instruct-q4f16_1-MLC",
+      display_name: "Llama 3.3 70B Instruct (4-bit)",
+      provider: "Meta",
+      family: "llama",
+      version: "3.3",
+      parameter_count: "70B",
+      quantization: "q4f16_1",
+      precision: "4-bit float16 hybrid",
+      model_type: "instruct",
+      recommended_config: {
+        temperature: 0.6,
+        top_p: 0.9,
+      },
+      memory_requirements: "≈40 GB VRAM",
+      huggingface_link: "https://huggingface.co/mlc-ai/Llama-3.3-70B-Instruct-q4f16_1-MLC",
+      tags: ["high-accuracy", "instruction-following", "heavy"],
+      short_description: "The absolute state of the art Llama 3.3 model from Meta. Requires immense VRAM."
+    },
+  ],
   "Llama 3.2": [
     {
       name: "Llama-3.2-1B-Instruct-q4f16_1-MLC",
@@ -946,6 +986,25 @@ export const AVAILABLE_MODELS = {
   ],
 
   "Qwen 2.5": [
+    {
+      name: "Qwen2.5-32B-Instruct-q4f16_1-MLC",
+      display_name: "Qwen 2.5 32B Instruct (4-bit)",
+      provider: "Alibaba",
+      family: "qwen",
+      version: "2.5",
+      parameter_count: "32B",
+      quantization: "q4f16_1",
+      precision: "4-bit float16 hybrid",
+      model_type: "instruct",
+      recommended_config: {
+        temperature: 0.7,
+        top_p: 0.8,
+      },
+      memory_requirements: "≈20 GB VRAM",
+      huggingface_link: "https://huggingface.co/mlc-ai/Qwen2.5-32B-Instruct-q4f16_1-MLC",
+      tags: ["high-accuracy", "coding", "fast"],
+      short_description: "Massive 32B parameter model from Qwen with exceptional coding abilities."
+    },
     {
       name: "Qwen2.5-3B-Instruct-q4f16_1-MLC",
       display_name: "Qwen 2.5 3B Instruct (4-bit)",

@@ -314,6 +314,7 @@ export type ModelGroupName =
   | "Llama 3"
   | "Llama 3.1"
   | "Llama 3.2"
+  | "Llama 3.3"
   | "Phi 1.5"
   | "Phi 2"
   | "Phi 3"
