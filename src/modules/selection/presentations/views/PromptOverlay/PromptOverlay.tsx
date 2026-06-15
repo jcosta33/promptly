@@ -1,5 +1,5 @@
 import { useState, useEffect, FC, useRef } from "react";
-import { PiXCircleBold, PiChatCircleTextBold } from "react-icons/pi";
+import { PiXCircleBold, PiChatCircleTextBold, PiBrainBold } from "react-icons/pi";
 
 import {
   Message,
@@ -351,6 +351,29 @@ export const PromptlyOverlay: FC<PromptlyOverlayProps> = ({
   };
 
 
+  
+  const [isSavingBrain, setIsSavingBrain] = useState(false);
+  
+  const handleSaveToBrain = async () => {
+    setIsSavingBrain(true);
+    try {
+      const pageText = document.body.innerText.substring(0, 100000); // Grab up to 100k chars of the document
+      await chrome.runtime.sendMessage({
+        type: "store_knowledge",
+        payload: {
+          filename: selectionData.pageTitle || document.title || "Web Page",
+          text: pageText
+        }
+      });
+      alert("Saved to Brain!");
+    } catch (err) {
+      console.error(err);
+      alert("Failed to save to brain.");
+    } finally {
+      setIsSavingBrain(false);
+    }
+  };
+
   const handleExport = () => {
     let mdContent = `# Promptly Chat Export\n\n`;
     messages.forEach(msg => {
@@ -470,6 +493,17 @@ export const PromptlyOverlay: FC<PromptlyOverlayProps> = ({
               &quot;{selectionData.text.substring(0, 100)}
               {selectionData.text.length > 100 ? "..." : ""}&quot;
             </Text>
+            <Button
+              className={styles.closeButton}
+              color="tertiary"
+              size="sm"
+              onClick={handleSaveToBrain}
+              disabled={isSavingBrain}
+              aria-label="Save to Brain"
+              title="Save to Brain"
+            >
+              <PiBrainBold />
+            </Button>
             <Button
               className={styles.closeButton}
               color="tertiary"

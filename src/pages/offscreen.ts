@@ -12,7 +12,8 @@ import type { Message } from "../modules/inference/models/inference_model";
 import { get_settings } from "../modules/configuration/use_cases/get_settings";
 import { MLCEngine } from "@mlc-ai/web-llm";
 import { generate_text_stream } from "../modules/inference/repositories/generate_text_stream";
-import { semanticKnowledgeSearch, KnowledgeRecord } from "../modules/history/repositories/vector_db";
+import { semanticKnowledgeSearch, KnowledgeRecord, storeKnowledgeEmbedding } from "../modules/history/repositories/vector_db";
+import { chunkText } from "../utils/chunking";
 import { logger } from "../utils/logger";
 
 
@@ -510,7 +511,18 @@ const processQueue = async () => {
       await handleTranscribeAudio(item);
     } else if (item.type === EventType.EXECUTE_CODE) {
       await handleExecuteCode(item);
+    } else if (item.type === EventType.STORE_KNOWLEDGE) {
+      const { filename, text } = item.payload;
+      const chunks = chunkText(text, 300, 50);
+      const extract = await getExtractor();
+      for (const chunk of chunks) {
+        const output = await extract(chunk, { pooling: 'mean', normalize: true });
+        const embeddingArray = Array.from(output.data) as number[];
+        await storeKnowledgeEmbedding(filename, chunk, embeddingArray);
+      }
+      item.sendResponse({ success: true });
     }
+    
     } catch (err: any) {
       logger.error("Failed to process embedding queue item", err);
       item.sendResponse({ error: err.message });
@@ -522,7 +534,7 @@ const processQueue = async () => {
 
 // Listen for embedding requests
 chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
-  if (message.type === EventType.PERFORM_KNOWLEDGE_SEARCH || message.type === EventType.GENERATE_EMBEDDING || message.type === EventType.TRANSCRIBE_AUDIO || message.type === EventType.EXECUTE_CODE) {
+  if (message.type === EventType.PERFORM_KNOWLEDGE_SEARCH || message.type === EventType.GENERATE_EMBEDDING || message.type === EventType.TRANSCRIBE_AUDIO || message.type === EventType.EXECUTE_CODE || message.type === EventType.STORE_KNOWLEDGE) {
     const text = message.payload?.text;
     if (!text) {
       sendResponse({ error: "No text provided" });

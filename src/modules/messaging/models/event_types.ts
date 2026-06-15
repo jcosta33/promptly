@@ -41,6 +41,7 @@ export const EventType = {
   DOWNLOAD_FILE: "download_file",
   TRANSCRIBE_AUDIO: "transcribe_audio",
   EXECUTE_CODE: "execute_code",
+  STORE_KNOWLEDGE: "store_knowledge",
 } as const;
 
 export type EventType = (typeof EventType)[keyof typeof EventType];
