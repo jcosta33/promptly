@@ -2,10 +2,17 @@ const LOG_PREFIX = "[Promptly]";
 
 type LogLevel = "log" | "warn" | "error" | "info" | "debug";
 
-const isDebugMode = true; // Or: process.env.NODE_ENV !== 'production';
+// `warn` and `error` always surface; `log`/`info`/`debug` are verbose and only
+// emit in dev builds. `import.meta.env.DEV` is true under `wxt`/vitest and
+// false in production builds, so debug traffic (selection payloads, event-bus
+// messages, mousemove logs) never reaches a published console.
+function isVerboseEnabled(): boolean {
+  return import.meta.env.DEV;
+}
 
 function logInternal(level: LogLevel, ...args: any[]): void {
-  if (!isDebugMode) {
+  const isAlwaysOn = level === "error" || level === "warn";
+  if (!isAlwaysOn && !isVerboseEnabled()) {
     return;
   }
 
@@ -13,7 +20,7 @@ function logInternal(level: LogLevel, ...args: any[]): void {
   const levelIndicator = level.toUpperCase();
   const consoleMethod = console[level] || console.log;
 
-  if (level === "error" || level === "warn") {
+  if (isAlwaysOn) {
     consoleMethod(`${LOG_PREFIX} ${timestamp} [${levelIndicator}]`, ...args);
   } else {
     console.groupCollapsed(
