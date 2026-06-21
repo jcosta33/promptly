@@ -60,11 +60,15 @@ export function subscribe<TPayload = unknown>(
 }
 
 /**
- * Publish an event
+ * Publish an event. The payload type is tied to the event type via
+ * `PayloadForEvent`, so the payload is checked against the event's mapped
+ * payload at the call site (no cast needed). Events without an explicit entry
+ * in `EventPayloadMap` resolve to `DefaultPayload` through the map's index
+ * signature.
  */
-export async function publish<TPayload = unknown>(
-  eventType: EventType,
-  payload: TPayload,
+export async function publish<TEventType extends EventType>(
+  eventType: TEventType,
+  payload: PayloadForEvent<TEventType>,
   tabId?: number,
   frameId?: number,
 ): Promise<any> {

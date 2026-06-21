@@ -21,7 +21,7 @@ export default defineBackground(() => {
       const onboardingUrl = chrome.runtime.getURL("onboarding.html") + "?q=" + encodeURIComponent(text);
       chrome.tabs.create({ url: onboardingUrl });
     } else if (tab?.id) {
-      publish(EventType.OMNIBOX_INPUT as any, { text }, tab.id);
+      publish(EventType.OMNIBOX_INPUT, { text }, tab.id);
     }
   });
 
@@ -118,7 +118,7 @@ export default defineBackground(() => {
       actionId = info.menuItemId.toString();
     }
     
-    publish(EventType.TRIGGER_CONTEXT_ACTION as any, { actionId }, tab.id);
+    publish(EventType.TRIGGER_CONTEXT_ACTION, { actionId }, tab.id);
   });
 
   chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {

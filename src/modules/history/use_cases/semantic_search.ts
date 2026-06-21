@@ -6,8 +6,8 @@ import { logger } from '../../../utils/logger';
 export const performSemanticSearch = async (query: string, limit = 5): Promise<VectorRecord[]> => {
   try {
     // 1. Get embedding for the query from the background/offscreen engine
-    const response = await publish<{ text: string }>(
-      'GENERATE_EMBEDDING' as EventType,
+    const response = await publish(
+      EventType.GENERATE_EMBEDDING,
       { text: query }
     );
 
