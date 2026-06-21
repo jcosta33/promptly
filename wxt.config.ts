@@ -39,7 +39,7 @@ export default defineConfig({
       }
     } : {}),
 
-    permissions: ["storage", "tabs", "contextMenus", "offscreen"],
+    permissions: ["storage", "tabs", "contextMenus", "offscreen", "downloads"],
     omnibox: { keyword: "promptly" },
     host_permissions: ["<all_urls>"],
     action: {
