@@ -37,4 +37,42 @@ describe('chunkText', () => {
     const chunks = chunkText(text, 10, 2);
     expect(chunks[0]).toBe('This has too much space.');
   });
+
+  it('should leave valid-input output unchanged (overlap < maxWords)', () => {
+    // 12 distinct words so chunk boundaries are observable and exact.
+    const text = 'w0 w1 w2 w3 w4 w5 w6 w7 w8 w9 w10 w11';
+    // step = max(1, 5 - 2) = 3 (the clamp is a no-op here).
+    // i=0 -> w0..w4 ; i=3 -> w3..w7 ; i=6 -> w6..w10 ; i=9 -> w9..w11
+    expect(chunkText(text, 5, 2)).toEqual([
+      'w0 w1 w2 w3 w4',
+      'w3 w4 w5 w6 w7',
+      'w6 w7 w8 w9 w10',
+      'w9 w10 w11',
+    ]);
+  });
+
+  it('should terminate and cover the input when overlapWords === maxWords', () => {
+    const text = 'w0 w1 w2 w3 w4 w5';
+    // Without the clamp the step would be 0 and the loop would never end.
+    const chunks = chunkText(text, 3, 3);
+    // step = max(1, 3 - 3) = 1: i=0 -> w0..w2 ; i=1 -> w1..w3 ; ... ; i=5 -> w5
+    expect(chunks).toEqual([
+      'w0 w1 w2',
+      'w1 w2 w3',
+      'w2 w3 w4',
+      'w3 w4 w5',
+      'w4 w5',
+      'w5',
+    ]);
+    // The whole input is covered: last word appears in the final chunk.
+    expect(chunks[chunks.length - 1]).toBe('w5');
+  });
+
+  it('should terminate when overlapWords > maxWords', () => {
+    const text = 'w0 w1 w2 w3';
+    // Without the clamp the step would be negative and i would run backwards.
+    const chunks = chunkText(text, 2, 5);
+    // step = max(1, 2 - 5) = 1: i=0 -> w0,w1 ; i=1 -> w1,w2 ; i=2 -> w2,w3 ; i=3 -> w3
+    expect(chunks).toEqual(['w0 w1', 'w1 w2', 'w2 w3', 'w3']);
+  });
 });
