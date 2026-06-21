@@ -1,6 +1,6 @@
 import { publish } from "../repositories/message_bus";
 
-import type { EventType } from "../models/event_types";
+import type { EventType, PayloadForEvent } from "../models/event_types";
 
 /**
  * Send a message to a specific target (tab or extension)
@@ -11,11 +11,11 @@ import type { EventType } from "../models/event_types";
  * @param frameId - Optional frame ID within the tab
  * @returns A promise resolving to the response, if any
  */
-export async function send_message<T = unknown, R = any>(
-  eventType: EventType,
-  payload: T,
+export async function send_message<TEventType extends EventType, R = any>(
+  eventType: TEventType,
+  payload: PayloadForEvent<TEventType>,
   tabId?: number,
   frameId?: number,
 ): Promise<R> {
-  return await publish<T>(eventType, payload, tabId, frameId);
+  return await publish(eventType, payload, tabId, frameId);
 }

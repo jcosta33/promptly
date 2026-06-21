@@ -41,7 +41,7 @@ const PromptlyRoot: FC = () => {
 
     
     const unsubscribeContext = subscribe<{ actionId: string }>(
-      EventType.TRIGGER_CONTEXT_ACTION as any,
+      EventType.TRIGGER_CONTEXT_ACTION,
       (event) => {
         setInitialActionId(event.payload.actionId);
         setShowOverlay(true);
@@ -50,7 +50,7 @@ const PromptlyRoot: FC = () => {
 
     
     const unsubscribeOmnibox = subscribe<{ text: string }>(
-      EventType.OMNIBOX_INPUT as any,
+      EventType.OMNIBOX_INPUT,
       (event) => {
         setOmniboxText(event.payload.text);
         setInitialActionId(undefined);
