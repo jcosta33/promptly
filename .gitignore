@@ -16,9 +16,9 @@ yarn-error.log*
 .wxt/
 *storybook.log
 
-# Swarm - code-repo scratch
+# Corpus - code-repo scratch
 .agents/tmp/
 tmp/
 
-# Local state of the future Swarm CLI
-.swarm/
+# Local state of the future Corpus CLI
+.corpus/
