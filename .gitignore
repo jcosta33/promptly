@@ -16,9 +16,9 @@ yarn-error.log*
 .wxt/
 *storybook.log
 
-# Corpus - code-repo scratch
+# Suspec - code-repo scratch
 .agents/tmp/
 tmp/
 
-# Local state of the future Corpus CLI
-.corpus/
+# Local state of the future Suspec CLI
+.suspec/

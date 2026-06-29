@@ -1,8 +1,8 @@
 # AGENTS.md - Promptly code repo
 
-## Corpus
+## Suspec
 
-- Corpus workspace: `../promptly-works/` - read the task packet you are given before coding.
+- Suspec workspace: `../promptly-works/` - read the task packet you are given before coding.
 - Specs, tasks, reviews, findings, and decisions live in the workspace, not this code repo.
 - Link implementation work back to the workspace task and review packets.
 

@@ -36,4 +36,4 @@ Promptly graduates from a prototype to a full-fledged, offline-first AI operatin
 
 ---
 
-_Built autonomously by the Corpus._
+_Built autonomously by the Suspec._
